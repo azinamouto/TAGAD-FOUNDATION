@@ -77,6 +77,9 @@ export interface TableDefinitionItem {
   isSystemTable: boolean;
   isArchived: boolean;
   verificationStatus: StatisticalVerificationStatus;
+  hasRealData?: boolean;
+  dataStatus?: 'REAL DATA' | 'UNVERIFIED' | string;
+  observationCount?: number;
   dimensionCount?: number;
   indicatorCount?: number;
   dimensionBindings: DimensionBindingItem[];

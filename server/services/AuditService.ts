@@ -15,11 +15,11 @@ const MEMORY_AUDIT_LOGS: any[] = [];
 
 export class AuditService {
   public static async logActionTx(tx: any, params: AuditLogParams) {
-    const ipAddress = params.req
+    const ipAddress = params.req?.headers
       ? (params.req.headers['x-forwarded-for'] as string) || params.req.socket?.remoteAddress || null
       : null;
 
-    const userAgent = params.req ? (params.req.headers['user-agent'] as string) || null : null;
+    const userAgent = params.req?.headers ? (params.req.headers['user-agent'] as string) || null : null;
 
     if (!isDatabaseConnected() || !tx) {
       MEMORY_AUDIT_LOGS.unshift({
@@ -57,11 +57,11 @@ export class AuditService {
   }
 
   public static async logAction(params: AuditLogParams) {
-    const ipAddress = params.req
+    const ipAddress = params.req?.headers
       ? (params.req.headers['x-forwarded-for'] as string) || params.req.socket?.remoteAddress || null
       : null;
 
-    const userAgent = params.req ? (params.req.headers['user-agent'] as string) || null : null;
+    const userAgent = params.req?.headers ? (params.req.headers['user-agent'] as string) || null : null;
 
     if (!isDatabaseConnected()) {
       MEMORY_AUDIT_LOGS.unshift({

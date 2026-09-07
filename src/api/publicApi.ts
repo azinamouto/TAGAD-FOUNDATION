@@ -43,40 +43,50 @@ export const publicApi = {
    * Fetch public GAD programs (ACTIVE or COMPLETED)
    */
   async getPrograms(params?: { year?: number; sector?: string }): Promise<PublicProgram[]> {
-    const res = await api.get<ApiResponse<PublicProgram[]>>('/public/programs', { params });
-    return res.data.data;
+    const res = await api.get<any>('/public/programs', { params });
+    if (Array.isArray(res.data?.data)) return res.data.data;
+    if (Array.isArray(res.data)) return res.data;
+    return [];
   },
 
   /**
    * Fetch public GAD accomplishments feed
    */
   async getAccomplishments(params?: { year?: number; quarter?: number }): Promise<PublicAccomplishment[]> {
-    const res = await api.get<ApiResponse<PublicAccomplishment[]>>('/public/accomplishments', { params });
-    return res.data.data;
+    const res = await api.get<any>('/public/accomplishments', { params });
+    if (Array.isArray(res.data?.data)) return res.data.data;
+    if (Array.isArray(res.data)) return res.data;
+    return [];
   },
 
   /**
    * Fetch public approved GAD plans with line items
    */
   async getGADPlans(params?: { year?: number; officeId?: string }): Promise<PublicGADPlan[]> {
-    const res = await api.get<ApiResponse<PublicGADPlan[]>>('/public/gad-plans', { params });
-    return res.data.data;
+    const res = await api.get<any>('/public/gad-plans', { params });
+    if (Array.isArray(res.data?.data)) return res.data.data;
+    if (Array.isArray(res.data)) return res.data;
+    return [];
   },
 
   /**
    * Fetch list of municipal offices for filtering
    */
   async getOffices(): Promise<PublicOffice[]> {
-    const res = await api.get<ApiResponse<PublicOffice[]>>('/public/offices');
-    return res.data.data;
+    const res = await api.get<any>('/public/offices');
+    if (Array.isArray(res.data?.data)) return res.data.data;
+    if (Array.isArray(res.data)) return res.data;
+    return [];
   },
 
   /**
    * Fetch list of 25 barangays for filtering
    */
   async getBarangays(): Promise<PublicBarangay[]> {
-    const res = await api.get<ApiResponse<PublicBarangay[]>>('/public/barangays');
-    return res.data.data;
+    const res = await api.get<any>('/public/barangays');
+    if (Array.isArray(res.data?.data)) return res.data.data;
+    if (Array.isArray(res.data)) return res.data;
+    return [];
   },
 
   /**

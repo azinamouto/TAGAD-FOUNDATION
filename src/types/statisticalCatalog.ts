@@ -48,6 +48,8 @@ export interface StatisticalTableCatalogItem {
   measureStructure?: string | null;
   sourceFormat?: string | null;
   verificationStatus: StatisticalVerificationStatus;
+  hasRealData?: boolean;
+  dataStatus?: 'REAL DATA' | 'UNVERIFIED' | string;
   indicators?: StatisticalIndicatorItem[];
   createdAt?: string;
   updatedAt?: string;

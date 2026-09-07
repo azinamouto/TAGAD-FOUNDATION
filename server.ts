@@ -1,5 +1,7 @@
 import 'dotenv/config';
 import express, { Request, Response, NextFunction } from "express";
+import path from "path";
+import { createServer as createViteServer } from "vite";
 import cors from 'cors';
 import helmet from 'helmet';
 import { validateJwtConfig } from './server/lib/jwt';
@@ -115,6 +117,21 @@ async function startServer() {
     });
     sendError(res, err, err.statusCode || 500);
   });
+
+  // Vite middleware for development / Static file serving for production
+  if (process.env.NODE_ENV !== "production") {
+    const vite = await createViteServer({
+      server: { middlewareMode: true },
+      appType: "spa",
+    });
+    app.use(vite.middlewares);
+  } else {
+    const distPath = path.join(process.cwd(), 'dist');
+    app.use(express.static(distPath));
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(distPath, 'index.html'));
+    });
+  }
 
   app.listen(PORT, "0.0.0.0", () => {
     logger.info('TAGAD_BACKEND_SERVER_STARTED', {

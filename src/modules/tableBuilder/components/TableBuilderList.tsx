@@ -300,10 +300,10 @@ export const TableBuilderList: React.FC<TableBuilderListProps> = ({
               }}
               className="w-full px-2.5 py-1.5 text-xs bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-300"
             >
-              <option value="ALL">All Statuses</option>
-              <option value={StatisticalVerificationStatus.VERIFIED}>Verified Only</option>
-              <option value={StatisticalVerificationStatus.PROVISIONAL}>Provisional Only</option>
-              <option value={StatisticalVerificationStatus.UNVERIFIED}>Unverified</option>
+              <option value="ALL">All Data Statuses</option>
+              <option value={StatisticalVerificationStatus.VERIFIED}>REAL DATA (Verified)</option>
+              <option value={StatisticalVerificationStatus.PROVISIONAL}>Provisional</option>
+              <option value={StatisticalVerificationStatus.UNVERIFIED}>UNVERIFIED (Placeholder)</option>
             </select>
           </div>
         </div>
@@ -382,7 +382,7 @@ export const TableBuilderList: React.FC<TableBuilderListProps> = ({
                   <th className="py-3 px-4">Title & Description</th>
                   <th className="py-3 px-4 w-44">Domain</th>
                   <th className="py-3 px-4 w-32">Classification</th>
-                  <th className="py-3 px-4 w-28">Status</th>
+                  <th className="py-3 px-4 w-32">Data Status</th>
                   <th className="py-3 px-4 w-28 text-center">Structure</th>
                   <th className="py-3 px-4 w-24 text-right">Actions</th>
                 </tr>
@@ -462,27 +462,19 @@ export const TableBuilderList: React.FC<TableBuilderListProps> = ({
                         </span>
                       </td>
 
-                      {/* Verification Status */}
+                      {/* Data Status */}
                       <td className="py-3.5 px-4">
-                        <span
-                          className={`text-[11px] font-semibold px-2 py-0.5 rounded inline-flex items-center gap-1 ${
-                            isVerified
-                              ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300'
-                              : 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300'
-                          }`}
-                        >
-                          {isVerified ? (
-                            <>
-                              <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-                              VERIFIED
-                            </>
-                          ) : (
-                            <>
-                              <AlertCircle className="w-3 h-3 text-amber-600" />
-                              {table.verificationStatus}
-                            </>
-                          )}
-                        </span>
+                        {isVerified || table.hasRealData || table.dataStatus === 'REAL DATA' ? (
+                          <span className="text-[11px] font-bold px-2 py-0.5 rounded inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                            <CheckCircle2 className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+                            REAL DATA
+                          </span>
+                        ) : (
+                          <span className="text-[11px] font-bold px-2 py-0.5 rounded inline-flex items-center gap-1 bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                            <AlertCircle className="w-3 h-3 text-amber-600 dark:text-amber-400" />
+                            UNVERIFIED
+                          </span>
+                        )}
                       </td>
 
                       {/* Dimensions & Indicators Count */}

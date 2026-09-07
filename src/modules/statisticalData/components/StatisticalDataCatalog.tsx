@@ -107,9 +107,19 @@ export const StatisticalDataCatalog: React.FC<StatisticalDataCatalogProps> = ({
         domainFilter === 'ALL' ||
         table.domain.toUpperCase() === domainFilter.toUpperCase();
 
-      return matchSearch && matchDomain;
+      // Data Status filter
+      const isVerified =
+        table.verificationStatus === 'VERIFIED' ||
+        table.hasRealData ||
+        table.dataStatus === 'REAL DATA';
+      const matchStatus =
+        statusFilter === 'ALL' ||
+        (statusFilter === 'REAL_DATA' && isVerified) ||
+        (statusFilter === 'UNVERIFIED' && !isVerified);
+
+      return matchSearch && matchDomain && matchStatus;
     });
-  }, [tables, searchQuery, domainFilter]);
+  }, [tables, searchQuery, domainFilter, statusFilter]);
 
   // Unique domains present in actual data
   const domains = useMemo(() => {
@@ -216,7 +226,7 @@ export const StatisticalDataCatalog: React.FC<StatisticalDataCatalogProps> = ({
           />
         </div>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto">
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
           <Select value={domainFilter} onValueChange={setDomainFilter}>
             <SelectTrigger className="w-full sm:w-44 h-9 text-xs">
               <Filter className="w-3.5 h-3.5 mr-1 text-slate-400" />
@@ -232,13 +242,25 @@ export const StatisticalDataCatalog: React.FC<StatisticalDataCatalogProps> = ({
             </SelectContent>
           </Select>
 
-          {(searchQuery || domainFilter !== 'ALL') && (
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-full sm:w-36 h-9 text-xs">
+              <SelectValue placeholder="Data Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL" className="text-xs">All Data Status</SelectItem>
+              <SelectItem value="REAL_DATA" className="text-xs">REAL DATA</SelectItem>
+              <SelectItem value="UNVERIFIED" className="text-xs">UNVERIFIED</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {(searchQuery || domainFilter !== 'ALL' || statusFilter !== 'ALL') && (
             <Button
               variant="ghost"
               size="sm"
               onClick={() => {
                 setSearchQuery('');
                 setDomainFilter('ALL');
+                setStatusFilter('ALL');
               }}
               className="h-9 text-xs text-slate-500"
             >
@@ -325,6 +347,17 @@ export const StatisticalDataCatalog: React.FC<StatisticalDataCatalogProps> = ({
                   {/* Footer status & Action */}
                   <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
                     <div className="flex items-center gap-1.5">
+                      {table.verificationStatus === 'VERIFIED' || table.hasRealData || table.dataStatus === 'REAL DATA' ? (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                          <CheckCircle2 className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+                          REAL DATA
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                          <AlertCircle className="w-3 h-3 text-amber-600 dark:text-amber-400" />
+                          UNVERIFIED
+                        </span>
+                      )}
                       <Badge variant="outline" className="text-[10px] bg-slate-50 dark:bg-slate-800/50 text-slate-500 border-slate-200 dark:border-slate-700 font-medium">
                         INPUT-READY
                       </Badge>

@@ -139,3 +139,30 @@ export const getBarangays = async (): Promise<BarangayItem[]> => {
     }
   }
 };
+
+// ==============================================================================
+// 4. Statistical CSV Import APIs (TAGAD Issue #16)
+// ==============================================================================
+
+export interface DiscoverStatisticalCsvPayload {
+  csvContent: string;
+  filename?: string;
+  tableId?: string;
+  datasetId?: string;
+}
+
+export const discoverStatisticalCsv = async (payload: DiscoverStatisticalCsvPayload): Promise<any> => {
+  const response = await api.post('/admin/statistical-import/discover', payload);
+  return response.data?.data || response.data;
+};
+
+export const previewStatisticalCsv = async (payload: any): Promise<any> => {
+  const response = await api.post('/admin/statistical-import/preview', payload);
+  return response.data?.data || response.data;
+};
+
+export const executeStatisticalCsv = async (payload: any): Promise<any> => {
+  const response = await api.post('/admin/statistical-import/execute', payload);
+  return response.data?.data || response.data;
+};
+

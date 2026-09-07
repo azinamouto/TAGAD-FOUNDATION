@@ -5,6 +5,7 @@ import {
 } from '@prisma/client';
 import prisma, { isDatabaseConnected } from '../lib/prisma';
 import { v4 as uuidv4 } from 'uuid';
+import { StatisticalDatasetService } from './StatisticalDatasetService';
 
 export interface StatisticalTableCatalogItem {
   tableNumber: number;
@@ -1183,17 +1184,29 @@ export class StatisticalCatalogService {
 
       if (isPaginated) {
         return {
-          data: items,
+          data: items.map((t) => ({
+            ...t,
+            hasRealData: t.verificationStatus === StatisticalVerificationStatus.VERIFIED,
+            dataStatus: t.verificationStatus === StatisticalVerificationStatus.VERIFIED ? 'REAL DATA' : 'UNVERIFIED',
+          })),
           total,
           page,
           limit,
           totalPages: Math.ceil(total / limit),
         };
       }
-      return items;
+      return items.map((t) => ({
+        ...t,
+        hasRealData: t.verificationStatus === StatisticalVerificationStatus.VERIFIED,
+        dataStatus: t.verificationStatus === StatisticalVerificationStatus.VERIFIED ? 'REAL DATA' : 'UNVERIFIED',
+      }));
     }
 
-    let results = [...inMemoryTableDefinitions];
+    let results = inMemoryTableDefinitions.map((t) => ({
+      ...t,
+      hasRealData: t.verificationStatus === StatisticalVerificationStatus.VERIFIED,
+      dataStatus: t.verificationStatus === StatisticalVerificationStatus.VERIFIED ? 'REAL DATA' : 'UNVERIFIED',
+    }));
     if (params?.domain) {
       const d = params.domain.toLowerCase();
       results = results.filter((t) => t.domain.toLowerCase().includes(d));
@@ -1321,8 +1334,10 @@ export class StatisticalCatalogService {
    * Registers a Statistical Dataset header (survey publication / dataset metadata).
    */
   public static async createDataset(data: {
-    datasetCode: string;
-    name: string;
+    datasetCode?: string;
+    name?: string;
+    title?: string;
+    datasetYear?: number;
     description?: string;
     sourceAgency?: string;
     reportingYear?: number;
@@ -1332,21 +1347,31 @@ export class StatisticalCatalogService {
     sourceFileName?: string;
     importedById?: string;
     publicationStatus?: StatisticalPublicationStatus;
+    isOfficial?: boolean;
+    isApproved?: boolean;
+    metadata?: any;
   }): Promise<any> {
+    const datasetCode =
+      data.datasetCode || `DS-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    const name = data.name || data.title || `Dataset ${datasetCode}`;
+    const reportingYear = data.reportingYear || data.datasetYear || new Date().getFullYear();
+
     if (isDatabaseConnected()) {
       return await prisma.statisticalDataset.create({
         data: {
-          datasetCode: data.datasetCode,
-          name: data.name,
+          datasetCode,
+          name,
           description: data.description,
           sourceAgency: data.sourceAgency,
-          reportingYear: data.reportingYear,
+          reportingYear,
           reportingPeriod: data.reportingPeriod,
           surveyRound: data.surveyRound,
           geographicLevel: data.geographicLevel || 'MUNICIPALITY',
           sourceFileName: data.sourceFileName,
           importedById: data.importedById,
-          publicationStatus: data.publicationStatus || StatisticalPublicationStatus.DRAFT,
+          isOfficial: false,
+          isPublished: false,
+          publicationStatus: StatisticalPublicationStatus.DRAFT,
           verificationStatus: StatisticalVerificationStatus.UNVERIFIED,
         },
       });
@@ -1354,11 +1379,11 @@ export class StatisticalCatalogService {
 
     const newDataset = {
       id: uuidv4(),
-      datasetCode: data.datasetCode,
-      name: data.name,
+      datasetCode,
+      name,
       description: data.description || null,
       sourceAgency: data.sourceAgency || null,
-      reportingYear: data.reportingYear || null,
+      reportingYear: reportingYear || null,
       reportingPeriod: data.reportingPeriod || null,
       surveyRound: data.surveyRound || null,
       geographicLevel: data.geographicLevel || 'MUNICIPALITY',
@@ -1366,13 +1391,29 @@ export class StatisticalCatalogService {
       importedById: data.importedById || null,
       isOfficial: false,
       isPublished: false,
-      publicationStatus: data.publicationStatus || StatisticalPublicationStatus.DRAFT,
+      isApproved: false,
+      publicationStatus: StatisticalPublicationStatus.DRAFT,
       verificationStatus: StatisticalVerificationStatus.UNVERIFIED,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
     inMemoryDatasets.push(newDataset);
+    try {
+      const memoryDatasets = StatisticalDatasetService.getMemoryDatasets();
+      if (Array.isArray(memoryDatasets) && !memoryDatasets.some((d) => d.id === newDataset.id)) {
+        memoryDatasets.push(newDataset);
+      }
+    } catch {
+      // Ignore in isolation
+    }
     return newDataset;
+  }
+
+  /**
+   * Returns in-memory datasets reference (for test inspection & isolation).
+   */
+  public static getInMemoryDatasets(): any[] {
+    return inMemoryDatasets;
   }
 
   /**

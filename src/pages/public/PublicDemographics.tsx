@@ -30,9 +30,10 @@ export const PublicDemographics: React.FC = () => {
     const fetchBarangays = async () => {
       try {
         const brgyList = await publicApi.getBarangays();
-        setBarangays(brgyList);
+        setBarangays(Array.isArray(brgyList) ? brgyList : []);
       } catch (err) {
         console.error('Failed to load barangays list:', err);
+        setBarangays([]);
       }
     };
     fetchBarangays();
@@ -46,7 +47,7 @@ export const PublicDemographics: React.FC = () => {
         year: selectedYear,
         barangayId: selectedBarangayId || undefined,
       });
-      setData(res);
+      setData(res || null);
     } catch (err: any) {
       console.error('Failed to load demographics:', err);
       setError(err?.response?.data?.error?.message || 'Failed to retrieve demographic statistics.');
@@ -59,18 +60,18 @@ export const PublicDemographics: React.FC = () => {
     loadDemographics();
   }, [selectedYear, selectedBarangayId]);
 
-  const totals = data?.totals;
-  const bySector = data?.bySector || [];
-  const rawBarangays = data?.byBarangay || [];
+  const totals = data?.totals || null;
+  const bySector = Array.isArray(data?.bySector) ? data.bySector : [];
+  const rawBarangays = Array.isArray(data?.byBarangay) ? data.byBarangay : [];
 
   const filteredBarangays = rawBarangays
-    .filter((b) => b.barangay.toLowerCase().includes(searchTerm.toLowerCase()))
+    .filter((b) => (b?.barangay || '').toLowerCase().includes((searchTerm || '').toLowerCase()))
     .sort((a, b) => {
       let comparison = 0;
       if (sortField === 'barangay') {
-        comparison = a.barangay.localeCompare(b.barangay);
+        comparison = (a?.barangay || '').localeCompare(b?.barangay || '');
       } else {
-        comparison = (a[sortField] || 0) - (b[sortField] || 0);
+        comparison = ((a && a[sortField]) || 0) - ((b && b[sortField]) || 0);
       }
       return sortOrder === 'desc' ? -comparison : comparison;
     });
@@ -131,7 +132,7 @@ export const PublicDemographics: React.FC = () => {
               className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2.5 py-1 text-slate-900 dark:text-slate-100"
             >
               <option value="">All 25 Barangays</option>
-              {barangays.map((b) => (
+              {(barangays || []).map((b) => (
                 <option key={b.id} value={b.id}>
                   {b.name}
                 </option>
