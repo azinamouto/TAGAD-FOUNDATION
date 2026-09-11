@@ -2,6 +2,8 @@ import { Router } from 'express';
 import { IngestionController } from '../../controllers/admin/ingestionController';
 import { validate } from '../../middleware/validate';
 import { csvPreviewSchema, csvExecuteSchema } from '../../validators/ingestionValidator';
+import { requireRole } from '../../middleware/authMiddleware';
+import { Role } from '@prisma/client';
 
 const router = Router();
 
@@ -12,6 +14,11 @@ router.post('/discover-schema', IngestionController.discoverSchema);
 router.post('/preview', validate(csvPreviewSchema), IngestionController.previewData);
 
 // Phase 2 Step B: Transactional CSV Ingestion execution
-router.post('/execute', validate(csvExecuteSchema), IngestionController.executeIngestion);
+router.post(
+	'/execute',
+	requireRole(Role.ADMIN, Role.ENCODER),
+	validate(csvExecuteSchema),
+	IngestionController.executeIngestion
+);
 
 export default router;

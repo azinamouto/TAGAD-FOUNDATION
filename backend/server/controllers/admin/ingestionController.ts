@@ -3,8 +3,7 @@ import { AuthenticatedRequest } from '../../middleware/authMiddleware';
 import { CsvDiscoveryService } from '../../services/CsvDiscoveryService';
 import { CsvIngestionService } from '../../services/CsvIngestionService';
 import { sendSuccess, sendError } from '../../lib/response';
-import { ValidationError, ForbiddenError, UnauthorizedError } from '../../lib/errors';
-import { Role } from '@prisma/client';
+import { ValidationError, UnauthorizedError } from '../../lib/errors';
 
 export class IngestionController {
   /**
@@ -79,10 +78,6 @@ export class IngestionController {
     try {
       if (!req.user) {
         throw new UnauthorizedError('Authentication required');
-      }
-
-      if (req.user.role === Role.VIEWER) {
-        throw new ForbiddenError('Viewers have read-only access and cannot perform ingestion operations');
       }
 
       const {
