@@ -8,8 +8,8 @@ export const LoginPage: React.FC = () => {
   const location = useLocation();
   const { login } = useAuth();
 
-  const [email, setEmail] = useState('admin@talibon.gov.ph');
-  const [password, setPassword] = useState('Admin@1234');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -118,7 +118,6 @@ export const LoginPage: React.FC = () => {
           <div className="pt-4 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 space-y-1">
             <div className="font-medium text-slate-700 dark:text-slate-300">Development Credentials:</div>
             <div>Email: <span className="font-mono text-slate-900 dark:text-slate-200">admin@talibon.gov.ph</span></div>
-            <div>Password: <span className="font-mono text-slate-900 dark:text-slate-200">Admin@1234</span></div>
           </div>
         </div>
 

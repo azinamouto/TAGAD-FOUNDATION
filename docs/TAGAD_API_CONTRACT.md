@@ -82,7 +82,7 @@ The server never trusts client-supplied `officeId` for `ENCODER` users. The effe
   ```json
   {
     "email": "admin@talibon.gov.ph",
-    "password": "Password123!"
+    "password": "<password configured in the backend environment>"
   }
   ```
 - **Response (200)**:

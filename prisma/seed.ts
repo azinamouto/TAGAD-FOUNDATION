@@ -64,7 +64,9 @@ async function main() {
   // 3. Seed System Administrator & Super Administrator
   const mpdcOffice = await prisma.office.findUnique({ where: { code: 'MPDC' } });
   const adminEmail = 'admin@talibon.gov.ph';
-  const hashedPassword = await bcrypt.hash('Admin@1234', 10);
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  if (!adminPassword) throw new Error('ADMIN_PASSWORD is required to seed the admin account.');
+  const hashedPassword = await bcrypt.hash(adminPassword, 10);
 
   const admin = await prisma.user.upsert({
     where: { email: adminEmail },
@@ -86,7 +88,8 @@ async function main() {
 
   // 4. Seed Dedicated Super Administrator (System-wide / No office restriction)
   const superAdminEmail = 'superadmin@talibon.gov.ph';
-  const superAdminPasswordPlain = process.env.SUPER_ADMIN_PASSWORD || 'Admin@1234';
+  const superAdminPasswordPlain = process.env.SUPER_ADMIN_PASSWORD;
+  if (!superAdminPasswordPlain) throw new Error('SUPER_ADMIN_PASSWORD is required to seed the super-admin account.');
   const hashedSuperAdminPassword = await bcrypt.hash(superAdminPasswordPlain, 10);
 
   const superAdmin = await prisma.user.upsert({

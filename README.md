@@ -130,9 +130,9 @@ Security is enforced at the database level using PostgreSQL Row Level Security:
    npm run dev:frontend
    ```
 
-5. **Sign in with default credentials:**
-   * **Email:** `admin@talibon.gov.ph`
-   * **Password:** `Admin@1234`
+5. **Configure account credentials:**
+   * Database-seeded accounts require `backend/.env` values for `ADMIN_PASSWORD` and `SUPER_ADMIN_PASSWORD`.
+   * Demo fallback authentication is disabled by default. To enable it for local demonstrations only, set `DEMO_MODE=true` and provide all four `DEMO_*_PASSWORD` variables.
 
 ---
 

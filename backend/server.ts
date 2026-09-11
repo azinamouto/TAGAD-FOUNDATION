@@ -8,6 +8,7 @@ import { requestLogger } from './server/middleware/requestLogger';
 import { logger } from './server/lib/logger';
 import { sendError } from './server/lib/response';
 import { configureCors } from './server/lib/cors';
+import { logDemoModeWarning, validateDemoModeConfig } from './server/services/AuthService';
 
 // Route imports
 import authRoutes from './server/routes/auth';
@@ -27,6 +28,15 @@ import statisticalCatalogRoutes from './server/routes/statisticalCatalog';
 export { configureCors };
 
 async function startServer() {
+  try {
+    validateDemoModeConfig();
+    logDemoModeWarning();
+  } catch (err: any) {
+    logger.error('FATAL_STARTUP_DEMO_MODE_CONFIG_ERROR', err);
+    process.exit(1);
+    return;
+  }
+
   // Validate critical security & JWT configuration
   try {
     validateJwtConfig();

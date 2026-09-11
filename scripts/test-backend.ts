@@ -24,6 +24,8 @@ async function runIntegrationTests() {
 
   let passed = 0;
   let failed = 0;
+  const integrationPassword = process.env.TEST_PASSWORD;
+  if (!integrationPassword) throw new Error('TEST_PASSWORD is required to run backend integration tests.');
 
   function assert(condition: boolean, testName: string) {
     if (condition) {
@@ -39,7 +41,7 @@ async function runIntegrationTests() {
     // 0. Ensure test fixtures exist if live database is connected
     const { isDatabaseConnected } = await import('../server/lib/prisma');
     if (isDatabaseConnected()) {
-      const testHash = await bcrypt.hash('Password123!', 10);
+      const testHash = await bcrypt.hash(integrationPassword, 10);
       const mswdo = await prisma.office.findFirst({ where: { code: 'MSWDO' } });
       const mpdc = await prisma.office.findFirst({ where: { code: 'MPDC' } });
 
@@ -64,10 +66,10 @@ async function runIntegrationTests() {
 
     // 1. Authenticate ADMIN and ENCODER
     console.log('>> 1. TESTING AUTHENTICATION & TOKEN ISSUANCE');
-    const adminLogin = await AuthService.login('admin@talibon.gov.ph', 'Password123!');
+    const adminLogin = await AuthService.login('admin@talibon.gov.ph', integrationPassword);
     assert(!!adminLogin.accessToken && adminLogin.user.role === Role.ADMIN, 'Admin login returns valid JWT and role');
 
-    const encoderLogin = await AuthService.login('mswdo@talibon.gov.ph', 'Password123!');
+    const encoderLogin = await AuthService.login('mswdo@talibon.gov.ph', integrationPassword);
     assert(!!encoderLogin.accessToken && encoderLogin.user.role === Role.ENCODER, 'Encoder login returns valid JWT and role');
 
     const meProfile = await AuthService.getMe(adminLogin.user.id);
@@ -228,7 +230,7 @@ async function runIntegrationTests() {
     console.log('\n>> 6. TESTING TOKEN REVOCATION, ROTATION & LOGOUT HARDENING');
     
     // Test refresh token rotation
-    const rotationLogin = await AuthService.login('admin@talibon.gov.ph', 'Password123!');
+    const rotationLogin = await AuthService.login('admin@talibon.gov.ph', integrationPassword);
     const firstRefreshToken = rotationLogin.refreshToken;
     const firstRotated = await AuthService.refreshToken(firstRefreshToken);
     assert(!!firstRotated.accessToken && !!firstRotated.refreshToken, 'Refresh token rotated and returned new access & refresh tokens');
@@ -243,7 +245,7 @@ async function runIntegrationTests() {
     assert(reuseBlocked, 'Replay attack prevented: Reusing previous refresh token is immediately rejected');
 
     // Test access token revocation on logout
-    const logoutTestLogin = await AuthService.login('encoder.mswdo@talibon.gov.ph', 'Password123!');
+    const logoutTestLogin = await AuthService.login('encoder.mswdo@talibon.gov.ph', integrationPassword);
     const dummyReq: any = {
       headers: {
         authorization: `Bearer ${logoutTestLogin.accessToken}`,

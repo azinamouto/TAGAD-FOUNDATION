@@ -10,6 +10,37 @@ import {
 import { UnauthorizedError, NotFoundError } from '../lib/errors';
 import { AuditService } from './AuditService';
 import { Request } from 'express';
+import { logger } from '../lib/logger';
+
+const DEMO_PASSWORD_ENV_BY_ROLE: Record<string, string> = {
+  SUPER_ADMIN: 'DEMO_SUPER_ADMIN_PASSWORD',
+  ADMIN: 'DEMO_ADMIN_PASSWORD',
+  ENCODER: 'DEMO_ENCODER_PASSWORD',
+  VIEWER: 'DEMO_VIEWER_PASSWORD',
+};
+
+export function isDemoModeEnabled(): boolean {
+  return process.env.DEMO_MODE === 'true';
+}
+
+export function validateDemoModeConfig(): void {
+  if (!isDemoModeEnabled()) return;
+
+  const missing = Object.values(DEMO_PASSWORD_ENV_BY_ROLE).filter((name) => !process.env[name]);
+  if (missing.length > 0) {
+    throw new Error(
+      `DEMO_MODE=true requires these environment variables: ${missing.join(', ')}`
+    );
+  }
+}
+
+export function logDemoModeWarning(): void {
+  if (isDemoModeEnabled()) {
+    logger.error('!!! DEMO_MODE ENABLED: DEMO CREDENTIALS ARE ACTIVE !!!', {
+      warning: 'Disable DEMO_MODE in any real deployment.',
+    });
+  }
+}
 
 export const DEMO_USERS: any[] = [
   {
@@ -100,6 +131,7 @@ export const DEMO_USERS: any[] = [
 
 export class AuthService {
   public static getDemoUser(idOrEmail: string) {
+    if (!isDemoModeEnabled()) return null;
     if (!idOrEmail) return null;
     const clean = idOrEmail.toLowerCase().trim();
     return DEMO_USERS.find((u) => u.id === idOrEmail || u.email?.toLowerCase().trim() === clean) || null;
@@ -169,20 +201,18 @@ export class AuthService {
       }
     }
 
-    // Fallback demo authentication
-    const demoUser = DEMO_USERS.find((u) => u.email === cleanEmail);
+    // Fallback demo authentication is opt-in and requires role-specific secrets.
+    if (!isDemoModeEnabled()) {
+      throw new UnauthorizedError('Invalid email or password', 'INVALID_CREDENTIALS');
+    }
+
+    validateDemoModeConfig();
+    const demoUser = this.getDemoUser(cleanEmail);
     if (demoUser) {
-      let isDemoPasswordValid = false;
-      if (demoUser.role === 'SUPER_ADMIN') {
-        const configuredSuperAdminPassword = process.env.SUPER_ADMIN_PASSWORD;
-        if (configuredSuperAdminPassword) {
-          isDemoPasswordValid = passwordPlain === configuredSuperAdminPassword;
-        } else {
-          isDemoPasswordValid = (passwordPlain === 'Admin@1234' || passwordPlain === 'Password123!' || passwordPlain === 'password' || passwordPlain === 'demo1234');
-        }
-      } else {
-        isDemoPasswordValid = (passwordPlain === 'Admin@1234' || passwordPlain === 'Password123!' || passwordPlain === 'password' || passwordPlain === 'demo1234');
-      }
+      const passwordEnvName = DEMO_PASSWORD_ENV_BY_ROLE[demoUser.role];
+      const isDemoPasswordValid = passwordEnvName
+        ? passwordPlain === process.env[passwordEnvName]
+        : false;
 
       if (isDemoPasswordValid) {
         const tokenPayload = {
@@ -237,12 +267,12 @@ export class AuthService {
             where: { id: decoded.id },
           });
         } catch {
-          user = DEMO_USERS.find((u) => u.id === decoded.id);
+          user = this.getDemoUser(decoded.id);
         }
       }
 
-      if (!user && DEMO_USERS.find((u) => u.id === decoded.id)) {
-        user = DEMO_USERS.find((u) => u.id === decoded.id);
+      if (!user) {
+        user = this.getDemoUser(decoded.id);
       }
 
       if (!user || !user.isActive) {
@@ -302,7 +332,7 @@ export class AuthService {
       }
     }
 
-    const demo = DEMO_USERS.find((u) => u.id === userId);
+    const demo = this.getDemoUser(userId);
     if (demo) {
       return {
         id: demo.id,
