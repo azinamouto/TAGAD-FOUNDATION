@@ -92,7 +92,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const hasRole = (role: AppRole | AppRole[]): boolean => {
     if (!state.user || !state.roles.length) return false;
-    if (state.roles.includes('super_admin') || state.roles.includes('ADMIN')) return true; // Admin has universal access
+    if (state.roles.includes('SUPER_ADMIN') || state.roles.includes('ADMIN')) return true;
 
     if (Array.isArray(role)) {
       return role.some((r) => state.roles.includes(r));
@@ -100,12 +100,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return state.roles.includes(role);
   };
 
-  const isSuperAdmin = state.roles.includes('super_admin') || state.roles.includes('ADMIN');
-  const isAdmin =
-    state.roles.includes('super_admin') ||
-    state.roles.includes('admin') ||
-    state.roles.includes('municipal_admin') ||
-    state.roles.includes('ADMIN');
+  const isSuperAdmin = state.roles.includes('SUPER_ADMIN');
+  const isAdmin = state.roles.includes('SUPER_ADMIN') || state.roles.includes('ADMIN');
 
   return (
     <AuthContext.Provider

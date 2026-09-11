@@ -39,7 +39,7 @@ TAGAD adopts a **Modular Monolith** architecture designed for government-grade r
 2. **Authenticated Administrative Workspace (`/dashboard`, `/programs`, etc.)**:
    * Requires authenticated session (Supabase Auth / JWT).
    * Verified by `ProtectedRoute` on frontend and PostgreSQL RLS on database.
-   * Full CRUD operations restricted by role (`super_admin`, `admin`, `editor`, `municipal_admin`, `barangay_admin`).
+   * Full CRUD operations restricted by role (`SUPER_ADMIN`, `ADMIN`, `ENCODER`, `VIEWER`).
 
 ---
 

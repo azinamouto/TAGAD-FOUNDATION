@@ -169,7 +169,7 @@ describe('Sprint 9 — Backend Security, Persistence, & Observability Suite', ()
     test('redactPII strips plain passwords, password hashes, and secrets', () => {
       const input = {
         email: 'encoder@talibon.gov.ph',
-        password: 'SuperSecretPassword123!',
+        password: 'integration-secret-fixture',
         passwordHash: '$2a$10$abcdefghijklmnopqrstuvwxyz',
         secret: 'top_secret_gad_key',
         apiKey: 'AIzaSyDemoKey123',

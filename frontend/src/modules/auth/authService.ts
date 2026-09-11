@@ -30,11 +30,11 @@ export const authService = {
       // Map roles for application RBAC
       const roles: AppRole[] = [];
       if (apiUser.role === 'SUPER_ADMIN') {
-        roles.push('SUPER_ADMIN', 'super_admin', 'ADMIN', 'admin', 'municipal_admin');
+        roles.push('SUPER_ADMIN');
       } else if (apiUser.role === 'ADMIN') {
-        roles.push('ADMIN', 'admin', 'municipal_admin', 'super_admin');
+        roles.push('ADMIN');
       } else if (apiUser.role === 'ENCODER') {
-        roles.push('ENCODER', 'editor');
+        roles.push('ENCODER');
       } else if (apiUser.role === 'VIEWER') {
         roles.push('VIEWER');
       } else {
@@ -148,11 +148,11 @@ export const authService = {
 
       const roles: AppRole[] = [];
       if (apiUser.role === 'SUPER_ADMIN') {
-        roles.push('SUPER_ADMIN', 'super_admin', 'ADMIN', 'admin', 'municipal_admin');
+        roles.push('SUPER_ADMIN');
       } else if (apiUser.role === 'ADMIN') {
-        roles.push('ADMIN', 'admin', 'municipal_admin', 'super_admin');
+        roles.push('ADMIN');
       } else if (apiUser.role === 'ENCODER') {
-        roles.push('ENCODER', 'editor');
+        roles.push('ENCODER');
       } else if (apiUser.role === 'VIEWER') {
         roles.push('VIEWER');
       } else {

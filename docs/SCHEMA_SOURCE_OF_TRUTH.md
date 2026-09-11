@@ -21,9 +21,9 @@ Four competing schema definitions currently exist across the repository:
 | Schema Source | Format & Engine | Identifier Type | Roles Supported | Entity Structure |
 | :--- | :--- | :--- | :--- | :--- |
 | **1. Legacy Prisma Schema** (`prisma/schema.prisma`) | SQLite / Prisma | `Int @default(autoincrement())` | String: `ADMIN`, `ENCODER` | 5 Flat Models: `User`, `Beneficiary`, `Program`, `GADPlan`, `GADAccomplishment`. Flattened strings for offices and barangays. |
-| **2. Supabase Migration 1** (`supabase/migrations/20260824000001_...`) | PostgreSQL DDL | `UUID DEFAULT gen_random_uuid()` | 5 Enum values: `super_admin`, `admin`, `editor`, `municipal_admin`, `barangay_admin` | 14 Normalized Tables: `roles`, `offices`, `barangays`, `users`, `user_roles`, `gad_programs`, `gad_projects`, `gad_activities`, `budgets`, `budget_allocations`, `expenditures`, `document_types`, `documents`, `audit_logs`. |
-| **3. Database Types** (`src/types/database.types.ts`) | TypeScript Definitions | `string` (UUID) | 5 Supabase roles | Matches Supabase Migration 1 tables. |
-| **4. Legacy Frontend Types** (`src/context/AuthContext.tsx`, `src/pages/*.tsx`) | TypeScript Interfaces | `number` | 4 Roles: `ADMIN`, `ENCODER`, `VIEWER`, `PLANNER` | Matches Legacy SQLite field names and integer IDs. |
+| **2. Historical Supabase Migration 1** (`backend/supabase/migrations/20260824000001_...`) | PostgreSQL DDL | `UUID DEFAULT gen_random_uuid()` | Historical role values; superseded by the canonical Prisma enum | Historical normalized tables and policies. |
+| **3. Canonical Database Types** (`frontend/src/types/database.types.ts`) | TypeScript Definitions | `string` (UUID) | `SUPER_ADMIN`, `ADMIN`, `ENCODER`, `VIEWER` | Mirrors the current backend role contract. |
+| **4. Current Frontend Types** (`frontend/src/types/*.ts`) | TypeScript Interfaces | `string` (UUID) | `SUPER_ADMIN`, `ADMIN`, `ENCODER`, `VIEWER` | Matches the current PostgreSQL/Prisma application model. |
 
 ---
 
@@ -224,17 +224,13 @@ $$\text{GADPlan} \xrightarrow{1:N} \text{GADPlanItem} \xrightarrow{N:1 \text{ (o
 
 ## 8. Role Model Consolidation
 
-The 5 legacy/migration roles are consolidated into the 3 canonical roles defined in Blueprint v2:
+Historical migration roles are superseded by the 4 canonical roles in the current Prisma schema:
 
 ```text
-[ super_admin ]      ──┐
-[ admin ]            ──┼──>  ADMIN (Full municipal access, user management, audit logs, approvals)
-[ municipal_admin ]  ──┘
-
-[ editor ]           ──┐
-[ barangay_admin ]   ──┴──>  ENCODER (Office-scoped data entry for programs, beneficiaries, accomplishments)
-
-[ viewer ]           ──────>  VIEWER (Read-only access to dashboards, reports, and approved plans)
+[ SUPER_ADMIN ]      ──────>  System-wide authority, including publication approval
+[ ADMIN ]            ──────>  Cross-office administration and user management
+[ ENCODER ]          ──────>  Office-scoped data entry for permitted records
+[ VIEWER ]           ──────>  Read-only access to approved data and reports
 ```
 
 ---

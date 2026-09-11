@@ -27,14 +27,8 @@ export function formatDate(dateString: string | Date): string {
 export function formatRole(role: string): string {
   const roleMap: Record<string, string> = {
     SUPER_ADMIN: 'Super Admin',
-    super_admin: 'Super Admin',
-    admin: 'System Admin',
-    editor: 'GAD Focal Editor',
-    municipal_admin: 'Municipal GFPS Admin',
-    barangay_admin: 'Barangay Focal Person',
     ADMIN: 'System Admin',
     ENCODER: 'Data Encoder',
-    PLANNER: 'GAD Planner',
     VIEWER: 'Public / Viewer',
   };
   return roleMap[role] || role;

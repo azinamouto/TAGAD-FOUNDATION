@@ -14,15 +14,7 @@ export type Json =
 // Canonical 4-Role Architecture
 export type CanonicalRole = 'SUPER_ADMIN' | 'ADMIN' | 'ENCODER' | 'VIEWER';
 
-// Legacy Role Aliases for Backward Compatibility
-export type AppRole =
-  | CanonicalRole
-  | 'super_admin'
-  | 'admin'
-  | 'editor'
-  | 'municipal_admin'
-  | 'barangay_admin'
-  | 'PLANNER';
+export type AppRole = CanonicalRole;
 
 export type BeneficiarySex = 'MALE' | 'FEMALE';
 
