@@ -4,7 +4,7 @@ interface User {
   id: number;
   name: string;
   email: string;
-  role: 'ADMIN' | 'ENCODER' | 'VIEWER' | 'PLANNER';
+  role: 'SUPER_ADMIN' | 'ADMIN' | 'ENCODER' | 'VIEWER';
   office: string;
 }
 
