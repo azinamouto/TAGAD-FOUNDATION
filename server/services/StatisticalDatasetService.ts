@@ -155,9 +155,16 @@ const INITIAL_FALLBACK_DATASETS = [
   },
 ];
 
-let MEMORY_DATASETS: any[] = JSON.parse(JSON.stringify(INITIAL_FALLBACK_DATASETS));
+export let MEMORY_DATASETS: any[] = JSON.parse(JSON.stringify(INITIAL_FALLBACK_DATASETS));
 
 export class StatisticalDatasetService {
+  /**
+   * Returns current in-memory datasets reference.
+   */
+  public static getMemoryDatasets(): any[] {
+    return MEMORY_DATASETS;
+  }
+
   /**
    * Resets in-memory datasets to baseline state (useful for automated testing).
    */

@@ -121,6 +121,24 @@ export class ObservationService {
   }
 
   /**
+   * Retrieves in-memory observations for preview and transactional execution.
+   */
+  public static getInMemoryObservations(): ObservationRecord[] {
+    return MEMORY_OBSERVATIONS;
+  }
+
+  public static getMemoryObservations(): ObservationRecord[] {
+    return MEMORY_OBSERVATIONS;
+  }
+
+  /**
+   * Updates in-memory observations array.
+   */
+  public static setInMemoryObservations(records: ObservationRecord[]): void {
+    MEMORY_OBSERVATIONS = records;
+  }
+
+  /**
    * Authoritative Deterministic Dimension Hashing Algorithm.
    * Sorts dimension keys alphabetically, trims values, and hashes using SHA-256.
    */
@@ -298,9 +316,7 @@ export class ObservationService {
     }
 
     if (
-      dataset.publicationStatus === StatisticalPublicationStatus.OFFICIAL ||
-      dataset.publicationStatus === StatisticalPublicationStatus.PUBLISHED ||
-      dataset.publicationStatus === StatisticalPublicationStatus.WITHDRAWN
+      dataset.publicationStatus !== StatisticalPublicationStatus.DRAFT
     ) {
       throw new ForbiddenError(
         `Dataset '${dataset.datasetCode}' is locked in ${dataset.publicationStatus} status and cannot be modified.`

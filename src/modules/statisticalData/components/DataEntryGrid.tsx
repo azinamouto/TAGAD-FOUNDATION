@@ -38,10 +38,12 @@ import {
   HelpCircle,
   Lock,
   Download,
+  Upload,
   Info,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '../../auth/AuthContext';
+import { StatisticalCsvImportModal } from './StatisticalCsvImportModal';
 
 interface DataEntryGridProps {
   table: TableDefinitionItem;
@@ -63,6 +65,7 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
   const [pasteModalOpen, setPasteModalOpen] = useState(false);
   const [pasteText, setPasteText] = useState('');
   const [pasteError, setPasteError] = useState<string | null>(null);
+  const [isCsvImportOpen, setIsCsvImportOpen] = useState(false);
 
   // Active cell coordinate for keyboard navigation
   const [focusedCell, setFocusedCell] = useState<{ rowIndex: number; colKey: string } | null>(null);
@@ -672,6 +675,19 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
             type="button"
             variant="outline"
             size="sm"
+            onClick={() => setIsCsvImportOpen(true)}
+            disabled={isReadOnly}
+            className="h-8 text-xs text-slate-700 dark:text-slate-300"
+            id="btn-import-statistical-csv"
+          >
+            <Upload className="w-3.5 h-3.5 mr-1 text-slate-500" />
+            Import CSV
+          </Button>
+
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
             onClick={loadObservations}
             disabled={loading}
             className="h-8 text-xs text-slate-600 dark:text-slate-400"
@@ -1129,6 +1145,20 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
             </div>
           </div>
         </div>
+      )}
+
+      {/* Statistical CSV Ingestion Modal */}
+      {isCsvImportOpen && (
+        <StatisticalCsvImportModal
+          isOpen={isCsvImportOpen}
+          onClose={() => setIsCsvImportOpen(false)}
+          table={table}
+          dataset={dataset}
+          onSuccess={() => {
+            loadObservations();
+            if (onRefreshTable) onRefreshTable();
+          }}
+        />
       )}
     </div>
   );

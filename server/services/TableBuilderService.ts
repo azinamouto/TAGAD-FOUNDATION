@@ -2,6 +2,7 @@ import prisma, { isDatabaseConnected } from '../lib/prisma';
 import {
   StatisticalTableClassification,
   StatisticalVerificationStatus,
+  StatisticalPublicationStatus,
   Role,
 } from '@prisma/client';
 import {
@@ -12,6 +13,8 @@ import {
 } from '../lib/errors';
 import { AuditService } from './AuditService';
 import { STATISTICAL_69_TABLE_CATALOG } from './StatisticalCatalogService';
+import { ObservationService } from './ObservationService';
+import { StatisticalDatasetService, MEMORY_DATASETS } from './StatisticalDatasetService';
 import { Request } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -45,6 +48,7 @@ export interface CreateTableParams {
   dimensionsSummary?: string | null;
   measureStructure?: string | null;
   sourceFormat?: string | null;
+  verificationStatus?: StatisticalVerificationStatus;
   dimensionIds?: string[];
 }
 
@@ -199,12 +203,36 @@ let inMemoryDimensions: any[] = [
 
 let inMemoryDimensionBindings: any[] = [];
 let inMemoryIndicators: any[] = [];
+let inMemoryTableDatasetMap: Map<string, string[]> = new Map();
 
 // ------------------------------------------------------------------------------
 // TableBuilderService Implementation
 // ------------------------------------------------------------------------------
 
 export class TableBuilderService {
+  /**
+   * Associates a dataset with a table definition in-memory.
+   */
+  public static associateDatasetWithTable(tableId: string, datasetId: string): void {
+    const existing = inMemoryTableDatasetMap.get(tableId) || [];
+    if (!existing.includes(datasetId)) {
+      existing.push(datasetId);
+      inMemoryTableDatasetMap.set(tableId, existing);
+    }
+  }
+
+  public static associateTableWithDatasetInMemory(tableId: string, datasetId: string): void {
+    this.associateDatasetWithTable(tableId, datasetId);
+  }
+
+  /**
+   * Checks whether a dataset is associated with a table definition in-memory.
+   */
+  public static isTableAssociatedWithDatasetInMemory(tableId: string, datasetId: string): boolean {
+    const existing = inMemoryTableDatasetMap.get(tableId) || [];
+    return existing.includes(datasetId);
+  }
+
   /**
    * Resets in-memory state for isolated test runs.
    */
@@ -230,6 +258,7 @@ export class TableBuilderService {
     }));
     inMemoryDimensionBindings = [];
     inMemoryIndicators = [];
+    inMemoryTableDatasetMap.clear();
   }
 
   /**
@@ -291,29 +320,37 @@ export class TableBuilderService {
         }),
       ]);
 
-      const formatted = items.map((t) => ({
-        id: t.id,
-        tableNumber: t.tableNumber,
-        tableCode: t.tableCode,
-        title: t.title,
-        domain: t.domain,
-        classification: t.classification,
-        description: t.description,
-        expectedUnit: t.expectedUnit,
-        rowGrain: t.rowGrain,
-        dimensionsSummary: t.dimensionsSummary,
-        measureStructure: t.measureStructure,
-        sourceFormat: t.sourceFormat,
-        isSystemTable: t.isSystemTable,
-        isArchived: t.isArchived,
-        verificationStatus: t.verificationStatus,
-        dimensionCount: t.dimensionBindings.length,
-        indicatorCount: t.indicators.length,
-        dimensionBindings: t.dimensionBindings,
-        indicators: t.indicators,
-        createdAt: t.createdAt,
-        updatedAt: t.updatedAt,
-      }));
+      const formatted = items.map((t) => {
+        const isVerified = t.verificationStatus === StatisticalVerificationStatus.VERIFIED;
+        const hasRealData = isVerified;
+        const dataStatus = hasRealData ? 'REAL DATA' : 'UNVERIFIED';
+
+        return {
+          id: t.id,
+          tableNumber: t.tableNumber,
+          tableCode: t.tableCode,
+          title: t.title,
+          domain: t.domain,
+          classification: t.classification,
+          description: t.description,
+          expectedUnit: t.expectedUnit,
+          rowGrain: t.rowGrain,
+          dimensionsSummary: t.dimensionsSummary,
+          measureStructure: t.measureStructure,
+          sourceFormat: t.sourceFormat,
+          isSystemTable: t.isSystemTable,
+          isArchived: t.isArchived,
+          verificationStatus: t.verificationStatus,
+          hasRealData,
+          dataStatus,
+          dimensionCount: t.dimensionBindings.length,
+          indicatorCount: t.indicators.length,
+          dimensionBindings: t.dimensionBindings,
+          indicators: t.indicators,
+          createdAt: t.createdAt,
+          updatedAt: t.updatedAt,
+        };
+      });
 
       return {
         tables: formatted,
@@ -368,8 +405,29 @@ export class TableBuilderService {
         }));
       const indicators = inMemoryIndicators.filter((i) => i.tableDefinitionId === t.id);
 
+      const memoryObs = (
+        typeof ObservationService?.getInMemoryObservations === 'function'
+          ? ObservationService.getInMemoryObservations()
+          : []
+      ).filter((o) => o.tableDefinitionId === t.id);
+      const hasOfficialObs = memoryObs.some((o) => {
+        const ds = MEMORY_DATASETS.find((d) => d.id === o.datasetId);
+        return (
+          ds &&
+          (ds.publicationStatus === StatisticalPublicationStatus.OFFICIAL ||
+            ds.publicationStatus === StatisticalPublicationStatus.PUBLISHED ||
+            ds.isOfficial === true)
+        );
+      });
+      const isVerified = t.verificationStatus === StatisticalVerificationStatus.VERIFIED;
+      const hasRealData = isVerified || hasOfficialObs;
+      const dataStatus = hasRealData ? 'REAL DATA' : 'UNVERIFIED';
+
       return {
         ...t,
+        hasRealData,
+        dataStatus,
+        observationCount: memoryObs.length,
         dimensionCount: boundDims.length,
         indicatorCount: indicators.length,
         dimensionBindings: boundDims,
@@ -445,8 +503,28 @@ export class TableBuilderService {
       .filter((i) => i.tableDefinitionId === table.id)
       .sort((a, b) => a.indicatorCode.localeCompare(b.indicatorCode));
 
+    const memoryObs = (
+      typeof ObservationService?.getInMemoryObservations === 'function'
+        ? ObservationService.getInMemoryObservations()
+        : []
+    ).filter((o) => o.tableDefinitionId === table.id);
+    const hasOfficialObs = memoryObs.some((o) => {
+      const ds = MEMORY_DATASETS.find((d) => d.id === o.datasetId);
+      return (
+        ds &&
+        (ds.publicationStatus === StatisticalPublicationStatus.OFFICIAL ||
+          ds.publicationStatus === StatisticalPublicationStatus.PUBLISHED ||
+          ds.isOfficial === true)
+      );
+    });
+    const isVerified = table.verificationStatus === StatisticalVerificationStatus.VERIFIED;
+    const hasRealData = isVerified || hasOfficialObs;
+    const dataStatus = hasRealData ? 'REAL DATA' : 'UNVERIFIED';
+
     return {
       ...table,
+      hasRealData,
+      dataStatus,
       dimensionBindings: boundDims,
       indicators,
     };
@@ -522,7 +600,7 @@ export class TableBuilderService {
             sourceFormat: params.sourceFormat || null,
             isSystemTable: false,
             isArchived: false,
-            verificationStatus: StatisticalVerificationStatus.UNVERIFIED,
+            verificationStatus: params.verificationStatus || StatisticalVerificationStatus.UNVERIFIED,
           },
         });
 
@@ -586,7 +664,7 @@ export class TableBuilderService {
       sourceFormat: params.sourceFormat || null,
       isSystemTable: false,
       isArchived: false,
-      verificationStatus: StatisticalVerificationStatus.UNVERIFIED,
+      verificationStatus: params.verificationStatus || StatisticalVerificationStatus.UNVERIFIED,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -939,17 +1017,39 @@ export class TableBuilderService {
     tableId: string,
     dimensionId: string,
     actor: ActorContext,
-    req?: Request
+    reqOrDatasetId?: Request | string,
+    datasetId?: string
   ) {
     if (actor.role !== Role.SUPER_ADMIN && actor.role !== Role.ADMIN) {
       throw new ForbiddenError('Only ADMIN or SUPER_ADMIN may unbind dimensions');
     }
+
+    const req = typeof reqOrDatasetId === 'object' ? reqOrDatasetId : undefined;
+    const targetDatasetId =
+      datasetId ||
+      (typeof reqOrDatasetId === 'string' ? reqOrDatasetId : undefined) ||
+      (req?.query?.datasetId as string) ||
+      (req?.body?.datasetId as string);
 
     const table = await this.getTableById(tableId, actor);
     if (!table) throw new NotFoundError(`Statistical Table '${tableId}'`);
 
     const dimension = await this.getDimensionById(dimensionId);
     if (!dimension) throw new NotFoundError(`Statistical Dimension '${dimensionId}'`);
+
+    if (targetDatasetId) {
+      const ds = await StatisticalDatasetService.getDatasetById(targetDatasetId, actor);
+      if (
+        ds &&
+        (ds.publicationStatus === StatisticalPublicationStatus.OFFICIAL ||
+          ds.publicationStatus === StatisticalPublicationStatus.PUBLISHED ||
+          ds.isOfficial === true)
+      ) {
+        throw new ForbiddenError(
+          'Once a dataset is OFFICIAL, a dimension cannot be removed from its table structure.'
+        );
+      }
+    }
 
     if (isDatabaseConnected()) {
       const binding = await prisma.tableDimensionBinding.findUnique({
@@ -963,6 +1063,26 @@ export class TableBuilderService {
 
       if (!binding) {
         throw new NotFoundError('Dimension binding not found on this table');
+      }
+
+      // Check if this table has observations in an OFFICIAL or PUBLISHED dataset
+      const officialObs = await prisma.statisticalObservation.findFirst({
+        where: {
+          tableDefinitionId: table.id,
+          dataset: {
+            OR: [
+              { publicationStatus: StatisticalPublicationStatus.OFFICIAL },
+              { publicationStatus: StatisticalPublicationStatus.PUBLISHED },
+              { isOfficial: true },
+            ],
+          },
+        },
+      });
+
+      if (officialObs) {
+        throw new ForbiddenError(
+          'Once a dataset is OFFICIAL, a dimension cannot be removed from its table structure.'
+        );
       }
 
       // Check if observations exist for this table
@@ -994,7 +1114,31 @@ export class TableBuilderService {
       return { success: true, message: 'Dimension unbound successfully' };
     }
 
-    // In-memory unbind
+    // In-memory unbind:
+    // Check if table has associated datasets or observations in an OFFICIAL dataset
+    const memObservations = (
+      typeof ObservationService?.getInMemoryObservations === 'function'
+        ? ObservationService.getInMemoryObservations()
+        : []
+    ).filter((o) => o.tableDefinitionId === table.id);
+    const associatedDatasets = MEMORY_DATASETS.filter(
+      (d) =>
+        memObservations.some((o) => o.datasetId === d.id) ||
+        TableBuilderService.isTableAssociatedWithDatasetInMemory(table.id, d.id)
+    );
+    const hasOfficialDataset = associatedDatasets.some(
+      (d) =>
+        d.publicationStatus === StatisticalPublicationStatus.OFFICIAL ||
+        d.publicationStatus === StatisticalPublicationStatus.PUBLISHED ||
+        d.isOfficial === true
+    );
+
+    if (hasOfficialDataset) {
+      throw new ForbiddenError(
+        'Once a dataset is OFFICIAL, a dimension cannot be removed from its table structure.'
+      );
+    }
+
     const index = inMemoryDimensionBindings.findIndex(
       (b) => b.tableDefinitionId === table.id && b.dimensionId === dimension.id
     );

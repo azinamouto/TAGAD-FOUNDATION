@@ -52,7 +52,20 @@ export const requireAuth = async (
     }
 
     if (!user) {
-      user = AuthService.getDemoUser(payload.id);
+      user =
+        AuthService.getDemoUser(payload.id) ||
+        (payload.email ? AuthService.getDemoUser(payload.email) : null);
+    }
+
+    if (!user && payload.role) {
+      user = {
+        id: payload.id,
+        email: payload.email || 'user@talibon.gov.ph',
+        fullName: (payload as any).fullName || 'Authorized User',
+        role: payload.role as Role,
+        officeId: payload.officeId || null,
+        isActive: true,
+      };
     }
 
     if (!user) {

@@ -102,11 +102,14 @@ export const unbindDimension = async (req: AuthenticatedRequest, res: Response) 
       return sendError(res, new UnauthorizedError('Authentication required'));
     }
 
+    const datasetId = (req.query?.datasetId as string) || req.body?.datasetId;
+
     const result = await TableBuilderService.unbindDimension(
       req.params.id,
       req.params.dimensionId,
       req.user,
-      req
+      req,
+      datasetId
     );
     return sendSuccess(res, result);
   } catch (error: any) {

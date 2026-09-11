@@ -14,6 +14,7 @@ import ingestionRoutes from './ingestion';
 import datasetRoutes from './datasets';
 import tableBuilderRoutes from './tableBuilder';
 import statisticalCatalogRoutes from '../statisticalCatalog';
+import statisticalImportRoutes from './statisticalImport';
 
 const router = Router();
 
@@ -36,5 +37,6 @@ router.use('/ingestion', ingestionRoutes);
 router.use('/datasets', datasetRoutes);
 router.use('/table-builder', tableBuilderRoutes);
 router.use('/statistical-catalog', statisticalCatalogRoutes);
+router.use('/statistical-import', statisticalImportRoutes);
 
 export default router;
