@@ -42,6 +42,7 @@ jobs:
         run: npx prisma generate
 
       - name: Typecheck Backend Codebase
+        working-directory: backend
         run: npm run typecheck
 
       - name: Execute Node Backend Test Suite
