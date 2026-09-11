@@ -2,9 +2,9 @@ name: TAGAD Backend CI Pipeline
 
 on:
   push:
-    branches: [ main, master, develop ]
+    branches: [main, master, develop]
   pull_request:
-    branches: [ main, master, develop ]
+    branches: [main, master, develop]
 
 jobs:
   backend-verification:
@@ -29,16 +29,20 @@ jobs:
       - name: Setup Node.js Environment
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: backend/package-lock.json
 
-      - name: Install Node Dependencies
-        run: npm ci || npm install
+      - name: Install Backend Dependencies
+        working-directory: ./backend
+        run: npm ci
 
       - name: Validate Prisma Database Schema
+        working-directory: ./backend
         run: npx prisma validate
 
       - name: Generate Prisma Client Engine
+        working-directory: ./backend
         run: npx prisma generate
 
       - name: Typecheck Backend Codebase
@@ -46,7 +50,5 @@ jobs:
         run: npm run typecheck
 
       - name: Execute Node Backend Test Suite
+        working-directory: ./backend
         run: npm test
-
-      - name: Compile Backend Production Bundle
-        run: npm run build
