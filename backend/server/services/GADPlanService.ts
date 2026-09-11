@@ -568,7 +568,11 @@ export class GADPlanService {
 
     const planData: any = {};
     if (data.status) {
-      if (data.status === GADPlanStatus.APPROVED && actorUser.role !== Role.ADMIN) {
+      if (
+        data.status === GADPlanStatus.APPROVED &&
+        actorUser.role !== Role.ADMIN &&
+        actorUser.role !== Role.SUPER_ADMIN
+      ) {
         throw new ForbiddenError('Only administrators can approve GAD Plans');
       }
       planData.status = data.status as GADPlanStatus;
@@ -610,7 +614,11 @@ export class GADPlanService {
     actorUser: { id: string; role: Role; officeId: string | null },
     req?: Request
   ) {
-    if (status === GADPlanStatus.APPROVED && actorUser.role !== Role.ADMIN) {
+    if (
+      status === GADPlanStatus.APPROVED &&
+      actorUser.role !== Role.ADMIN &&
+      actorUser.role !== Role.SUPER_ADMIN
+    ) {
       throw new ForbiddenError('Only administrators can approve GAD Plans');
     }
 
