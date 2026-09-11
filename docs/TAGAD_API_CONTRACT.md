@@ -62,6 +62,7 @@ All API responses follow a uniform envelope contract.
 
 | Role | Office Scoping Rule | Read Scope | Mutation Scope |
 | :--- | :--- | :--- | :--- |
+| **`SUPER_ADMIN`** | Unrestricted / Cross-Office | All offices, barangays, users, plans, and governance data | System-wide CRUD and governance authority, including publication approval |
 | **`ADMIN`** | Unrestricted / Cross-Office | All offices, barangays, users, plans | Full CRUD on all system entities |
 | **`ENCODER`** | Strictly Bound to `user.officeId` | Own office programs & GAD plans; municipal beneficiaries | Create & update records for own office only |
 | **`VIEWER`** | Read-Only | All approved GAD plans, programs, aggregated metrics | No mutation access (POST/PUT/DELETE blocked) |
@@ -170,7 +171,7 @@ The server never trusts client-supplied `officeId` for `ENCODER` users. The effe
 - `GET /:id` — Get specific plan or item.
 - `POST /` — Create GAD Plan item or annual plan header.
 - `PUT /:id` — Update GAD Plan item.
-- `PATCH /:id/status` — Transition workflow status (`DRAFT` -> `SUBMITTED` -> `APPROVED` -> `REVISED`). *Only ADMIN can set `APPROVED`.*
+- `PATCH /:id/status` — Transition workflow status (`DRAFT` -> `SUBMITTED` -> `APPROVED` -> `REVISED`). *ADMIN or SUPER_ADMIN may set `APPROVED`.*
 - `DELETE /:id` — Delete plan or item.
 
 ##### `Accomplishments Management (/api/admin/accomplishments)`

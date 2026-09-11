@@ -16,7 +16,7 @@ The original Master Blueprint and the new Project Plan describe **compatible arc
 <thead><tr><th>Topic</th><th>Original Blueprint</th><th>New Project Plan</th><th>Status</th></tr></thead>
 <tbody>
 <tr><td><b>Public-facing portal</b></td><td>Not present — admin-only system</td><td>Core new feature — unauthenticated <code>/</code> and <code>/public/*</code> with PII-safe aggregated views</td><td>🟢 New scope, adopted below</td></tr>
-<tr><td><b>Roles</b></td><td>6 roles: ADMIN, PLANNER, GAD FOCAL, OFFICE HEAD, ENCODER, VIEWER</td><td>3 roles: ADMIN, ENCODER, VIEWER</td><td>⚠️ see 1.1</td></tr>
+<tr><td><b>Roles</b></td><td>6-role separation-of-duties model</td><td>4 roles: SUPER_ADMIN, ADMIN, ENCODER, VIEWER</td><td>🟢 current code and schema adopted</td></tr>
 <tr><td><b>GPB approval workflow</b></td><td>Full state machine: DRAFT→SUBMITTED→UNDER_REVIEW→RETURNED→RESUBMITTED→ENDORSED→APPROVED, with GAD Focal/MPDC/Mayor actors</td><td><code>/api/admin/gad-plans</code> is generic CRUD; <code>GADPlanStatus</code> enum mentioned but no transition endpoints/actors</td><td>⚠️ see 1.2</td></tr>
 <tr><td><b>HGDG scoring/attribution</b></td><td>Dedicated Sprint 4, isolated scoring service</td><td>Not mentioned anywhere</td><td>⚠️ see 1.3</td></tr>
 <tr><td><b>GAR (quarterly + variance)</b></td><td>Dedicated Sprint 5: Target vs Actual vs Variance per quarter, MOV per quarter</td><td>Simpler <code>Program</code> + <code>GADAccomplishment</code>; no quarterly/variance structure</td><td>⚠️ see 1.4</td></tr>
@@ -33,9 +33,8 @@ The original Master Blueprint and the new Project Plan describe **compatible arc
 </tbody>
 </table>
 
-### 1.1 — Role model conflict
-The new plan's 3-role model has no seat for **PLANNER** (who owns GPB drafting), **GAD FOCAL** (who reviews/endorses GPB and owns cross-office GAD visibility), or **OFFICE HEAD** (who authorizes on behalf of an office and submits GPB/GAR). If the approval workflow in 1.2 is being simplified or cut, this role reduction is consistent and fine. If the full GPB approval chain is still required, the 3-role model can't express "GAD Focal reviews, Mayor approves" as distinct steps — everything would collapse into ADMIN doing all of it, which defeats the separation-of-duties purpose the original workflow was designed for.
-**Decision needed:** confirm whether PLANNER/GAD FOCAL/OFFICE HEAD are (a) intentionally folded into ADMIN for this phase, (b) deferred to a later release, or (c) an oversight in the new plan that should be added back.
+### 1.1 — Role model decision
+The authoritative role model for the current release is `SUPER_ADMIN`, `ADMIN`, `ENCODER`, and `VIEWER`. The former PLANNER, GAD FOCAL, OFFICE HEAD, municipal-admin, editor, and barangay-admin concepts are not separate roles in the current schema. `SUPER_ADMIN` retains system-wide authority, including exclusive publication authority where required by the governance state machine; `ADMIN` provides cross-office operational administration; `ENCODER` is office-scoped; and `VIEWER` is read-only.
 
 ### 1.2 — GPB approval workflow conflict
 Related to 1.1. The new plan's `GADPlanStatus` enum implies *some* status field exists, but no submit/review/endorse/approve endpoints appear in the API spec — only generic `GET/POST /api/admin/gad-plans` and `PUT/DELETE`. **Decision needed:** is GPB, for this release, just a document with a status label (e.g. Draft/Published) rather than a multi-actor approval chain? If yes, this is a real scope reduction from the original blueprint and should be reflected in the quotation. If no, the workflow from the original blueprint (Section 13 there) needs to be added back into this plan's API and sprint plan.
@@ -119,29 +118,28 @@ flowchart TD
 
 ---
 
-## 4. ROLE MODEL — AS ADOPTED FOR THIS PLAN (pending Section 1.1 resolution)
+## 4. ROLE MODEL — AS ADOPTED FOR THIS PLAN
 
 | Role | Scope | Notes |
 |---|---|---|
-| `ADMIN` | All offices, all resources | Full CRUD, user management, role assignment, audit log access — also absorbs GAD-Focal-equivalent and Mayor-equivalent authority under the current 3-role model |
-| `ENCODER` | Own office only | CRUD on Beneficiaries/Programs/GAD Plans/Accomplishments for their assigned office |
-| `VIEWER` | Read-only, scope TBD | Read access to admin dashboards and reports; no writes |
+| `SUPER_ADMIN` | All offices, all resources | System-wide authority, including publication approval, configuration, and audit administration |
+| `ADMIN` | All offices, all resources | Cross-office CRUD, user management, approval workflows, and audit log access |
+| `ENCODER` | Own office only | CRUD on permitted Beneficiaries/Programs/GAD Plans/Accomplishments for the assigned office |
+| `VIEWER` | Read-only | Read access to approved admin dashboards, reports, and data; no writes |
 
-⚠️ This table reflects the new plan **as written**. If Section 1.1 resolves toward keeping PLANNER/GAD FOCAL/OFFICE HEAD, this table and the permission matrix below must be rebuilt to match the original blueprint's 6-role matrix instead.
+### Permission Matrix (4-role model, as currently scoped)
 
-### Permission Matrix (3-role model, as currently scoped)
-
-| Action | ADMIN | ENCODER | VIEWER |
-|---|---|---|---|
-| View (own office) | Yes | Yes | Yes |
-| View (all offices) | Yes | No | 🟡 TBD |
-| Create/Edit (own office) | Yes | Yes | No |
-| Delete/Archive | Yes | 🟡 TBD (own office?) | No |
-| Upload MOV | Yes | Yes | No |
-| Download MOV | Yes | Yes | Yes |
-| Export PDF/Excel | Yes | Yes | Yes |
-| Manage Users | Yes | No | No |
-| View Audit Logs | Yes | No | No |
+| Action | SUPER_ADMIN | ADMIN | ENCODER | VIEWER |
+|---|---|---|---|---|
+| View (own office) | Yes | Yes | Yes | Yes |
+| View (all offices) | Yes | Yes | No | Approved/public data only |
+| Create/Edit (own office) | Yes | Yes | Yes | No |
+| Delete/Archive | Yes | Yes | Permitted own-office records | No |
+| Upload MOV | Yes | Yes | Yes | No |
+| Download MOV | Yes | Yes | Yes | Yes |
+| Export PDF/Excel | Yes | Yes | Yes | Yes |
+| Manage Users | Yes | Yes | No | No |
+| View Audit Logs | Yes | Yes | No | No |
 
 ---
 
@@ -165,7 +163,7 @@ erDiagram
         uuid id PK
         string email UK
         string passwordHash
-        enum role "ADMIN | ENCODER | VIEWER"
+        enum role "SUPER_ADMIN | ADMIN | ENCODER | VIEWER"
         uuid officeId FK
         boolean isActive
         datetime createdAt
@@ -476,7 +474,7 @@ A feature is not done until:
 
 This is the actionable summary of Section 1, restated as decisions rather than descriptions:
 
-1. Confirm final role model: 3 roles (as written) or restore the original 6-role GPB approval chain.
+1. Final role model: `SUPER_ADMIN`, `ADMIN`, `ENCODER`, and `VIEWER`.
 2. Confirm GPB workflow depth: simple status field, or full multi-actor state machine.
 3. Confirm HGDG: in scope this phase, deferred, or out of scope entirely.
 4. Confirm GAR structure: quarterly with variance, or annual/flat as currently modeled.

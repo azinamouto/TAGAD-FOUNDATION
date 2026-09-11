@@ -82,15 +82,14 @@ frontend/src/
 
 ## 4. Role-Based Access Control (RBAC)
 
-TAGAD enforces 5 discrete roles:
+TAGAD enforces 4 discrete roles:
 
 | Role | Scope | Permissions |
 | :--- | :--- | :--- |
-| `super_admin` | Global / System | Full municipal access, system configuration, audit logs |
-| `admin` | LGU Executive | GFPS management, approval workflows, user management |
-| `municipal_admin` | Department Level | Office-specific GAD planning and allocation control |
-| `editor` | GAD Focal Unit | Create/update programs, beneficiaries, and activities |
-| `barangay_admin` | Barangay Level | Local barangay beneficiary and program encoding |
+| `SUPER_ADMIN` | Global / System | System-wide authority, including publication approval and configuration |
+| `ADMIN` | LGU Executive | Cross-office CRUD, approval workflows, user management, and audit logs |
+| `ENCODER` | Assigned Office | Create and update permitted records within the assigned office |
+| `VIEWER` | Read-only | View approved data, dashboards, and reports without mutation access |
 
 ---
 
@@ -98,7 +97,7 @@ TAGAD enforces 5 discrete roles:
 
 Security is enforced at the database level using PostgreSQL Row Level Security:
 * **Public Data:** Reference tables (`offices`, `barangays`, `document_types`) and approved programs have public read policies.
-* **User Data:** Users can only view and edit their own profiles unless designated as `admin`/`super_admin`.
+* **User Data:** Users can only view and edit their own profiles unless designated as `ADMIN` or `SUPER_ADMIN`.
 * **Traceability:** Every record tracks `created_by`, `updated_by`, `created_at`, and `updated_at`.
 * **Audit Logs:** Append-only access with admin-only read privileges.
 
