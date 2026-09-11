@@ -2,6 +2,7 @@ import prisma, { isDatabaseConnected } from '../lib/prisma';
 import {
   StatisticalTableClassification,
   StatisticalVerificationStatus,
+  StatisticalPublicationStatus,
   Role,
 } from '@prisma/client';
 import {
@@ -45,6 +46,7 @@ export interface CreateTableParams {
   dimensionsSummary?: string | null;
   measureStructure?: string | null;
   sourceFormat?: string | null;
+  verificationStatus?: StatisticalVerificationStatus;
   dimensionIds?: string[];
 }
 
@@ -306,6 +308,8 @@ export class TableBuilderService {
         isSystemTable: t.isSystemTable,
         isArchived: t.isArchived,
         verificationStatus: t.verificationStatus,
+        hasRealData: t.verificationStatus === StatisticalVerificationStatus.VERIFIED,
+        dataStatus: t.verificationStatus === StatisticalVerificationStatus.VERIFIED ? 'REAL DATA' : 'UNVERIFIED',
         dimensionCount: t.dimensionBindings.length,
         indicatorCount: t.indicators.length,
         dimensionBindings: t.dimensionBindings,
@@ -419,7 +423,11 @@ export class TableBuilderService {
         throw new NotFoundError(`Statistical Table '${id}'`);
       }
 
-      return table;
+      return {
+        ...table,
+        hasRealData: table.verificationStatus === StatisticalVerificationStatus.VERIFIED,
+        dataStatus: table.verificationStatus === StatisticalVerificationStatus.VERIFIED ? 'REAL DATA' : 'UNVERIFIED',
+      };
     }
 
     const isNum = /^\d+$/.test(id);
@@ -446,6 +454,8 @@ export class TableBuilderService {
 
     return {
       ...table,
+      hasRealData: table.verificationStatus === StatisticalVerificationStatus.VERIFIED,
+      dataStatus: table.verificationStatus === StatisticalVerificationStatus.VERIFIED ? 'REAL DATA' : 'UNVERIFIED',
       dimensionBindings: boundDims,
       indicators,
     };
@@ -521,7 +531,7 @@ export class TableBuilderService {
             sourceFormat: params.sourceFormat || null,
             isSystemTable: false,
             isArchived: false,
-            verificationStatus: StatisticalVerificationStatus.UNVERIFIED,
+            verificationStatus: params.verificationStatus || StatisticalVerificationStatus.UNVERIFIED,
           },
         });
 
@@ -585,7 +595,7 @@ export class TableBuilderService {
       sourceFormat: params.sourceFormat || null,
       isSystemTable: false,
       isArchived: false,
-      verificationStatus: StatisticalVerificationStatus.UNVERIFIED,
+      verificationStatus: params.verificationStatus || StatisticalVerificationStatus.UNVERIFIED,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -950,6 +960,25 @@ export class TableBuilderService {
     if (!dimension) throw new NotFoundError(`Statistical Dimension '${dimensionId}'`);
 
     if (isDatabaseConnected()) {
+      const officialObservation = await prisma.statisticalObservation.findFirst({
+        where: {
+          tableDefinitionId: table.id,
+          dataset: {
+            OR: [
+              { publicationStatus: StatisticalPublicationStatus.OFFICIAL },
+              { publicationStatus: StatisticalPublicationStatus.PUBLISHED },
+              { isOfficial: true },
+            ],
+          },
+        },
+      });
+
+      if (officialObservation) {
+        throw new ForbiddenError(
+          'Once a dataset is OFFICIAL or PUBLISHED, a dimension cannot be removed from its table structure.'
+        );
+      }
+
       const binding = await prisma.tableDimensionBinding.findUnique({
         where: {
           tableDefinitionId_dimensionId: {

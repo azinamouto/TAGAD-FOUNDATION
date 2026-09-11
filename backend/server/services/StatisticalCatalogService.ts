@@ -1183,17 +1183,29 @@ export class StatisticalCatalogService {
 
       if (isPaginated) {
         return {
-          data: items,
+          data: items.map((t) => ({
+            ...t,
+            hasRealData: t.verificationStatus === StatisticalVerificationStatus.VERIFIED,
+            dataStatus: t.verificationStatus === StatisticalVerificationStatus.VERIFIED ? 'REAL DATA' : 'UNVERIFIED',
+          })),
           total,
           page,
           limit,
           totalPages: Math.ceil(total / limit),
         };
       }
-      return items;
+      return items.map((t) => ({
+        ...t,
+        hasRealData: t.verificationStatus === StatisticalVerificationStatus.VERIFIED,
+        dataStatus: t.verificationStatus === StatisticalVerificationStatus.VERIFIED ? 'REAL DATA' : 'UNVERIFIED',
+      }));
     }
 
-    let results = [...inMemoryTableDefinitions];
+    let results = inMemoryTableDefinitions.map((t) => ({
+      ...t,
+      hasRealData: t.verificationStatus === StatisticalVerificationStatus.VERIFIED,
+      dataStatus: t.verificationStatus === StatisticalVerificationStatus.VERIFIED ? 'REAL DATA' : 'UNVERIFIED',
+    }));
     if (params?.domain) {
       const d = params.domain.toLowerCase();
       results = results.filter((t) => t.domain.toLowerCase().includes(d));
@@ -1333,6 +1345,8 @@ export class StatisticalCatalogService {
     importedById?: string;
     publicationStatus?: StatisticalPublicationStatus;
   }): Promise<any> {
+    const reportingYear = data.reportingYear || new Date().getFullYear();
+
     if (isDatabaseConnected()) {
       return await prisma.statisticalDataset.create({
         data: {
@@ -1340,7 +1354,7 @@ export class StatisticalCatalogService {
           name: data.name,
           description: data.description,
           sourceAgency: data.sourceAgency,
-          reportingYear: data.reportingYear,
+          reportingYear,
           reportingPeriod: data.reportingPeriod,
           surveyRound: data.surveyRound,
           geographicLevel: data.geographicLevel || 'MUNICIPALITY',
@@ -1358,7 +1372,7 @@ export class StatisticalCatalogService {
       name: data.name,
       description: data.description || null,
       sourceAgency: data.sourceAgency || null,
-      reportingYear: data.reportingYear || null,
+      reportingYear,
       reportingPeriod: data.reportingPeriod || null,
       surveyRound: data.surveyRound || null,
       geographicLevel: data.geographicLevel || 'MUNICIPALITY',
