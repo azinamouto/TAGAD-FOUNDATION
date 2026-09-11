@@ -18,8 +18,22 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       localStorage.removeItem('tagad_token');
       localStorage.removeItem('tagad_user');
-      if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
-        window.location.href = '/login';
+      if (typeof window !== 'undefined') {
+        const path = window.location.pathname;
+        const isAuthRoute =
+          path.startsWith('/admin') ||
+          path.startsWith('/dashboard') ||
+          path.startsWith('/programs') ||
+          path.startsWith('/gad-plan') ||
+          path.startsWith('/accomplishments') ||
+          path.startsWith('/data-encoding') ||
+          path.startsWith('/beneficiaries') ||
+          path.startsWith('/reports') ||
+          path.startsWith('/users');
+
+        if (isAuthRoute && path !== '/login') {
+          window.location.href = '/login';
+        }
       }
     }
     return Promise.reject(error);

@@ -23,11 +23,13 @@ export const Sidebar: React.FC = () => {
     { name: 'GAD Plans Matrix', path: '/gad-plan', icon: FileSpreadsheet },
     { name: 'Accomplishments', path: '/accomplishments', icon: CheckSquare },
     { name: 'Beneficiaries', path: '/data-encoding', icon: Users },
+    { name: 'Data Entry Grid', path: '/statistical-data', icon: FileSpreadsheet },
     { name: 'Statistical Catalog', path: '/statistical-catalog', icon: Database },
     { name: 'Reports', path: '/reports', icon: BarChart3 },
   ];
 
   const adminItems = [
+    { name: 'Table Builder', path: '/admin/table-builder', icon: Table2 },
     { name: 'Statistical Catalog', path: '/admin/statistical-catalog', icon: Table2 },
     { name: 'User Management', path: '/users', icon: Settings },
   ];

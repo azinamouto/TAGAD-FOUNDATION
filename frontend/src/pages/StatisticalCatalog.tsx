@@ -431,23 +431,23 @@ export const StatisticalCatalog: React.FC = () => {
                     </div>
 
                     <div className="flex items-center gap-1">
-                      {/* Verification Status Badge */}
+                      {/* Verification / Data Status Badge */}
                       <span
-                        className={`text-[10px] font-semibold px-2 py-0.5 rounded inline-flex items-center gap-1 ${
-                          isVerified
+                        className={`text-[10px] font-bold px-2 py-0.5 rounded inline-flex items-center gap-1 ${
+                          isVerified || table.hasRealData || table.dataStatus === 'REAL DATA'
                             ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
                             : 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300'
                         }`}
                       >
-                        {isVerified ? (
+                        {isVerified || table.hasRealData || table.dataStatus === 'REAL DATA' ? (
                           <>
                             <CheckCircle2 className="w-2.5 h-2.5" />
-                            [VERIFIED]
+                            REAL DATA
                           </>
                         ) : (
                           <>
                             <AlertCircle className="w-2.5 h-2.5" />
-                            [UNVERIFIED]
+                            UNVERIFIED
                           </>
                         )}
                       </span>
@@ -535,13 +535,15 @@ export const StatisticalCatalog: React.FC = () => {
                       <td className="py-3 px-4 text-slate-500">{table.expectedUnit || 'Households'}</td>
                       <td className="py-3 px-4">
                         <span
-                          className={`text-[10px] font-semibold px-2 py-0.5 rounded inline-flex items-center gap-1 ${
-                            isVerified
+                          className={`text-[10px] font-bold px-2 py-0.5 rounded inline-flex items-center gap-1 ${
+                            isVerified || table.hasRealData || table.dataStatus === 'REAL DATA'
                               ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
                               : 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300'
                           }`}
                         >
-                          {isVerified ? '[VERIFIED]' : '[UNVERIFIED]'}
+                          {isVerified || table.hasRealData || table.dataStatus === 'REAL DATA'
+                            ? 'REAL DATA'
+                            : 'UNVERIFIED'}
                         </span>
                       </td>
                       <td className="py-3 px-4 text-right">
