@@ -12,7 +12,7 @@
     "typecheck:backend": "npm --prefix backend run typecheck",
     "typecheck:frontend": "npm --prefix frontend run typecheck",
     "test:backend": "npm --prefix backend test",
-    "db:validate": "npm --prefix backend run db:validate"
+    "db:validate": "npm --prefix backend run db:validate"  
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
