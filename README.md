@@ -27,10 +27,21 @@ The system provides:
 
 ---
 
-## 3. Project Structure (Modular Monolith)
+## 3. Project Structure
 
 ```text
-src/
+backend/
+├── server.ts             # Express API entrypoint
+├── server/               # Controllers, routes, services, middleware
+├── prisma/               # Backend Prisma schema and seed
+└── tests/                # Backend test suite
+
+frontend/
+├── src/                  # React application source
+├── public/               # Frontend static assets
+└── vite.config.ts        # Frontend Vite configuration
+
+frontend/src/
 ├── app/                  # Application bootstrap, router, and configuration
 │   ├── config/           # Safe environment variables loader
 │   ├── providers/        # React context providers
@@ -97,23 +108,27 @@ Security is enforced at the database level using PostgreSQL Row Level Security:
 
 1. **Install dependencies:**
    ```bash
-   npm install
+   cd backend && npm install
+   cd ../frontend && npm install
    ```
 
 2. **Configure environment variables:**
    ```bash
-   cp .env.example .env
+   # Configure backend/.env and frontend/.env
    ```
 
 3. **Initialize database schema & seed admin:**
    ```bash
+   cd backend
+   npx prisma generate
    npx prisma db push
    npx tsx prisma/seed.ts
    ```
 
-4. **Start development server:**
+4. **Start the applications in separate terminals:**
    ```bash
-   npm run dev
+   npm run dev:backend
+   npm run dev:frontend
    ```
 
 5. **Sign in with default credentials:**

@@ -5,14 +5,14 @@
   "description": "Talibon Analytics for Gender and Development - Full-Stack Application",
   "type": "module",
   "scripts": {
-    "dev": "tsx server.ts",
-    "build": "prisma generate && vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
-    "start": "node dist/server.cjs",
-    "test": "tsx --test tests/**/*.test.ts",
-    "lint": "tsc --noEmit",
-    "typecheck": "tsc --noEmit",
-    "db:validate": "prisma validate",
-    "clean": "rm -rf dist"
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "build:backend": "npm --prefix backend run typecheck",
+    "build:frontend": "npm --prefix frontend run build",
+    "typecheck:backend": "npm --prefix backend run typecheck",
+    "typecheck:frontend": "npm --prefix frontend run typecheck",
+    "test:backend": "npm --prefix backend test",
+    "db:validate": "npm --prefix backend run db:validate"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
