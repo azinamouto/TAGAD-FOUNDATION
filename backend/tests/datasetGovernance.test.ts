@@ -1,3 +1,4 @@
+import './testEnvironment';
 import test, { describe, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { StatisticalDatasetService, ActorContext } from '../server/services/StatisticalDatasetService';

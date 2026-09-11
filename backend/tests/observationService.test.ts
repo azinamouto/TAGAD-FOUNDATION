@@ -1,3 +1,4 @@
+import './testEnvironment';
 import test, { describe, beforeEach, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import express from 'express';

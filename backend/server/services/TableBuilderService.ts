@@ -131,7 +131,7 @@ let inMemoryTables: any[] = STATISTICAL_69_TABLE_CATALOG.map((item, index) => ({
 
 let inMemoryDimensions: any[] = [
   {
-    id: 'd0000000-0000-0000-0000-000000000001',
+    id: 'd0000000-0000-4000-8000-000000000001',
     dimensionCode: 'DIM_SEX',
     name: 'Sex Disaggregation',
     description: 'Biological sex classification (Male, Female, Both Sexes)',
@@ -142,7 +142,7 @@ let inMemoryDimensions: any[] = [
     updatedAt: new Date('2024-01-01T00:00:00.000Z'),
   },
   {
-    id: 'd0000000-0000-0000-0000-000000000002',
+    id: 'd0000000-0000-4000-8000-000000000002',
     dimensionCode: 'DIM_AGE_GROUP',
     name: 'Age Bracket',
     description: 'Five-year and functional demographic age cohorts',
@@ -153,7 +153,7 @@ let inMemoryDimensions: any[] = [
     updatedAt: new Date('2024-01-01T00:00:00.000Z'),
   },
   {
-    id: 'd0000000-0000-0000-0000-000000000003',
+    id: 'd0000000-0000-4000-8000-000000000003',
     dimensionCode: 'DIM_BARANGAY',
     name: 'Barangay',
     description: '25 official Talibon administrative barangays',
@@ -164,7 +164,7 @@ let inMemoryDimensions: any[] = [
     updatedAt: new Date('2024-01-01T00:00:00.000Z'),
   },
   {
-    id: 'd0000000-0000-0000-0000-000000000004',
+    id: 'd0000000-0000-4000-8000-000000000004',
     dimensionCode: 'DIM_TENURE_STATUS',
     name: 'Tenure Status',
     description: 'Housing and land tenure classification',
@@ -175,7 +175,7 @@ let inMemoryDimensions: any[] = [
     updatedAt: new Date('2024-01-01T00:00:00.000Z'),
   },
   {
-    id: 'd0000000-0000-0000-0000-000000000005',
+    id: 'd0000000-0000-4000-8000-000000000005',
     dimensionCode: 'DIM_WATER_SOURCE',
     name: 'Water Supply Source',
     description: 'Primary drinking and general domestic water source classification',
@@ -186,7 +186,7 @@ let inMemoryDimensions: any[] = [
     updatedAt: new Date('2024-01-01T00:00:00.000Z'),
   },
   {
-    id: 'd0000000-0000-0000-0000-000000000006',
+    id: 'd0000000-0000-4000-8000-000000000006',
     dimensionCode: 'DIM_TOILET_FACILITY',
     name: 'Sanitation / Toilet Type',
     description: 'Sanitary toilet and sanitation service classification',
@@ -373,6 +373,8 @@ export class TableBuilderService {
 
       return {
         ...t,
+        hasRealData: t.verificationStatus === StatisticalVerificationStatus.VERIFIED,
+        dataStatus: t.verificationStatus === StatisticalVerificationStatus.VERIFIED ? 'REAL DATA' : 'UNVERIFIED',
         dimensionCount: boundDims.length,
         indicatorCount: indicators.length,
         dimensionBindings: boundDims,

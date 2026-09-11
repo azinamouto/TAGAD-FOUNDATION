@@ -1360,7 +1360,7 @@ export class StatisticalCatalogService {
           geographicLevel: data.geographicLevel || 'MUNICIPALITY',
           sourceFileName: data.sourceFileName,
           importedById: data.importedById,
-          publicationStatus: data.publicationStatus || StatisticalPublicationStatus.DRAFT,
+          publicationStatus: StatisticalPublicationStatus.DRAFT,
           verificationStatus: StatisticalVerificationStatus.UNVERIFIED,
         },
       });
@@ -1380,7 +1380,8 @@ export class StatisticalCatalogService {
       importedById: data.importedById || null,
       isOfficial: false,
       isPublished: false,
-      publicationStatus: data.publicationStatus || StatisticalPublicationStatus.DRAFT,
+      isApproved: false,
+      publicationStatus: StatisticalPublicationStatus.DRAFT,
       verificationStatus: StatisticalVerificationStatus.UNVERIFIED,
       createdAt: new Date(),
       updatedAt: new Date(),
