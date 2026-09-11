@@ -420,7 +420,7 @@ gantt
 
 Kept here explicitly so nothing is silently lost if Section 1's open questions resolve toward keeping them in scope:
 
-- Full GPB multi-actor approval workflow (submit → review → return → endorse → approve) with PLANNER/GAD FOCAL/OFFICE HEAD/Mayor actors
+- Full GPB multi-actor approval workflow beyond the current four-role scope
 - HGDG questionnaire, scoring, classification, and budget attribution service
 - 5% GAD budget threshold validation against total LGU appropriations
 - Quarterly (Q1–Q4) accomplishment tracking with Target vs. Actual vs. Variance and per-quarter MOV
