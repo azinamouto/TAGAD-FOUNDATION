@@ -99,3 +99,54 @@ pie title Statistical Table Distribution by Canonical Domain (69 Tables)
 | **67** | `STAT-TAB-67` | SDG 9.2.2 | Manufacturing Employment as a Proportion of Total Employment | SDG Indicators | Indicator | Percent (%) | `[SOURCE-VERIFIED]` | `[READY]` |
 | **69** | `STAT-TAB-69` | SDG 16.1.4.p1 | Proportion of Households that Feel Safe Walking Alone Around their Area at Night | SDG Indicators | Indicator | Percent (%) | `[SOURCE-VERIFIED]` | `[READY]` |
 | **70** | `STAT-TAB-70` | SDG 17.8.1.p1 | Proportion of Households with Exposure to the Internet | SDG Indicators | Indicator | Percent (%) | `[SOURCE-VERIFIED]` | `[READY]` |
+
+---
+
+## 3. Catalog Reconciliation Note
+
+> **Note (v2.1.0):** The table above reflects the authoritative PSA CBMS source titles as documented externally. The in-code catalog (`StatisticalCatalogService.ts`) uses locally-adapted titles that align to the same underlying statistical concepts, ordered as tables 1–69 (`STAT-TAB-01` through `STAT-TAB-69`). A reconciliation pass to align code titles with the PSA source document is tracked as a future CMS-1 refinement task once the official 2025 CBMS tabulation plan is formally received by the LGU. The system enforces exactly 69 tables (verified by test: `All 69 PSA CBMS statistical tables are registered`).
+
+**Known catalog entry discrepancies vs. code (to resolve on receipt of official PSA document):**
+- Code table 1: `Summary of Household and Population Statistics` → Source: `Responding Households, Covered Population and Average Household Size`
+- Code table 2: `Households by Tenure Status of Housing Unit and Lot` → Source: `Distribution of Households by Number of Household Members`
+- Code tables 49–67: Titles differ from the PSA source tabulation plan ordering — source ordering takes precedence once officially confirmed
+
+---
+
+## 4. API Access
+
+The 69-table catalog is exposed via the Table Builder API:
+
+```
+GET  /api/admin/table-builder/tables
+     ?search=<keyword>
+     &domain=<domain string>
+     &page=<1>&limit=<20>
+
+GET  /api/admin/table-builder/tables/:id
+     (accepts UUID or STAT-TAB-XX table code)
+
+GET  /api/admin/table-builder/tables/:id/observations/export
+     ?datasetId=<uuid>
+     &format=csv|xlsx
+```
+
+All endpoints require `Authorization: Bearer <token>`. Read access is available to all authenticated roles including `VIEWER`.
+
+---
+
+## 5. Domains Quick Reference
+
+| Domain | Table Range | Count |
+|---|---|---|
+| Demographics & Population | STAT-TAB-01, 24–27 | 5 |
+| Living Conditions & Housing | STAT-TAB-02, 11–15, 18–19, 49–51 | 10 |
+| Water & Sanitation | STAT-TAB-04–10 | 7 |
+| Education & Literacy | STAT-TAB-28–29, 41–43, 48 | 5 |
+| Labor & Employment | STAT-TAB-30–40, 44–46 | 13 |
+| Socio-Economic Welfare | STAT-TAB-16–17, 20–23 | 6 |
+| Barangay Infrastructure | STAT-TAB-03, 47, 52–54 | 5 |
+| SDG Indicators | STAT-TAB-55–61, 63–69 | 14 |
+| Priority GAD Indicators | STAT-TAB-62 | 1 |
+
+*Note: Domain assignments are approximate pending final PSA CBMS classification document.*
