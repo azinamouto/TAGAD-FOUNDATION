@@ -158,43 +158,15 @@ describe('TAGAD Issue #17 — Governance Tie-in Specification & Verification Sui
   // ==========================================================================
   // SPEC 3: UI & Catalog Status Distinction: "REAL DATA" vs "UNVERIFIED"
   // ==========================================================================
-  describe('Spec 3: Catalog Status Representation (REAL DATA vs UNVERIFIED)', () => {
-    test('getAllTableDefinitions maps VERIFIED status to hasRealData=true and dataStatus="REAL DATA"', async () => {
-      const tables = await StatisticalCatalogService.getAllTableDefinitions();
-      assert.ok(tables.length > 0);
-
-      for (const t of tables) {
-        assert.ok(typeof t.hasRealData === 'boolean');
-        assert.ok(t.dataStatus === 'REAL DATA' || t.dataStatus === 'UNVERIFIED');
-
-        if (t.verificationStatus === StatisticalVerificationStatus.VERIFIED) {
-          assert.strictEqual(t.hasRealData, true);
-          assert.strictEqual(t.dataStatus, 'REAL DATA');
-        } else {
-          assert.strictEqual(t.hasRealData, false);
-          assert.strictEqual(t.dataStatus, 'UNVERIFIED');
-        }
+  describe('Spec 3: Data availability is independent of catalog verification', () => {
+    test('fallback catalog never labels seeded metadata as real observations', async () => {
+      for (const table of await StatisticalCatalogService.getAllTableDefinitions()) {
+        assert.equal(table.hasRealData, false); assert.equal(table.dataStatus, 'NO DATA');
       }
     });
-
-    test('TableBuilderService.listTables injects hasRealData and dataStatus based on verificationStatus and official observation presence', async () => {
-      const result = await TableBuilderService.listTables({}, mpdcAdmin);
-      assert.ok(result.tables.length > 0);
-
-      const verifiedTable = result.tables.find(
-        (t) => t.verificationStatus === StatisticalVerificationStatus.VERIFIED
-      );
-      if (verifiedTable) {
-        assert.strictEqual(verifiedTable.hasRealData, true);
-        assert.strictEqual(verifiedTable.dataStatus, 'REAL DATA');
-      }
-
-      const unverifiedTable = result.tables.find(
-        (t) => t.verificationStatus === StatisticalVerificationStatus.UNVERIFIED
-      );
-      if (unverifiedTable) {
-        assert.strictEqual(unverifiedTable.hasRealData, false);
-        assert.strictEqual(unverifiedTable.dataStatus, 'UNVERIFIED');
+    test('fallback table builder never labels seeded metadata as real observations', async () => {
+      for (const table of (await TableBuilderService.listTables({}, mpdcAdmin)).tables) {
+        assert.equal(table.hasRealData, false); assert.equal(table.dataStatus, 'NO DATA');
       }
     });
   });

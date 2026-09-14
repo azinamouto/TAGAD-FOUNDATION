@@ -1,3 +1,4 @@
+import { statisticalDataStatus } from '../lib/statisticalDataStatus';
 import {
   StatisticalTableClassification,
   StatisticalPublicationStatus,
@@ -1177,6 +1178,7 @@ export class StatisticalCatalogService {
         skip: isPaginated ? (page - 1) * limit : undefined,
         take: isPaginated ? limit : undefined,
         include: {
+          _count: { select: { observations: true } },
           indicators: true,
         },
       });
@@ -1185,8 +1187,7 @@ export class StatisticalCatalogService {
         return {
           data: items.map((t) => ({
             ...t,
-            hasRealData: t.verificationStatus === StatisticalVerificationStatus.VERIFIED,
-            dataStatus: t.verificationStatus === StatisticalVerificationStatus.VERIFIED ? 'REAL DATA' : 'UNVERIFIED',
+            ...statisticalDataStatus(t, isDatabaseConnected()),
           })),
           total,
           page,
@@ -1196,15 +1197,13 @@ export class StatisticalCatalogService {
       }
       return items.map((t) => ({
         ...t,
-        hasRealData: t.verificationStatus === StatisticalVerificationStatus.VERIFIED,
-        dataStatus: t.verificationStatus === StatisticalVerificationStatus.VERIFIED ? 'REAL DATA' : 'UNVERIFIED',
+        ...statisticalDataStatus(t, isDatabaseConnected()),
       }));
     }
 
     let results = inMemoryTableDefinitions.map((t) => ({
       ...t,
-      hasRealData: t.verificationStatus === StatisticalVerificationStatus.VERIFIED,
-      dataStatus: t.verificationStatus === StatisticalVerificationStatus.VERIFIED ? 'REAL DATA' : 'UNVERIFIED',
+      ...statisticalDataStatus(t, isDatabaseConnected()),
     }));
     if (params?.domain) {
       const d = params.domain.toLowerCase();
@@ -1248,10 +1247,11 @@ export class StatisticalCatalogService {
    */
   public static async getTableDefinitionByNumber(tableNumber: number): Promise<any | null> {
     if (isDatabaseConnected()) {
-      return await prisma.statisticalTableDefinition.findUnique({
+      const table = await prisma.statisticalTableDefinition.findUnique({
         where: { tableNumber },
-        include: { indicators: true },
+        include: { indicators: true, _count: { select: { observations: true } } },
       });
+      return table ? { ...table, ...statisticalDataStatus(table, true) } : null;
     }
     return inMemoryTableDefinitions.find((t) => t.tableNumber === tableNumber) || null;
   }
@@ -1262,10 +1262,11 @@ export class StatisticalCatalogService {
   public static async getTableDefinitionByCode(tableCode: string): Promise<any | null> {
     const normalized = tableCode.trim().toUpperCase();
     if (isDatabaseConnected()) {
-      return await prisma.statisticalTableDefinition.findUnique({
+      const table = await prisma.statisticalTableDefinition.findUnique({
         where: { tableCode: normalized },
-        include: { indicators: true },
+        include: { indicators: true, _count: { select: { observations: true } } },
       });
+      return table ? { ...table, ...statisticalDataStatus(table, true) } : null;
     }
     return inMemoryTableDefinitions.find((t) => t.tableCode.toUpperCase() === normalized) || null;
   }
@@ -1289,7 +1290,7 @@ export class StatisticalCatalogService {
     const allTables = isDatabaseConnected()
       ? await prisma.statisticalTableDefinition.findMany({
           orderBy: { tableNumber: 'asc' },
-          include: { indicators: true },
+          include: { indicators: true, _count: { select: { observations: true } } },
         })
       : inMemoryTableDefinitions;
 

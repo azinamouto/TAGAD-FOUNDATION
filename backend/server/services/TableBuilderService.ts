@@ -1,3 +1,4 @@
+import { statisticalDataStatus } from '../lib/statisticalDataStatus';
 import { ObservationService } from './ObservationService';
 import prisma, { isDatabaseConnected } from '../lib/prisma';
 import {
@@ -282,6 +283,7 @@ export class TableBuilderService {
           take: limit,
           orderBy: { tableNumber: 'asc' },
           include: {
+            _count: { select: { observations: true } },
             dimensionBindings: {
               include: {
                 dimension: true,
@@ -309,8 +311,7 @@ export class TableBuilderService {
         isSystemTable: t.isSystemTable,
         isArchived: t.isArchived,
         verificationStatus: t.verificationStatus,
-        hasRealData: t.verificationStatus === StatisticalVerificationStatus.VERIFIED,
-        dataStatus: t.verificationStatus === StatisticalVerificationStatus.VERIFIED ? 'REAL DATA' : 'UNVERIFIED',
+        ...statisticalDataStatus(t, isDatabaseConnected()),
         dimensionCount: t.dimensionBindings.length,
         indicatorCount: t.indicators.length,
         dimensionBindings: t.dimensionBindings,
@@ -374,8 +375,7 @@ export class TableBuilderService {
 
       return {
         ...t,
-        hasRealData: t.verificationStatus === StatisticalVerificationStatus.VERIFIED,
-        dataStatus: t.verificationStatus === StatisticalVerificationStatus.VERIFIED ? 'REAL DATA' : 'UNVERIFIED',
+        ...statisticalDataStatus(t, isDatabaseConnected()),
         dimensionCount: boundDims.length,
         indicatorCount: indicators.length,
         dimensionBindings: boundDims,
@@ -410,6 +410,7 @@ export class TableBuilderService {
       const table = await prisma.statisticalTableDefinition.findFirst({
         where: whereClause,
         include: {
+          _count: { select: { observations: true } },
           dimensionBindings: {
             include: {
               dimension: true,
@@ -428,8 +429,7 @@ export class TableBuilderService {
 
       return {
         ...table,
-        hasRealData: table.verificationStatus === StatisticalVerificationStatus.VERIFIED,
-        dataStatus: table.verificationStatus === StatisticalVerificationStatus.VERIFIED ? 'REAL DATA' : 'UNVERIFIED',
+        ...statisticalDataStatus(table, isDatabaseConnected()),
       };
     }
 
@@ -457,8 +457,7 @@ export class TableBuilderService {
 
     return {
       ...table,
-      hasRealData: table.verificationStatus === StatisticalVerificationStatus.VERIFIED,
-      dataStatus: table.verificationStatus === StatisticalVerificationStatus.VERIFIED ? 'REAL DATA' : 'UNVERIFIED',
+      ...statisticalDataStatus(table, isDatabaseConnected()),
       dimensionBindings: boundDims,
       indicators,
     };
