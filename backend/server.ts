@@ -139,9 +139,11 @@ async function startServer() {
 
   if (process.env.NODE_ENV !== 'production' && !process.env.SERVE_STATIC) {
     try {
-      const { createServer: createViteServer } = await import('vite');
+      const viteModuleName = 'vite';
+      const { createServer: createViteServer } = (await import(viteModuleName)) as any;
       const vite = await createViteServer({
         root: frontendDir,
+        configFile: path.resolve(frontendDir, 'vite.config.ts'),
         server: { middlewareMode: true },
         appType: 'spa',
       });
