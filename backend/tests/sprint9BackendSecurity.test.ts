@@ -210,7 +210,7 @@ describe('Sprint 9 — Backend Security, Persistence, & Observability Suite', ()
       ];
       const res = redactPII(arr);
       assert.strictEqual(res[0].password, '[REDACTED]');
-      assert.strictEqual(res[0].name, 'GAD');
+      assert.strictEqual(res[0].name, '[REDACTED]');
       assert.strictEqual(res[1].token, '[REDACTED]');
       assert.strictEqual(res[1].count, 10);
     });

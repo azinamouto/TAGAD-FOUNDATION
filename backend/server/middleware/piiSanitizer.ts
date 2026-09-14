@@ -1,22 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 
-const SENSITIVE_KEYS = new Set([
-  'firstname',
-  'lastname',
-  'middlename',
-  'fullname',
-  'name', // only if object is a person/beneficiary
-  'birthdate',
-  'contactnumber',
-  'phonenumber',
-  'addressstreet',
-  'street',
-  'householdno',
-  'passwordhash',
-  'password',
-  'token',
-  'refreshtoken',
-]);
+import { SENSITIVE_KEYS } from '../lib/sensitiveKeys';
 
 /**
  * Deeply strips sensitive PII fields from JSON payloads before sending to public clients

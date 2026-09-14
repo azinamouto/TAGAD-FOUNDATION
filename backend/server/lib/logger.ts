@@ -1,3 +1,4 @@
+import { SENSITIVE_KEYS } from './sensitiveKeys';
 import { Request } from 'express';
 
 export type LogLevel = 'DEBUG' | 'INFO' | 'WARN' | 'ERROR';
@@ -93,7 +94,7 @@ export function redactPII(data: any, depth = 0): any {
       const lowerKey = key.toLowerCase();
 
       // Check if key matches sensitive patterns
-      const isSensitiveKey = SENSITIVE_KEY_PATTERNS.some((pattern) => lowerKey.includes(pattern));
+      const isSensitiveKey = SENSITIVE_KEYS.has(lowerKey) || SENSITIVE_KEY_PATTERNS.some((pattern) => lowerKey.includes(pattern));
 
       if (isSensitiveKey) {
         redacted[key] = '[REDACTED]';
