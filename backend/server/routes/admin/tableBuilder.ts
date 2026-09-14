@@ -21,6 +21,7 @@ import {
   updateObservation,
   deleteObservation,
   bulkSaveObservations,
+  exportObservations,
 } from '../../controllers/admin/observationController';
 import { requireRole } from '../../middleware/authMiddleware';
 import { validate } from '../../middleware/validate';
@@ -239,6 +240,18 @@ router.delete(
 
 // Direct /:id/observations alias routes
 router.get('/:id/observations', validate(observationQuerySchema, 'query'), listObservations);
+
+// ==============================================================================
+// 6. Statistical Observation Grid Export (GRID-5)
+//    GET /tables/:id/observations/export?datasetId=...&format=csv|xlsx
+//    Must be declared before /:id/observations/:observationId to avoid
+//    the literal "export" segment matching the observationId param.
+// ==============================================================================
+
+router.get('/tables/:tableId/observations/export', exportObservations);
+router.get('/tables/:id/observations/export', exportObservations);
+router.get('/:id/observations/export', exportObservations);
+
 router.post(
   '/:id/observations',
   requireRole(Role.SUPER_ADMIN, Role.ADMIN, Role.ENCODER),
