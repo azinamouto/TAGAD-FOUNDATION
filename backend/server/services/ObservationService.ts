@@ -348,7 +348,7 @@ export class ObservationService {
           where,
           skip: (page - 1) * limit,
           take: limit,
-          orderBy: [{ period: 'desc' }, { createdAt: 'asc' }],
+          orderBy: [{ period: 'desc' }, { createdAt: 'asc' }, { id: 'asc' }],
           include: {
             barangay: { select: { id: true, name: true, code: true } },
             indicator: { select: { id: true, indicatorCode: true, name: true, unit: true } },

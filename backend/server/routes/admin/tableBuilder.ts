@@ -202,6 +202,10 @@ router.post(
   createObservation
 );
 
+router.get('/tables/:tableId/observations/export', exportObservations);
+router.get('/tables/:id/observations/export', exportObservations);
+router.get('/:id/observations/export', exportObservations);
+
 // Get single observation by ID
 router.get(
   '/tables/:tableId/observations/:observationId',
@@ -248,9 +252,6 @@ router.get('/:id/observations', validate(observationQuerySchema, 'query'), listO
 //    the literal "export" segment matching the observationId param.
 // ==============================================================================
 
-router.get('/tables/:tableId/observations/export', exportObservations);
-router.get('/tables/:id/observations/export', exportObservations);
-router.get('/:id/observations/export', exportObservations);
 
 router.post(
   '/:id/observations',

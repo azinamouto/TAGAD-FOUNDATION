@@ -110,97 +110,61 @@ export const bulkSaveObservations = async (req: AuthenticatedRequest, res: Respo
  */
 export const exportObservations = async (req: AuthenticatedRequest, res: Response) => {
   try {
+    if (!req.user) throw new UnauthorizedError('Authentication required');
     const tableId = req.params.tableId || req.params.id;
-    const { datasetId, format = 'csv' } = req.query as any;
-
-    if (!datasetId) {
-      return res.status(400).json({ success: false, message: 'datasetId query parameter is required for export.' });
+    const { datasetId, format = 'csv', period, barangayId, indicatorId } = req.query;
+    if (typeof datasetId !== 'string' || !['csv', 'xlsx'].includes(String(format))) {
+      return res.status(400).json({ message: 'datasetId and format=csv|xlsx are required' });
     }
-
-    // Fetch all observations without pagination
-    const result = await ObservationService.listObservations(
-      tableId,
-      { datasetId: String(datasetId), page: 1, limit: 10000 },
-      req.user
-    );
-
-    const observations = result.observations ?? [];
-    const tableTitle = result.table?.title ?? tableId;
-    const datasetCode = result.dataset?.datasetCode ?? datasetId;
-    const safeTitle = tableTitle.replace(/[^\w\s-]/g, '').replace(/\s+/g, '_').slice(0, 50);
-    const filename = `${safeTitle}_${datasetCode}`;
-
-    if (String(format).toLowerCase() === 'xlsx') {
-      // â”€â”€ Excel export â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-      const workbook = new ExcelJS.Workbook();
-      workbook.creator = 'TAGAD Statistical System';
-      workbook.created = new Date();
-
-      const sheet = workbook.addWorksheet('Observations');
-
-      sheet.columns = [
-        { header: 'Period', key: 'period', width: 14 },
-        { header: 'Barangay', key: 'barangayName', width: 24 },
-        { header: 'Indicator', key: 'indicatorCode', width: 22 },
-        { header: 'Numeric Value', key: 'numericValue', width: 16 },
-        { header: 'Unit', key: 'unit', width: 14 },
-        { header: 'Dimensions', key: 'dimensions', width: 40 },
-        { header: 'Suppression Status', key: 'suppressionStatus', width: 20 },
-        { header: 'ID', key: 'id', width: 38 },
-      ];
-
-      // Header row styling
-      const headerRow = sheet.getRow(1);
-      headerRow.font = { bold: true };
-      headerRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD6E4F7' } };
-
-      for (const obs of observations) {
-        sheet.addRow({
-          period: obs.period ?? '',
-          barangayName: obs.barangay?.name ?? obs.barangayId ?? '',
-          indicatorCode: obs.indicator?.indicatorCode ?? obs.indicatorId ?? '',
-          numericValue: obs.numericValue ?? '',
-          unit: obs.unit ?? '',
-          dimensions: obs.dimensions ? JSON.stringify(obs.dimensions) : '',
-          suppressionStatus: obs.suppressionStatus ?? '',
-          id: obs.id ?? '',
-        });
-      }
-
+    const filters = { datasetId, limit: 500,
+      period: typeof period === 'string' ? period : undefined,
+      barangayId: typeof barangayId === 'string' ? barangayId : undefined,
+      indicatorId: typeof indicatorId === 'string' ? indicatorId : undefined };
+    let result = await ObservationService.listObservations(tableId, { ...filters, page: 1 }, req.user);
+    const filename = `${result.table.tableCode}_${result.dataset.datasetCode}`.replace(/[^a-zA-Z0-9_-]/g, '_');
+    const columns = ['period', 'barangay', 'indicator_code', 'numeric_value', 'unit', 'dimensions', 'suppression_status', 'id'];
+    const values = (obs: any) => [obs.period ?? '', obs.barangay?.name ?? obs.barangayId ?? '',
+      obs.indicator?.indicatorCode ?? obs.indicatorId ?? '', obs.numericValue ?? '', obs.unit ?? '',
+      JSON.stringify(obs.dimensions ?? {}), obs.suppressionStatus ?? '', obs.id];
+    const escape = (value: any) => {
+      let text = String(value);
+      if (typeof value === 'string' && /^[=+@-]/.test(text)) text = "'" + text;
+      return /[",\r\n]/.test(text) ? '"' + text.replace(/"/g, '""') + '"' : text;
+    };
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}.${format}"`);
+    res.setHeader('Cache-Control', 'no-store');
+    let workbook: ExcelJS.stream.xlsx.WorkbookWriter | undefined;
+    let sheet: ExcelJS.Worksheet | undefined;
+    if (format === 'xlsx') {
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-      res.setHeader('Content-Disposition', `attachment; filename="${filename}.xlsx"`);
-      await workbook.xlsx.write(res);
-      return res.end();
+      workbook = new ExcelJS.stream.xlsx.WorkbookWriter({ stream: res });
+      sheet = workbook.addWorksheet('Observations');
+      sheet.addRow(columns).commit();
     } else {
-      // â”€â”€ CSV export â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-      const csvLines: string[] = [
-        'period,barangay,indicator_code,numeric_value,unit,dimensions,suppression_status,id',
-      ];
-
-      for (const obs of observations) {
-        const escape = (v: any) => {
-          const s = v === null || v === undefined ? '' : String(v);
-          return s.includes(',') || s.includes('"') || s.includes('\n')
-            ? `"${s.replace(/"/g, '""')}"` : s;
-        };
-
-        csvLines.push([
-          escape(obs.period ?? ''),
-          escape(obs.barangay?.name ?? obs.barangayId ?? ''),
-          escape(obs.indicator?.indicatorCode ?? obs.indicatorId ?? ''),
-          escape(obs.numericValue ?? ''),
-          escape(obs.unit ?? ''),
-          escape(obs.dimensions ? JSON.stringify(obs.dimensions) : ''),
-          escape(obs.suppressionStatus ?? ''),
-          escape(obs.id ?? ''),
-        ].join(','));
-      }
-
       res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-      res.setHeader('Content-Disposition', `attachment; filename="${filename}.csv"`);
-      return res.end(csvLines.join('\n'));
+      res.write(columns.join(',') + '\r\n');
     }
+    let page = 1;
+    while (true) {
+      if (res.destroyed) return;
+      for (const obs of result.observations) {
+        if (sheet) sheet.addRow(values(obs)).commit();
+        else if (!res.write(values(obs).map(escape).join(',') + '\r\n')) {
+          await new Promise<void>((resolve, reject) => {
+            const cleanup = () => { res.off('drain', drained); res.off('close', closed); };
+            const drained = () => { cleanup(); resolve(); };
+            const closed = () => { cleanup(); reject(new Error('Export connection closed')); };
+            res.once('drain', drained); res.once('close', closed);
+          });
+        }
+      }
+      if (page >= result.pagination.totalPages) break;
+      result = await ObservationService.listObservations(tableId, { ...filters, page: ++page }, req.user);
+    }
+    if (workbook) { sheet!.commit(); await workbook.commit(); }
+    else res.end();
   } catch (error: any) {
+    if (res.headersSent) { res.destroy(error); return; }
     return sendError(res, error, error.statusCode || 500);
   }
 };
