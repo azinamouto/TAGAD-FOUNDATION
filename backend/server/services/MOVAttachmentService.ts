@@ -301,8 +301,7 @@ export class MOVAttachmentService {
     mode: 'read' | 'write'
   ): Promise<void> {
     if (!isDatabaseConnected()) {
-      // In-memory/test path — always allow (no real DB to check office scope)
-      return;
+      throw new AppError('Cannot verify attachment access while database is unavailable', 503, 'SCOPE_UNAVAILABLE');
     }
 
     const accomplishment = await prisma.gADAccomplishment.findUnique({
@@ -327,7 +326,7 @@ export class MOVAttachmentService {
         accomplishment.gadPlanItem?.gadPlan?.officeId ??
         null;
 
-      if (accomplishmentOfficeId && accomplishmentOfficeId !== actor.officeId) {
+      if (!actor.officeId || !accomplishmentOfficeId || accomplishmentOfficeId !== actor.officeId) {
         throw new ForbiddenError(
           'Encoders cannot access MOV attachments belonging to accomplishments of other offices.'
         );
