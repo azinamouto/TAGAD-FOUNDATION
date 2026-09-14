@@ -133,7 +133,7 @@ async function startServer() {
     res.status(404).json({ error: 'Endpoint not found', path: req.originalUrl });
   });
 
-  // Frontend integration: Serve React SPA via Vite middleware in dev, static files in production
+  // Frontend integration: Serve React SPA via Vite middleware in dev, static files in production test
   const frontendDir = path.resolve(process.cwd(), 'frontend');
   const distPath = path.resolve(frontendDir, 'dist');
 
