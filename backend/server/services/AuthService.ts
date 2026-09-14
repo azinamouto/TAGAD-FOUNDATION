@@ -1,3 +1,5 @@
+import { TokenRevocationService } from './TokenRevocationService';
+import { AppError } from '../lib/errors';
 import bcrypt from 'bcryptjs';
 import prisma, { isDatabaseConnected } from '../lib/prisma';
 import {
@@ -250,6 +252,10 @@ export class AuthService {
   }
 
   public static async refreshToken(token: string) {
+    if (process.env.NODE_ENV === 'production') {
+      await TokenRevocationService.hydrateFromDatabase();
+      if (!TokenRevocationService.isReady()) throw new AppError('Authentication temporarily unavailable', 503, 'AUTH_NOT_READY');
+    }
     try {
       const decoded = verifyRefreshToken(token);
 

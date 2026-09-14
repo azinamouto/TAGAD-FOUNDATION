@@ -1,3 +1,5 @@
+import { TokenRevocationService } from '../services/TokenRevocationService';
+import { AppError } from '../lib/errors';
 import { Request, Response, NextFunction } from 'express';
 import prisma, { isDatabaseConnected } from '../lib/prisma';
 import { verifyAccessToken, TokenPayload } from '../lib/jwt';
@@ -31,6 +33,12 @@ export const requireAuth = async (
     return sendError(res, new UnauthorizedError('Authorization token is missing or malformed', 'NO_TOKEN'));
   }
 
+  if (process.env.NODE_ENV === 'production') {
+    await TokenRevocationService.hydrateFromDatabase();
+    if (!TokenRevocationService.isReady()) {
+      return sendError(res, new AppError('Authentication temporarily unavailable', 503, 'AUTH_NOT_READY'));
+    }
+  }
   const token = authHeader.split(' ')[1];
 
   try {

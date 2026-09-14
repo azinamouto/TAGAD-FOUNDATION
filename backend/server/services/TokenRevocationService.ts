@@ -48,46 +48,51 @@ export class TokenRevocationService {
   /**
    * Hydrates the in-memory revocation cache with active records from PostgreSQL.
    */
+  private static retryTimer: ReturnType<typeof setTimeout> | null = null;
+  private static retryDelayMs = 1000;
+
+  public static isReady(): boolean { return this.isHydrated; }
+
+  private static scheduleHydrationRetry(): void {
+    if (this.retryTimer) return;
+    this.retryTimer = setTimeout(() => {
+      this.retryTimer = null;
+      void this.hydrateFromDatabase();
+    }, this.retryDelayMs);
+    this.retryTimer.unref();
+    this.retryDelayMs = Math.min(this.retryDelayMs * 2, 30000);
+  }
+
   public static async hydrateFromDatabase(): Promise<void> {
     if (this.isHydrated) return;
     if (this.hydrationPromise) return this.hydrationPromise;
-
+    if (!isDatabaseConnected()) {
+      this.scheduleHydrationRetry();
+      return;
+    }
     this.hydrationPromise = (async () => {
-      if (!isDatabaseConnected()) {
-        this.isHydrated = true;
-        return;
-      }
-
       try {
-        const now = new Date();
         const activeRevocations = await prisma.revokedToken.findMany({
-          where: {
-            expiresAt: { gt: now },
-          },
-          select: {
-            jti: true,
-            tokenHash: true,
-            expiresAt: true,
-          },
+          where: { expiresAt: { gt: new Date() } },
+          select: { jti: true, tokenHash: true, expiresAt: true },
         });
-
         for (const rev of activeRevocations) {
-          const expMs = rev.expiresAt.getTime();
-          if (rev.jti) inMemoryRevokedTokens.set(rev.jti, expMs);
-          if (rev.tokenHash) inMemoryRevokedTokens.set(rev.tokenHash, expMs);
+          const expiresAt = rev.expiresAt.getTime();
+          if (rev.jti) inMemoryRevokedTokens.set(rev.jti, expiresAt);
+          if (rev.tokenHash) inMemoryRevokedTokens.set(rev.tokenHash, expiresAt);
         }
-
         this.isHydrated = true;
+        this.retryDelayMs = 1000;
+        if (this.retryTimer) clearTimeout(this.retryTimer);
+        this.retryTimer = null;
         logger.info('REVOCATION_STORE_HYDRATED', { count: activeRevocations.length });
-      } catch (err: any) {
-        logger.warn('REVOCATION_HYDRATION_FAILED', { message: err.message });
-      } finally {
-        this.isHydrated = true;
-        this.hydrationPromise = null;
+      } catch {
+        logger.warn('REVOCATION_HYDRATION_FAILED');
+        this.scheduleHydrationRetry();
       }
     })();
-
-    return this.hydrationPromise;
+    try { await this.hydrationPromise; }
+    finally { this.hydrationPromise = null; }
   }
 
   /**
@@ -280,6 +285,9 @@ export class TokenRevocationService {
    * Testing hook: Resets in-memory state.
    */
   public static resetInMemoryTestState(): void {
+    if (this.retryTimer) clearTimeout(this.retryTimer);
+    this.retryTimer = null;
+    this.retryDelayMs = 1000;
     inMemoryRevokedTokens.clear();
     this.isHydrated = false;
     this.hydrationPromise = null;
