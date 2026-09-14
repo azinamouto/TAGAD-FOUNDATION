@@ -1,3 +1,4 @@
+import { ObservationService } from './ObservationService';
 import prisma, { isDatabaseConnected } from '../lib/prisma';
 import {
   StatisticalTableClassification,
@@ -1023,7 +1024,8 @@ export class TableBuilderService {
       return { success: true, message: 'Dimension unbound successfully' };
     }
 
-    // In-memory unbind
+    // Apply the same governance and observation locks as the database path.
+    await ObservationService.assertMemoryDimensionRemovalAllowed(table.id, actor);
     const index = inMemoryDimensionBindings.findIndex(
       (b) => b.tableDefinitionId === table.id && b.dimensionId === dimension.id
     );

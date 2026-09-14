@@ -91,6 +91,17 @@ export interface ObservationRecord {
 let MEMORY_OBSERVATIONS: ObservationRecord[] = [];
 
 export class ObservationService {
+  public static async assertMemoryDimensionRemovalAllowed(tableId: string, actor: ActorContext): Promise<void> {
+    const observations = MEMORY_OBSERVATIONS.filter(o => o.tableDefinitionId === tableId);
+    for (const datasetId of new Set(observations.map(o => o.datasetId))) {
+      const dataset = await StatisticalDatasetService.getDatasetById(datasetId, actor);
+      if (dataset.isOfficial || ['OFFICIAL', 'PUBLISHED'].includes(dataset.publicationStatus)) {
+        throw new ForbiddenError('Once a dataset is OFFICIAL or PUBLISHED, a dimension cannot be removed from its table structure.');
+      }
+    }
+    if (observations.length) throw new ConflictError('Cannot unbind dimension from a table with existing statistical observations.');
+  }
+
   /**
    * Asserts production persistence isolation. In production, memory fallback is strictly forbidden.
    */
