@@ -15,6 +15,7 @@ import datasetRoutes from './datasets';
 import tableBuilderRoutes from './tableBuilder';
 import statisticalCatalogRoutes from '../statisticalCatalog';
 import statisticalImportRoutes from './statisticalImport';
+import movAttachmentRoutes from './movAttachments';
 
 const router = Router();
 
@@ -38,5 +39,8 @@ router.use('/datasets', datasetRoutes);
 router.use('/table-builder', tableBuilderRoutes);
 router.use('/statistical-catalog', statisticalCatalogRoutes);
 router.use('/statistical-import', statisticalImportRoutes);
+
+// MOV Attachments — mounted under accomplishments for scope clarity
+router.use('/accomplishments/:accomplishmentId/mov', movAttachmentRoutes);
 
 export default router;
