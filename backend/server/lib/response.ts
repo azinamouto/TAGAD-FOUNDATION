@@ -1,3 +1,4 @@
+import { captureBackendError } from './errorTracking';
 import { Response } from 'express';
 import { AppError } from './errors';
 
@@ -31,6 +32,7 @@ export const sendError = (
   error: AppError | Error | string,
   statusCode: number = 500
 ): Response => {
+  captureBackendError(error, error instanceof AppError ? error.statusCode : statusCode);
   if (error instanceof AppError) {
     const code = error.code || 'APP_ERROR';
     return res.status(error.statusCode).json({
