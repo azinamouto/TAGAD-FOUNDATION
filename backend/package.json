@@ -6,13 +6,14 @@
   "type": "module",
   "scripts": {
     "dev": "tsx server.ts",
-    "start": "NODE_ENV=production tsx server.ts",
+    "start": "node --import tsx scripts/start-production.mjs",
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test tests/**/*.test.ts",
     "db:validate": "prisma validate",
     "db:seed": "prisma db seed",
-    "db:migrate": "prisma migrate deploy"
+    "db:migrate": "prisma migrate deploy",
+    "test:qualification": "node scripts/run-qualification.mjs"
   },
   "dependencies": {
     "@google/genai": "^1.29.0",

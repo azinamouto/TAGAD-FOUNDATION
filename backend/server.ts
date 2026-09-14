@@ -1,3 +1,4 @@
+import { isDatabaseConnected } from './server/lib/prisma';
 import './server/instrument';
 import 'dotenv/config';
 import express, { Request, Response, NextFunction } from "express";
@@ -58,7 +59,8 @@ async function startServer() {
   }
 
   const app = express();
-  const PORT = 3000;
+  const PORT = Number(process.env.PORT || 3000);
+  if (!Number.isInteger(PORT) || PORT < 1 || PORT > 65535) throw new Error('PORT must be an integer from 1 to 65535');
 
   // BE-1/BE-2: Trust reverse proxy (1 hop for Cloud Run / Nginx container ingress)
   // Ensures req.ip correctly resolves client IP for rate limiting and logging without header spoofing
@@ -92,6 +94,13 @@ async function startServer() {
 
   app.use(express.json({ limit: '50mb' }));
   app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
+  // Readiness is distinct from liveness: never route authenticated traffic
+  // before database connectivity and durable revocation state are available.
+  app.get('/api/ready', (_req, res) => {
+    const ready = isDatabaseConnected() && TokenRevocationService.isReady();
+    res.status(ready ? 200 : 503).json({ status: ready ? 'ready' : 'not_ready' });
+  });
 
   // Health check
   app.get("/api/health", (req, res) => {
