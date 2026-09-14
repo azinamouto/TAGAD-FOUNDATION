@@ -39,8 +39,7 @@ router.put(
 );
 router.patch(
   '/:id/status',
-  requireRole(Role.ADMIN, Role.ENCODER),
-  requireOfficeScope(),
+  requireRole(Role.ADMIN, Role.SUPER_ADMIN),
   validate(uuidParamSchema, 'params'),
   validate(updatePlanStatusSchema),
   updatePlanStatus
