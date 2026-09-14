@@ -2,6 +2,8 @@ import 'dotenv/config';
 import express, { Request, Response, NextFunction } from "express";
 import cors from 'cors';
 import helmet from 'helmet';
+import path from 'path';
+import fs from 'fs';
 import { validateJwtConfig } from './server/lib/jwt';
 import { TokenRevocationService } from './server/services/TokenRevocationService';
 import { requestLogger } from './server/middleware/requestLogger';
@@ -125,6 +127,43 @@ async function startServer() {
     });
     sendError(res, err, err.statusCode || 500);
   });
+
+  // 404 fallback for undefined API routes
+  app.all('/api/*', (req: Request, res: Response) => {
+    res.status(404).json({ error: 'Endpoint not found', path: req.originalUrl });
+  });
+
+  // Frontend integration: Serve React SPA via Vite middleware in dev, static files in production
+  const frontendDir = path.resolve(process.cwd(), 'frontend');
+  const distPath = path.resolve(frontendDir, 'dist');
+
+  if (process.env.NODE_ENV !== 'production' && !process.env.SERVE_STATIC) {
+    try {
+      const { createServer: createViteServer } = await import('vite');
+      const vite = await createViteServer({
+        root: frontendDir,
+        server: { middlewareMode: true },
+        appType: 'spa',
+      });
+      app.use(vite.middlewares);
+      logger.info('VITE_MIDDLEWARE_ATTACHED', { root: frontendDir });
+    } catch (err: any) {
+      logger.warn('VITE_MIDDLEWARE_ATTACH_FAILED', { error: err.message });
+      if (fs.existsSync(distPath)) {
+        app.use(express.static(distPath));
+        app.get('*', (_req: Request, res: Response) => {
+          res.sendFile(path.join(distPath, 'index.html'));
+        });
+      }
+    }
+  } else {
+    if (fs.existsSync(distPath)) {
+      app.use(express.static(distPath));
+      app.get('*', (_req: Request, res: Response) => {
+        res.sendFile(path.join(distPath, 'index.html'));
+      });
+    }
+  }
 
   app.listen(PORT, "0.0.0.0", () => {
     logger.info('TAGAD_BACKEND_SERVER_STARTED', {

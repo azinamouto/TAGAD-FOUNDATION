@@ -5,6 +5,9 @@
   "description": "Talibon Analytics for Gender and Development - Full-Stack Application",
   "type": "module",
   "scripts": {
+    "dev": "tsx server.ts",
+    "build": "npm --prefix frontend run build && npm --prefix backend run typecheck",
+    "start": "NODE_ENV=production tsx server.ts",
     "dev:backend": "npm --prefix backend run dev",
     "dev:frontend": "npm --prefix frontend run dev",
     "build:backend": "npm --prefix backend run typecheck",
