@@ -57,7 +57,7 @@ async function main() {
     await prisma.barangay.upsert({
       where: { name: brgy.name },
       update: { code: brgy.code },
-      create: { ...brgy, captainName: 'Hon. Barangay Captain' },
+      create: { ...brgy, captainName: 'Hon. Barangay Captain', latitude: null, longitude: null, geoSource: null, geoVerified: false },
     });
   }
 

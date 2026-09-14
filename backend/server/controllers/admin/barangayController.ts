@@ -20,3 +20,8 @@ export const getBarangayById = async (req: AuthenticatedRequest, res: Response) 
     return sendError(res, error, error.statusCode || 404);
   }
 };
+
+export const getBarangayGeoData = async (_req: AuthenticatedRequest, res: Response) => {
+  try { return res.type('application/geo+json').json(await BarangayService.getGeoData()); }
+  catch (error: any) { return sendError(res, error, error.statusCode || 500); }
+};

@@ -78,6 +78,13 @@ model Barangay {
   createdAt      DateTime      @default(now()) @map("created_at")
   updatedAt      DateTime      @updatedAt @map("updated_at")
 
+  // WGS84 coordinates; null means no verified source has supplied a location.
+  latitude       Float?        @db.DoublePrecision
+  longitude      Float?        @db.DoublePrecision
+  boundary       Json?
+  geoSource      String?       @map("geo_source")
+  geoVerified    Boolean       @default(false) @map("geo_verified")
+
   households    Household[]
   beneficiaries Beneficiary[]
   users         User[]

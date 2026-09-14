@@ -3,6 +3,28 @@ import { NotFoundError } from '../lib/errors';
 import { FALLBACK_BARANGAYS } from '../lib/fallbackStore';
 
 export class BarangayService {
+  public static async getGeoData() {
+    const barangays = await this.getBarangays();
+    return {
+      type: 'FeatureCollection',
+      features: barangays.map((barangay: any) => {
+        const located = typeof barangay.latitude === 'number' && typeof barangay.longitude === 'number';
+        const boundary = barangay.boundary || null;
+        const geometry = boundary || (located ? { type: 'Point', coordinates: [barangay.longitude, barangay.latitude] } : null);
+        return {
+          type: 'Feature', id: barangay.id, geometry,
+          properties: {
+            barangayName: barangay.name, code: barangay.code,
+            latitude: located ? barangay.latitude : null,
+            longitude: located ? barangay.longitude : null,
+            geoSource: barangay.geoSource || null,
+            geoStatus: !geometry ? 'NO DATA' : barangay.geoVerified ? 'VERIFIED' : 'UNVERIFIED',
+          },
+        };
+      }),
+    };
+  }
+
   public static async getBarangays() {
     if (!isDatabaseConnected()) {
       return FALLBACK_BARANGAYS;

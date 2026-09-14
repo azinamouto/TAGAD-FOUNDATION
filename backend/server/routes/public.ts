@@ -1,3 +1,4 @@
+import { getBarangayGeoData } from '../controllers/admin/barangayController';
 import { Router } from 'express';
 import {
   getPublicDashboard,
@@ -26,6 +27,7 @@ router.get('/programs', getPublicPrograms);
 router.get('/accomplishments', getPublicAccomplishments);
 router.get('/gad-plans', getPublicGADPlans);
 router.get('/offices', getPublicOffices);
+router.get('/barangays/geo', getBarangayGeoData);
 router.get('/barangays', getPublicBarangays);
 router.get('/datasets', getPublicDatasets);
 router.post('/feedback', feedbackRateLimiter, validate(publicFeedbackSchema), submitPublicFeedback);
