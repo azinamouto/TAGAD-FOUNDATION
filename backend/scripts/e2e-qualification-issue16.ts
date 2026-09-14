@@ -1,7 +1,8 @@
+import { FALLBACK_BARANGAYS } from '../server/lib/fallbackStore';
 import dotenv from 'dotenv';
 dotenv.config();
 
-import prisma, { isDatabaseConnected } from '../server/lib/prisma';
+import prisma, { testDatabaseConnection } from '../server/lib/prisma';
 import { TableBuilderService, ActorContext } from '../server/services/TableBuilderService';
 import { ObservationService } from '../server/services/ObservationService';
 import { StatisticalDatasetService } from '../server/services/StatisticalDatasetService';
@@ -29,40 +30,59 @@ async function runIssue16Qualification() {
   StatisticalDatasetService.resetInMemoryDatasets();
   ObservationService.resetInMemoryObservations();
 
+  const url = new URL(process.env.DATABASE_URL || '');
+  if (!['127.0.0.1', 'localhost'].includes(url.hostname) || url.pathname !== '/tagad_qualification') {
+    throw new Error('Run via scripts/run-qualification.mjs against a disposable local database');
+  }
+  if (!await testDatabaseConnection()) throw new Error('Qualification database unavailable');
+  await prisma.office.createMany({ data: [
+    { id: '00000000-0000-4000-8000-000000000001', code: 'MPDC', name: 'Synthetic MPDC' },
+    { id: '00000000-0000-4000-8000-000000000002', code: 'MSWDO', name: 'Synthetic MSWDO' },
+  ] });
+  const users = [
+    ['00000000-0000-4000-8000-000000000003', Role.SUPER_ADMIN, null], ['00000000-0000-4000-8000-000000000004', Role.ADMIN, '00000000-0000-4000-8000-000000000001'],
+    ['00000000-0000-4000-8000-000000000005', Role.ENCODER, '00000000-0000-4000-8000-000000000001'], ['00000000-0000-4000-8000-000000000006', Role.ENCODER, '00000000-0000-4000-8000-000000000002'],
+    ['00000000-0000-4000-8000-000000000007', Role.VIEWER, null],
+  ];
+  for (const [id, role, officeId] of users) await prisma.user.create({ data: {
+    id: id!, email: `${id}@qualification.invalid`, fullName: 'Synthetic actor', passwordHash: 'not-a-login-hash', role: role as Role, officeId,
+  } });
+  for (const b of FALLBACK_BARANGAYS) await prisma.barangay.create({ data: { name: b.name, code: b.code } });
+  await prisma.statisticalDimension.create({ data: { dimensionCode: 'DIM_SEX', name: 'Sex' } });
   const barangays = await BarangayService.getBarangays();
   console.log(`>> [SETUP] Loaded ${barangays.length} canonical Talibon barangays.`);
 
   // Actors
   const superAdminActor: ActorContext = {
-    id: 'usr-superadmin-01',
+    id: '00000000-0000-4000-8000-000000000003',
     email: 'superadmin@talibon.gov.ph',
     role: Role.SUPER_ADMIN,
     officeId: null,
   };
 
   const adminActor: ActorContext = {
-    id: 'usr-admin-01',
+    id: '00000000-0000-4000-8000-000000000004',
     email: 'admin@talibon.gov.ph',
     role: Role.ADMIN,
-    officeId: 'off-mpdc',
+    officeId: '00000000-0000-4000-8000-000000000001',
   };
 
   const encoderMpdcActor: ActorContext = {
-    id: 'usr-encoder-mpdc',
+    id: '00000000-0000-4000-8000-000000000005',
     email: 'encoder_mpdc@talibon.gov.ph',
     role: Role.ENCODER,
-    officeId: 'off-mpdc',
+    officeId: '00000000-0000-4000-8000-000000000001',
   };
 
   const encoderMswdoActor: ActorContext = {
-    id: 'usr-encoder-mswdo',
+    id: '00000000-0000-4000-8000-000000000006',
     email: 'encoder_mswdo@talibon.gov.ph',
     role: Role.ENCODER,
-    officeId: 'off-mswdo',
+    officeId: '00000000-0000-4000-8000-000000000002',
   };
 
   const viewerActor: ActorContext = {
-    id: 'usr-viewer-01',
+    id: '00000000-0000-4000-8000-000000000007',
     email: 'viewer@talibon.gov.ph',
     role: Role.VIEWER,
     officeId: null,
@@ -79,10 +99,13 @@ async function runIssue16Qualification() {
     adminActor
   );
 
+  const dimensions = await TableBuilderService.getDimensionDictionary();
+  const sexDimension = dimensions.find(d => d.dimensionCode === 'DIM_SEX');
+  if (!sexDimension) throw new Error('Qualification setup requires DIM_SEX in the dimension dictionary');
   await TableBuilderService.bindDimension(
     testTable.id,
     {
-      dimensionCode: 'DIM_SEX',
+      dimensionId: sexDimension.id,
       displayOrder: 1,
       isRequired: true,
       allowedValues: ['MALE', 'FEMALE'],
@@ -213,7 +236,7 @@ async function runIssue16Qualification() {
       '2024,Talibon,MALE,5000',
     ].join('\n');
 
-    const obsCountBefore = ObservationService.getInMemoryObservations().length;
+    const obsCountBefore = await prisma.statisticalObservation.count();
 
     const preview = await StatisticalObservationIngestionService.preview(
       {
@@ -234,7 +257,7 @@ async function runIssue16Qualification() {
       adminActor
     );
 
-    const obsCountAfter = ObservationService.getInMemoryObservations().length;
+    const obsCountAfter = await prisma.statisticalObservation.count();
 
     const pass =
       preview.valid === true &&
@@ -339,7 +362,7 @@ async function runIssue16Qualification() {
       adminActor
     );
 
-    const stored = ObservationService.getInMemoryObservations();
+    const stored = (await prisma.statisticalObservation.findMany()).map(o => ({ ...o, numericValue: Number(o.numericValue) }));
     const storedObs = stored.find((o) => o.period === '2024' && o.numericValue === 650);
 
     const expectedHash = ObservationService.validateDimensions(fullTable, { DIM_SEX: 'FEMALE' }).dimensionsHash;
@@ -440,7 +463,7 @@ async function runIssue16Qualification() {
       adminActor
     );
 
-    const storedObs = ObservationService.getInMemoryObservations().find(
+    const storedObs = (await prisma.statisticalObservation.findMany()).map(o => ({ ...o, numericValue: Number(o.numericValue) })).find(
       (o) => o.period === '2024' && o.barangayId !== null && o.numericValue === 999
     );
 
@@ -590,7 +613,7 @@ async function runIssue16Qualification() {
   // TEST 8: Transactional Atomicity & Rollback Guarantees
   // =========================================================================
   try {
-    const countBefore = ObservationService.getInMemoryObservations().length;
+    const countBefore = await prisma.statisticalObservation.count();
 
     // Mixed batch with intentionally invalid row (invalid numeric text)
     const mixedBatchCsv = [
@@ -623,7 +646,7 @@ async function runIssue16Qualification() {
       abortTriggered = true;
     }
 
-    const countAfter = ObservationService.getInMemoryObservations().length;
+    const countAfter = await prisma.statisticalObservation.count();
     const pass = abortTriggered && countBefore === countAfter;
 
     results.push({
@@ -657,6 +680,7 @@ async function runIssue16Qualification() {
   }
 
   console.log('======================================================================');
+  if (!allPassed) process.exitCode = 1;
   if (allPassed) {
     console.log('  FINAL VERDICT: ISSUE #16 — QUALIFIED / PASS');
   } else {
@@ -667,5 +691,5 @@ async function runIssue16Qualification() {
 
 runIssue16Qualification().catch((err) => {
   console.error('Fatal execution error:', err);
-  process.exit(1);
-});
+  process.exitCode = 1;
+}).finally(() => prisma.$disconnect());
