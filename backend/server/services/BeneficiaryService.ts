@@ -8,6 +8,13 @@ import { getFallbackDemographicsData } from '../lib/fallbackStore';
 export const MEMORY_BENEFICIARIES: any[] = [];
 
 export class BeneficiaryService {
+  private static readOffice(actor?: { id: string; role: Role; officeId: string | null }): string | null {
+    if (!actor) throw new ForbiddenError('Authentication required to read beneficiaries');
+    if (actor.role !== Role.ENCODER) return null;
+    if (!actor.officeId) throw new OfficeScopeError('Encoder has no assigned office');
+    return actor.officeId;
+  }
+
   public static async getBeneficiaries(
     params: {
       page?: number;
@@ -23,6 +30,13 @@ export class BeneficiaryService {
     },
     actorUser?: { id: string; role: Role; officeId: string | null }
   ) {
+    const officeScope = this.readOffice(actorUser);
+    if (officeScope) {
+      if (params.officeId && params.officeId !== officeScope) {
+        throw new OfficeScopeError('Encoders cannot read beneficiaries from other offices');
+      }
+      params = { ...params, officeId: officeScope };
+    }
     const page = Number(params.page) || 1;
     const limit = Number(params.limit) || 10;
     const skip = (page - 1) * limit;
@@ -166,8 +180,9 @@ export class BeneficiaryService {
     id: string,
     actorUser?: { id: string; role: Role; officeId: string | null }
   ) {
+    const officeScope = this.readOffice(actorUser);
     if (!isDatabaseConnected()) {
-      const ben = MEMORY_BENEFICIARIES.find((b) => b.id === id);
+      const ben = MEMORY_BENEFICIARIES.find((b) => b.id === id && (!officeScope || b.officeId === officeScope));
       if (!ben) throw new NotFoundError('Beneficiary');
       return ben;
     }
@@ -183,7 +198,7 @@ export class BeneficiaryService {
         },
       });
 
-      if (!beneficiary) {
+      if (!beneficiary || (officeScope && beneficiary.officeId !== officeScope)) {
         throw new NotFoundError('Beneficiary');
       }
 
@@ -195,7 +210,7 @@ export class BeneficiaryService {
       };
     } catch (err: any) {
       if (err instanceof NotFoundError) throw err;
-      const ben = MEMORY_BENEFICIARIES.find((b) => b.id === id);
+      const ben = MEMORY_BENEFICIARIES.find((b) => b.id === id && (!officeScope || b.officeId === officeScope));
       if (!ben) throw new NotFoundError('Beneficiary');
       return ben;
     }
