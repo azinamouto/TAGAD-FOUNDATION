@@ -25,12 +25,13 @@
     "cors": "^2.8.6",
     "dotenv": "^17.2.3",
     "exceljs": "^4.4.0",
-    "express": "^4.21.2",
+    "express": "4.22.3",
     "express-rate-limit": "^8.7.0",
     "helmet": "^8.3.0",
     "jsonwebtoken": "^9.0.3",
-    "multer": "2.0.2",
+    "multer": "2.4.0",
     "pdfkit": "^0.18.0",
+    "uuid": "11.1.1",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -44,6 +45,9 @@
     "prisma": "^5.21.1",
     "tsx": "^4.21.0",
     "typescript": "~5.8.2"
+  },
+  "overrides": {
+    "uuid": "$uuid"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
