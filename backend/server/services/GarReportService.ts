@@ -227,7 +227,9 @@ export class GarReportService {
       for (const item of items) {
         const plannedBudget = Number(item.budget) || 0;
         let accs = [...FALLBACK_ACCOMPLISHMENTS].filter(
-          (a: any) => a.gadPlanItemId === item.id || a.programId === item.programId
+          (a: any) => a.gadPlanItemId
+            ? a.gadPlanItemId === item.id
+            : Boolean(item.programId) && a.programId === item.programId
         );
         if (targetQuarter) {
           accs = accs.filter((a: any) => a.quarter === targetQuarter);
