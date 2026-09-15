@@ -1,0 +1,22 @@
+diff --git a/docs/STATISTICAL_DATA_GOVERNANCE.md b/docs/STATISTICAL_DATA_GOVERNANCE.md
+index 0f7651c..9cb4b2a 100644
+--- a/docs/STATISTICAL_DATA_GOVERNANCE.md
++++ b/docs/STATISTICAL_DATA_GOVERNANCE.md
+@@ -113,9 +113,14 @@ This prevents structural schema drift from invalidating observation coordinates
+ 
+ | Field | Type | Logic |
+ |---|---|---|
+-| `hasRealData` | `boolean` | `true` if `verificationStatus === 'VERIFIED'` |
+-| `dataStatus` | `string` | `"REAL DATA"` if verified, otherwise `"UNVERIFIED"` |
++| `hasRealData` | `boolean` | `true` only when the table has at least one persisted observation (`_count.observations > 0`) |
++| `dataStatus` | `string` | `"REAL DATA"` when `hasRealData` is true; otherwise `"NO DATA"` |
+ 
+-These fields drive the data quality indicator shown in the statistical catalog browser UI (when built) and are available via `GET /api/admin/table-builder/tables`.
++Catalog verification is independent of observation availability. A verified table
++with no stored observations reports `false` / `NO DATA`; an unverified table with
++stored observations reports `true` / `REAL DATA`. In-memory fallback tables report
++`false` / `NO DATA` because they do not establish persisted data availability.
++
++These fields are available via `GET /api/admin/table-builder/tables` and the table-detail/catalog services. They indicate data presence, not approval, accuracy, or permission to publish. The API-wide field reports observations for the table, not a selected dataset.
+ 
+ ---
