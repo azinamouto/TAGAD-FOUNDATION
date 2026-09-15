@@ -14,6 +14,13 @@ import {
 import { publicApi } from '../../api/publicApi';
 import { PublicDashboardData } from '../../types/public.types';
 import { LoadingSpinner } from '../../components/common/LoadingSpinner';
+import {
+  HeroPeekingConstituents,
+  StatsCornerArtwork,
+  BarangayNetworkArtwork,
+  TopographicWave,
+  CardCornerFlourish,
+} from '../../components/illustrations';
 
 const SECTOR_COLORS = ['#334155', '#475569', '#64748b', '#0284c7', '#059669', '#d97706', '#dc2626'];
 
@@ -68,48 +75,60 @@ export const LandingPage: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-8 py-12 space-y-16">
       {/* Header & Mandate Introduction */}
-      <section className="space-y-6">
-        <div className="text-xs font-semibold tracking-wider uppercase text-slate-500 dark:text-slate-400">
-          Municipality of Talibon, Bohol • Republic Act No. 9710
+      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-50/80 via-amber-50/20 to-white dark:from-slate-900/60 dark:via-slate-900 dark:to-slate-900 border border-slate-200/70 dark:border-slate-800 p-6 sm:p-10 lg:p-12 transition-all">
+        {/* Subtle layered ambient topographic wave */}
+        <TopographicWave className="bottom-0 left-0 right-0 h-24" />
+
+        <div className="relative z-10 max-w-2xl space-y-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 dark:bg-amber-500/20 text-amber-900 dark:text-amber-200 text-xs font-semibold tracking-wide">
+            <span>Municipality of Talibon, Bohol</span>
+            <span className="w-1 h-1 rounded-full bg-amber-500" />
+            <span>Republic Act No. 9710</span>
+          </div>
+
+          <div className="space-y-4">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-slate-900 dark:text-white leading-tight">
+              Gender and Development Transparency Portal
+            </h1>
+            <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
+              Public records and monitoring of the statutory 5% GAD budget allocation, sex-disaggregated outcomes, and community services across Talibon&apos;s 25 mainland and island barangays.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-4 pt-2 text-xs">
+            <Link
+              to="/demographics"
+              className="px-4 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 font-medium rounded transition-colors shadow-sm"
+            >
+              View Demographics
+            </Link>
+            <Link
+              to="/public-programs"
+              className="px-4 py-2 border border-slate-300 dark:border-slate-700 hover:border-slate-400 text-slate-800 dark:text-slate-200 font-medium rounded transition-colors bg-white/60 dark:bg-slate-800/40"
+            >
+              Browse Programs
+            </Link>
+            <Link
+              to="/public-accomplishments"
+              className="px-4 py-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white font-medium transition-colors"
+            >
+              Accomplishments &rarr;
+            </Link>
+          </div>
         </div>
 
-        <div className="space-y-4 max-w-3xl">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-slate-900 dark:text-white leading-tight">
-            Gender and Development Transparency Portal
-          </h1>
-          <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
-            Public records and monitoring of the statutory 5% GAD budget allocation, sex-disaggregated outcomes, and community services across Talibon&apos;s 25 mainland and island barangays.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-4 pt-2 text-xs">
-          <Link
-            to="/demographics"
-            className="px-4 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 font-medium rounded transition-colors"
-          >
-            View Demographics
-          </Link>
-          <Link
-            to="/public-programs"
-            className="px-4 py-2 border border-slate-300 dark:border-slate-700 hover:border-slate-400 text-slate-800 dark:text-slate-200 font-medium rounded transition-colors"
-          >
-            Browse Programs
-          </Link>
-          <Link
-            to="/public-accomplishments"
-            className="px-4 py-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white font-medium transition-colors"
-          >
-            Accomplishments &rarr;
-          </Link>
+        {/* EDGE PEEKING: Diverse civic constituents entering from the right edge */}
+        <div className="hidden md:block absolute -right-2 sm:-right-4 lg:right-2 bottom-0 w-64 sm:w-72 lg:w-88 z-10 pointer-events-none">
+          <HeroPeekingConstituents />
         </div>
       </section>
 
       <hr className="border-slate-200 dark:border-slate-800" />
 
       {/* Year Selection & Controls */}
-      <section className="space-y-10">
-        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-4">
-          <div>
+      <section className="space-y-10 relative">
+        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-4 relative z-10">
+          <div className="max-w-md">
             <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
               Annual Performance Summary
             </h2>
@@ -126,13 +145,18 @@ export const LandingPage: React.FC = () => {
               id="year-select"
               value={selectedYear}
               onChange={(e) => setSelectedYear(parseInt(e.target.value, 10))}
-              className="text-xs font-medium bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-3 py-1.5 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-slate-500"
+              className="text-xs font-medium bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-3 py-1.5 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-slate-500 shadow-sm"
             >
               <option value={2026}>2026</option>
               <option value={2025}>2025</option>
               <option value={2024}>2024</option>
             </select>
           </div>
+        </div>
+
+        {/* CORNER COMPOSITION: Illustrated constituents reviewing the civic ledger in the top right */}
+        <div className="hidden lg:block absolute -top-12 right-28 w-52 pointer-events-none z-0">
+          <StatsCornerArtwork />
         </div>
 
         {/* Loading State */}
@@ -161,7 +185,7 @@ export const LandingPage: React.FC = () => {
 
         {/* Core Statistics (Clean open grid with subtle dividers) */}
         {!loading && !error && summary && (
-          <div className="space-y-12">
+          <div className="space-y-12 relative z-10">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pt-2">
               <div className="space-y-2 border-l-2 border-slate-900 dark:border-white pl-4">
                 <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">
@@ -213,9 +237,10 @@ export const LandingPage: React.FC = () => {
             </div>
 
             {/* Visual Analytics */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 pt-6">
-              {/* Sex-Disaggregated Chart */}
-              <div className="space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pt-6">
+              {/* Sex-Disaggregated Chart with Corner Composition */}
+              <div className="relative space-y-4 p-5 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white/70 dark:bg-slate-900/60 shadow-[0_1px_3px_rgba(0,0,0,0.02)] overflow-hidden">
+                <CardCornerFlourish />
                 <div>
                   <h3 className="text-sm font-semibold text-slate-900 dark:text-white">
                     Sex-Disaggregated Distribution
@@ -272,8 +297,9 @@ export const LandingPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Barangay Reach Chart */}
-              <div className="lg:col-span-2 space-y-4">
+              {/* Barangay Reach Chart with Corner Composition */}
+              <div className="lg:col-span-2 relative space-y-4 p-5 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white/70 dark:bg-slate-900/60 shadow-[0_1px_3px_rgba(0,0,0,0.02)] overflow-hidden">
+                <CardCornerFlourish />
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-sm font-semibold text-slate-900 dark:text-white">
@@ -364,43 +390,55 @@ export const LandingPage: React.FC = () => {
 
       <hr className="border-slate-200 dark:border-slate-800" />
 
-      {/* Institutional Framework */}
-      <section className="space-y-6">
-        <div>
-          <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
-            Statutory Framework
-          </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Governing mandates for municipal gender-responsive governance
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-          <div className="space-y-2">
-            <h3 className="font-semibold text-slate-900 dark:text-white text-sm">
-              Statutory 5% Allocation
-            </h3>
-            <p>
-              Under Republic Act No. 9710, local government units are required to formulate an annual GAD Plan and Budget allocating at least five percent of the total municipal budget.
-            </p>
+      {/* Institutional Framework with Edge-Peeking from the Left */}
+      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-amber-50/30 via-white to-slate-50/50 dark:from-slate-900/40 dark:via-slate-900 dark:to-slate-900 border border-slate-200/80 dark:border-slate-800 p-6 sm:p-8 lg:p-10">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center gap-8 relative z-10">
+          {/* EDGE PEEKING: Community members representing 25 barangays entering from the left */}
+          <div className="hidden lg:block w-72 shrink-0 -ml-6 -my-4 pointer-events-none">
+            <BarangayNetworkArtwork />
           </div>
 
-          <div className="space-y-2">
-            <h3 className="font-semibold text-slate-900 dark:text-white text-sm">
-              Sex-Disaggregated Reporting
-            </h3>
-            <p>
-              Program implementation records are maintained with gender-disaggregated indicators to evaluate equitable impact across female and male constituents.
-            </p>
-          </div>
+          <div className="flex-1 space-y-6">
+            <div>
+              <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
+                Statutory Framework
+              </h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                Governing mandates for municipal gender-responsive governance across Talibon&apos;s 25 mainland and island barangays
+              </p>
+            </div>
 
-          <div className="space-y-2">
-            <h3 className="font-semibold text-slate-900 dark:text-white text-sm">
-              All 25 Barangays Covered
-            </h3>
-            <p>
-              Reporting covers all mainland and island barangay units in Talibon to track geographic accessibility and ensure inclusive community participation.
-            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+              <div className="space-y-2 bg-white/70 dark:bg-slate-800/40 p-4 rounded-lg border border-slate-200/60 dark:border-slate-800 shadow-sm">
+                <h3 className="font-semibold text-slate-900 dark:text-white text-sm flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                  Statutory 5% Allocation
+                </h3>
+                <p>
+                  Under Republic Act No. 9710, local government units are required to formulate an annual GAD Plan and Budget allocating at least five percent of the total municipal budget.
+                </p>
+              </div>
+
+              <div className="space-y-2 bg-white/70 dark:bg-slate-800/40 p-4 rounded-lg border border-slate-200/60 dark:border-slate-800 shadow-sm">
+                <h3 className="font-semibold text-slate-900 dark:text-white text-sm flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+                  Sex-Disaggregated Reporting
+                </h3>
+                <p>
+                  Program implementation records are maintained with gender-disaggregated indicators to evaluate equitable impact across female and male constituents.
+                </p>
+              </div>
+
+              <div className="space-y-2 bg-white/70 dark:bg-slate-800/40 p-4 rounded-lg border border-slate-200/60 dark:border-slate-800 shadow-sm">
+                <h3 className="font-semibold text-slate-900 dark:text-white text-sm flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-teal-600" />
+                  All 25 Barangays Covered
+                </h3>
+                <p>
+                  Reporting covers all mainland and island barangay units in Talibon to track geographic accessibility and ensure inclusive community participation.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>

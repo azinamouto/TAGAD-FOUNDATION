@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
+import { CommunityUnityIllustration } from '../common/CommunityUnityIllustration';
 
 export const PublicLayout: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -108,22 +109,34 @@ export const PublicLayout: React.FC = () => {
       </main>
 
       {/* Institutional Footer */}
-      <footer className="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-12 px-4 sm:px-8 mt-16">
+      <footer className="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 pt-10 pb-10 px-4 sm:px-8 mt-16 overflow-hidden">
         <div className="max-w-6xl mx-auto space-y-8">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-8 border-b border-slate-100 dark:border-slate-800">
-            <div className="space-y-1.5 max-w-2xl">
-              <div className="text-sm font-semibold text-slate-900 dark:text-white">
-                Municipality of Talibon, Bohol
-              </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                Talibon Analytics for Gender and Development (TAGAD) is the public monitoring portal of the municipal Gender and Development Focal Point System, established in compliance with Republic Act No. 9710.
-              </p>
+          <div className="flex flex-col lg:flex-row items-center lg:items-end justify-between gap-8 pb-8 border-b border-slate-100 dark:border-slate-800">
+            {/* Community Unity Vector Illustration */}
+            <div className="w-full sm:w-80 md:w-96 lg:w-80 shrink-0 self-center lg:self-end relative group">
+              <div
+                className="absolute inset-0 -bottom-2 bg-gradient-to-t from-amber-500/10 via-amber-500/5 to-transparent rounded-full blur-xl pointer-events-none -z-10"
+                aria-hidden="true"
+              />
+              <CommunityUnityIllustration className="w-full h-auto drop-shadow-sm transition-transform hover:scale-[1.015] duration-500 motion-reduce:transform-none" />
             </div>
 
-            <div className="text-xs text-slate-500 dark:text-slate-400 space-y-0.5 md:text-right shrink-0">
-              <div className="font-medium text-slate-700 dark:text-slate-300">Talibon Municipal Hall</div>
-              <div>Poblacion, Talibon, Bohol 6325</div>
-              <div>gad.talibon@gmail.com</div>
+            {/* Municipality & System Attribution */}
+            <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 flex-1 w-full">
+              <div className="space-y-1.5 max-w-xl">
+                <div className="text-sm font-semibold text-slate-900 dark:text-white">
+                  Municipality of Talibon, Bohol
+                </div>
+                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                  Talibon Analytics for Gender and Development (TAGAD) is the public monitoring portal of the municipal Gender and Development Focal Point System, established in compliance with Republic Act No. 9710.
+                </p>
+              </div>
+
+              <div className="text-xs text-slate-500 dark:text-slate-400 space-y-0.5 md:text-right shrink-0">
+                <div className="font-medium text-slate-700 dark:text-slate-300">Talibon Municipal Hall</div>
+                <div>Poblacion, Talibon, Bohol 6325</div>
+                <div>gad.talibon@gmail.com</div>
+              </div>
             </div>
           </div>
 
