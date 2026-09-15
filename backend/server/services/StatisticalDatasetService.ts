@@ -816,11 +816,10 @@ export class StatisticalDatasetService {
 
     const auditData = await AuditService.getLogs({
       entityType: 'StatisticalDataset',
+      entityId: datasetId,
       limit: 100,
     });
 
-    // Filter logs for this specific entity
-    const matchingLogs = auditData.logs.filter((log: any) => log.entityId === datasetId);
 
     return {
       dataset: {
@@ -831,7 +830,7 @@ export class StatisticalDatasetService {
         isOfficial: dataset.isOfficial,
         isPublished: dataset.isPublished,
       },
-      history: matchingLogs.map((log: any) => ({
+      history: auditData.logs.map((log: any) => ({
         id: log.id,
         action: log.action,
         timestamp: log.createdAt,

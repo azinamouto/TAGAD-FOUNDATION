@@ -103,6 +103,7 @@ export class AuditService {
     userId?: string;
     action?: string;
     entityType?: string;
+    entityId?: string;
   }) {
     const page = params.page || 1;
     const limit = params.limit || 20;
@@ -112,6 +113,7 @@ export class AuditService {
       if (params.userId) filtered = filtered.filter((l) => l.userId === params.userId);
       if (params.action) filtered = filtered.filter((l) => l.action.toLowerCase().includes(params.action!.toLowerCase()));
       if (params.entityType) filtered = filtered.filter((l) => l.entityType === params.entityType);
+      if (params.entityId) filtered = filtered.filter((l) => l.entityId === params.entityId);
 
       const total = filtered.length;
       const logs = filtered.slice((page - 1) * limit, page * limit);
@@ -130,6 +132,7 @@ export class AuditService {
     if (params.userId) where.userId = params.userId;
     if (params.action) where.action = { contains: params.action, mode: 'insensitive' };
     if (params.entityType) where.entityType = params.entityType;
+    if (params.entityId) where.entityId = params.entityId;
 
     const [total, logs] = await Promise.all([
       prisma.auditLog.count({ where }),
