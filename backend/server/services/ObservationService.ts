@@ -1,4 +1,5 @@
 import prisma, { isDatabaseConnected } from '../lib/prisma';
+import type { StatisticalObservation } from '@prisma/client';
 import {
   StatisticalPublicationStatus,
   Role,
@@ -677,7 +678,7 @@ export class ObservationService {
     }
 
     let normalizedDimensions: Record<string, any> | null = (existing.dimensions as Record<string, any>) || null;
-    let dimensionsHash = existing.dimensionsHash;
+    let dimensionsHash = existing.dimensionsHash ?? this.computeDimensionsHash(normalizedDimensions);
 
     if (data.dimensions !== undefined) {
       const dimResult = this.validateDimensions(table, data.dimensions);
@@ -687,7 +688,7 @@ export class ObservationService {
 
     const numericValue = data.numericValue !== undefined ? Number(data.numericValue) : existing.numericValue;
     const unit = data.unit !== undefined ? data.unit : existing.unit;
-    const suppressionStatus = data.suppressionStatus !== undefined ? data.suppressionStatus : existing.suppressionStatus;
+    const suppressionStatus = data.suppressionStatus ?? existing.suppressionStatus ?? 'NONE';
     const suppressionReason = data.suppressionReason !== undefined ? data.suppressionReason : existing.suppressionReason;
 
     // In-Memory Execution (Non-production test/offline mode)
@@ -1047,7 +1048,7 @@ export class ObservationService {
     // PostgreSQL Transactional Execution (Production with Prisma $transaction)
     return await prisma.$transaction(async (tx) => {
       for (const row of validatedRows) {
-        let existing = null;
+        let existing: StatisticalObservation | null = null;
 
         if (row.id) {
           existing = await tx.statisticalObservation.findUnique({
