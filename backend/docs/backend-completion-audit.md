@@ -1,5 +1,10 @@
 # Backend completion audit — 2026-09-15
 
+Historical checkpoint: see [the follow-up verification](round-two-verification.md)
+for the subsequent defect fixes, completed local CBMS reconciliation, CI build
+hook, and synthetic backup/restore evidence. Open items below describe this
+earlier checkpoint, not the latest status.
+
 Status: the requested local fixes have regression coverage, but the whole
 backend is **not signed off for production**. CMS-1 reconciliation, live-service
 verification, and the remaining security findings below are open. Frontend
