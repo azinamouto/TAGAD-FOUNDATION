@@ -10,9 +10,18 @@ production recovery is qualified.** An operator with project access must record
 those values here before launch; do not resume/restore a production project as
 part of a routine test.
 
-The local qualification runner proves application behavior on a disposable
-PostgreSQL database. It does not prove backup integrity or a successful restore
-of deployed data.
+The local qualification runner also performs a logical backup/restore drill:
+it dumps synthetic application data with pg_dump, restores it into a second
+disposable database with pg_restore, and compares every public table's row count
+and row-content fingerprint. Run `npm run test:qualification` with local
+PostgreSQL tools installed. The dump and both databases remain inside the
+runner's temporary cluster and are removed afterward. This verifies the local
+procedure; it does not verify deployed backups, Supabase PITR, or MOV objects.
+
+Local drill evidence, 2026-09-16: PostgreSQL 18 custom-format dump and restore
+passed; all 19 public tables matched by count and content fingerprint. Restore
+plus comparison took 3,019 ms for synthetic fixtures. This is not a production
+RTO measurement. The cluster and dump were removed after verification.
 
 ## Ownership and objectives
 
