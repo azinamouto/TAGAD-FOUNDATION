@@ -6,6 +6,12 @@ Prisma, generates the client, typechecks and runs backend tests. It does not
 deploy or establish production database readiness. This session changes no
 frontend pipeline or root workflow.
 
+The backend `posttest` npm lifecycle hook runs `npm run build` after the test
+suite succeeds. Thus the existing GitHub Actions `npm test` step now performs
+tests followed by the build check and fails if either fails, without a workflow
+file change outside backend/. Local `npm test` has the same behavior. Calling
+tsx directly bypasses npm lifecycle hooks and is only a targeted test command.
+
 ## Prepare and validate
 
 Use Node 22+ and run from backend/:

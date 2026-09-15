@@ -10,6 +10,7 @@
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test tests/**/*.test.ts",
+    "posttest": "npm run build",
     "db:validate": "prisma validate",
     "db:seed": "prisma db seed",
     "db:migrate": "prisma migrate deploy",
