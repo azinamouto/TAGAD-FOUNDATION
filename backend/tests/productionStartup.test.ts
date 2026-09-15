@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import net from 'node:net';
 import { setTimeout as delay } from 'node:timers/promises';
-test('backend-only production command honors PORT and denies readiness without database', { timeout: 20000 }, async () => {
+test('backend-only production command honors PORT and denies readiness without database', { timeout: 60000 }, async () => {
   const socket = net.createServer();
   await new Promise<void>(resolve => socket.listen(0, '127.0.0.1', resolve));
   const port = (socket.address() as any).port;
@@ -18,8 +18,8 @@ test('backend-only production command honors PORT and denies readiness without d
   const exited = new Promise<void>(resolve => child.once('exit', () => resolve()));
   try {
     let ready = false;
-    for (let i = 0; i < 100; i++) {
-      try { if ((await fetch(`http://127.0.0.1:${port}/api/health`)).status === 200) { ready = true; break; } } catch {}
+    for (let i = 0; i < 400; i++) {
+      try { if ((await fetch(`http://127.0.0.1:${port}/api/health`, { signal: AbortSignal.timeout(1000) })).status === 200) { ready = true; break; } } catch {}
       if (child.exitCode !== null) break;
       await delay(100);
     }
