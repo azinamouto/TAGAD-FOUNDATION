@@ -309,9 +309,7 @@ export class ObservationService {
     }
 
     if (
-      dataset.publicationStatus === StatisticalPublicationStatus.OFFICIAL ||
-      dataset.publicationStatus === StatisticalPublicationStatus.PUBLISHED ||
-      dataset.publicationStatus === StatisticalPublicationStatus.WITHDRAWN
+      dataset.publicationStatus !== StatisticalPublicationStatus.DRAFT
     ) {
       throw new ForbiddenError(
         `Dataset '${dataset.datasetCode}' is locked in ${dataset.publicationStatus} status and cannot be modified.`
@@ -460,6 +458,8 @@ export class ObservationService {
         throw new NotFoundError(`Statistical Observation '${observationId}' in table '${table.tableCode}'`);
       }
 
+      await StatisticalDatasetService.getDatasetById(obs.datasetId, actor);
+
       return {
         ...obs,
         numericValue: Number(obs.numericValue),
@@ -473,6 +473,8 @@ export class ObservationService {
     if (!obs) {
       throw new NotFoundError(`Statistical Observation '${observationId}' in table '${table.tableCode}'`);
     }
+
+    await StatisticalDatasetService.getDatasetById(obs.datasetId, actor);
 
     return obs;
   }

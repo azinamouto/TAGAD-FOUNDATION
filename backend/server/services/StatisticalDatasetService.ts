@@ -479,7 +479,7 @@ export class StatisticalDatasetService {
       dataset.publicationStatus !== StatisticalPublicationStatus.PUBLISHED
     ) {
       const datasetOfficeId = dataset.importedBy?.officeId || dataset.importedBy?.office?.id;
-      if (datasetOfficeId && actor.officeId && datasetOfficeId !== actor.officeId) {
+      if (dataset.importedById !== actor.id && !(datasetOfficeId && actor.officeId && datasetOfficeId === actor.officeId)) {
         throw new OfficeScopeError(
           `Access Denied: Dataset belongs to office (${dataset.importedBy?.office?.name || datasetOfficeId}). Your assigned office scope is ${actor.officeId}.`
         );
