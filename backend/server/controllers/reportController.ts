@@ -1,3 +1,4 @@
+import { AuthenticatedRequest } from '../middleware/authMiddleware';
 import { Request, Response } from 'express';
 import ExcelJS from 'exceljs';
 import PDFDocument from 'pdfkit';
@@ -151,9 +152,9 @@ export const getGARExcel = async (req: Request, res: Response) => {
   }
 };
 
-export const getBeneficiariesExcel = async (req: Request, res: Response) => {
+export const getBeneficiariesExcel = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const result = await BeneficiaryService.getBeneficiaries({ limit: 1000 });
+    const result = await BeneficiaryService.getBeneficiaries({ limit: 1000 }, req.user);
     const beneficiaries = result.data || [];
 
     const workbook = new ExcelJS.Workbook();
@@ -196,9 +197,9 @@ export const getBeneficiariesExcel = async (req: Request, res: Response) => {
   }
 };
 
-export const getBeneficiariesPDF = async (req: Request, res: Response) => {
+export const getBeneficiariesPDF = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const result = await BeneficiaryService.getBeneficiaries({ limit: 100 });
+    const result = await BeneficiaryService.getBeneficiaries({ limit: 100 }, req.user);
     const beneficiaries = result.data || [];
 
     const doc = new PDFDocument({ margin: 40 });
