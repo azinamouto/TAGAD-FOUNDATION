@@ -25,6 +25,7 @@ try {
   started = true;
   run(join(bin, 'createdb'), ['-h', '127.0.0.1', '-p', String(port), '-U', 'postgres', 'tagad_qualification']);
   run(process.execPath, ['node_modules/prisma/build/index.js', 'db', 'push', '--skip-generate']);
+  run(process.execPath, ['--import', 'tsx', 'scripts/qualify-cbms-catalog.ts']);
   run(process.execPath, ['--import', 'tsx', 'scripts/e2e-qualification-issue16.ts']);
 } catch (error) {
   console.error(error.message); process.exitCode = 1;

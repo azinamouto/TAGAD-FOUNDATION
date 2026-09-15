@@ -113,7 +113,7 @@ describe('TAGAD Sprint 12 — Issue #14: Table Builder Backend Service & Securit
         async () => {
           await TableBuilderService.createTable(
             {
-              tableCode: 'STAT-TAB-01',
+              tableCode: 'SUMMARY_STATISTICS',
               title: 'Attempted Impersonation of Table 1',
               domain: 'Demographics',
             },

@@ -732,7 +732,7 @@ export class TableBuilderService {
 
     // System tables cannot be deleted
     if (table.isSystemTable) {
-      throw new ForbiddenError('System tables (STAT-TAB-01 to STAT-TAB-69) cannot be deleted.');
+      throw new ForbiddenError('System CBMS tables cannot be deleted.');
     }
 
     if (isDatabaseConnected()) {

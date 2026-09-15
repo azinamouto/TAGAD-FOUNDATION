@@ -234,7 +234,7 @@ describe('TAGAD Sprint 12 — Step 4: Full Table Builder HTTP End-to-End Integra
         method: 'POST',
         token: adminToken,
         body: {
-          tableCode: 'STAT-TAB-01',
+          tableCode: 'SUMMARY_STATISTICS',
           title: 'Collision Attempt on Canonical Table',
           domain: 'Demographics',
         },
@@ -250,7 +250,7 @@ describe('TAGAD Sprint 12 — Step 4: Full Table Builder HTTP End-to-End Integra
   // ==========================================================================
   describe('4. PSA System Table Immutability (#1–69)', () => {
     test('DELETE /tables/:id on a PSA System Table is strictly rejected with 403 Forbidden', async () => {
-      const listRes = await request('/tables?search=STAT-TAB-01', { token: adminToken });
+      const listRes = await request('/tables?search=SUMMARY_STATISTICS', { token: adminToken });
       const table1Id = listRes.body.data[0].id;
 
       const deleteRes = await request(`/tables/${table1Id}`, {
@@ -264,7 +264,7 @@ describe('TAGAD Sprint 12 — Step 4: Full Table Builder HTTP End-to-End Integra
     });
 
     test('PUT /tables/:id cannot mutate tableCode, tableNumber, or isSystemTable', async () => {
-      const listRes = await request('/tables?search=STAT-TAB-01', { token: adminToken });
+      const listRes = await request('/tables?search=SUMMARY_STATISTICS', { token: adminToken });
       const table1Id = listRes.body.data[0].id;
 
       const updateRes = await request(`/tables/${table1Id}`, {
@@ -281,7 +281,7 @@ describe('TAGAD Sprint 12 — Step 4: Full Table Builder HTTP End-to-End Integra
 
       assert.strictEqual(updateRes.status, 200);
       assert.strictEqual(updateRes.body.data.title, 'Updated Table 1 Title Allowed');
-      assert.strictEqual(updateRes.body.data.tableCode, 'STAT-TAB-01');
+      assert.strictEqual(updateRes.body.data.tableCode, 'SUMMARY_STATISTICS');
       assert.strictEqual(updateRes.body.data.tableNumber, 1);
       assert.strictEqual(updateRes.body.data.isSystemTable, true);
     });

@@ -23,20 +23,21 @@ describe('Sprint 8 — Statistical Catalog & Category UX Backend Verification Su
       assert.strictEqual(list.length, 69);
     });
 
-    test('Table numbers are strictly sequential from 1 to 69', () => {
+    test('Table numbers preserve the source gap at 68 and final Table 70', () => {
       const numbers = STATISTICAL_69_TABLE_CATALOG.map((t) => t.tableNumber).sort((a, b) => a - b);
       assert.strictEqual(numbers[0], 1);
-      assert.strictEqual(numbers[numbers.length - 1], 69);
+      assert.strictEqual(numbers[numbers.length - 1], 70);
       const uniqueNumbers = new Set(numbers);
       assert.strictEqual(uniqueNumbers.size, 69);
+      assert.equal(uniqueNumbers.has(68), false);
     });
 
-    test('Table codes are uniquely formatted as STAT-TAB-XX', () => {
+    test('Table codes are unique normalized source tab names', () => {
       const codes = STATISTICAL_69_TABLE_CATALOG.map((t) => t.tableCode);
       const uniqueCodes = new Set(codes);
       assert.strictEqual(uniqueCodes.size, 69);
       for (const code of codes) {
-        assert.match(code, /^STAT-TAB-\d{2}$/);
+        assert.match(code, /^[A-Z0-9]+(?:_[A-Z0-9]+)*$/);
       }
     });
 
@@ -58,10 +59,10 @@ describe('Sprint 8 — Statistical Catalog & Category UX Backend Verification Su
 
   describe('2. Search & Filter Engine', () => {
     test('Search by table code returns exact table', async () => {
-      const result: any = await StatisticalCatalogService.getAllTableDefinitions({ search: 'STAT-TAB-01' });
+      const result: any = await StatisticalCatalogService.getAllTableDefinitions({ search: 'SUMMARY_STATISTICS' });
       const items = Array.isArray(result) ? result : result.data;
       assert.ok(items.length >= 1);
-      assert.strictEqual(items[0].tableCode, 'STAT-TAB-01');
+      assert.strictEqual(items[0].tableCode, 'SUMMARY_STATISTICS');
     });
 
     test('Search by keyword matches in title or description', async () => {
@@ -146,15 +147,15 @@ describe('Sprint 8 — Statistical Catalog & Category UX Backend Verification Su
     test('Retrieves table by integer number', async () => {
       const table = await StatisticalCatalogService.getTableDefinitionByNumber(1);
       assert.ok(table);
-      assert.strictEqual(table.tableCode, 'STAT-TAB-01');
+      assert.strictEqual(table.tableCode, 'SUMMARY_STATISTICS');
       assert.strictEqual(table.tableNumber, 1);
     });
 
     test('Retrieves table by string table code (case-insensitive)', async () => {
-      const table = await StatisticalCatalogService.getTableDefinitionByCode('stat-tab-24');
+      const table = await StatisticalCatalogService.getTableDefinitionByCode('population_by_sex');
       assert.ok(table);
       assert.strictEqual(table.tableNumber, 24);
-      assert.strictEqual(table.tableCode, 'STAT-TAB-24');
+      assert.strictEqual(table.tableCode, 'POPULATION_BY_SEX');
     });
 
     test('Retrieves table by polymorphic identifier', async () => {
@@ -162,7 +163,7 @@ describe('Sprint 8 — Statistical Catalog & Category UX Backend Verification Su
       assert.ok(byNum);
       assert.strictEqual(byNum.tableNumber, 62);
 
-      const byCode = await StatisticalCatalogService.getTableDefinitionByCodeOrNumber('STAT-TAB-62');
+      const byCode = await StatisticalCatalogService.getTableDefinitionByCodeOrNumber('SDG_5_5_2');
       assert.ok(byCode);
       assert.strictEqual(byCode.tableNumber, 62);
     });

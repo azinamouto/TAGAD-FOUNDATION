@@ -115,7 +115,7 @@ describe('TAGAD Issue #15 — Step 3: Admin Data Entry Grid & 69 Statistical Cat
       assert.equal(data.meta.pagination.total, 69);
 
       // Verify Table #01 (Demography)
-      const table1 = data.data.find((t: any) => t.tableNumber === 1 || t.tableCode === 'T-01' || t.tableCode === 'STAT-TAB-01');
+      const table1 = data.data.find((t: any) => t.tableNumber === 1 || t.tableCode === 'T-01' || t.tableCode === 'SUMMARY_STATISTICS');
       assert.ok(table1, 'Table 1 must exist');
       assert.equal(table1.domain, 'Demographics & Population');
 

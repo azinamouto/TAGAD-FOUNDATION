@@ -1,6 +1,8 @@
 import 'dotenv/config';
 import { PrismaClient, Role, Sex } from '@prisma/client';
 import bcrypt from 'bcryptjs';
+import { STATISTICAL_69_TABLE_CATALOG } from '../server/services/StatisticalCatalogService';
+import { reconcileCbmsCatalog } from '../server/services/reconcileCbmsCatalog';
 
 const prisma = new PrismaClient();
 
@@ -115,6 +117,7 @@ async function main() {
   console.log('Seeded admin user:', admin.email);
   console.log('Seeded super admin user:', superAdmin.email);
   console.log('Canonical seed completed successfully.');
+  console.log('CBMS catalog reconciliation:', await reconcileCbmsCatalog(prisma, STATISTICAL_69_TABLE_CATALOG));
 }
 
 main()
