@@ -47,6 +47,24 @@ const SENSITIVE_KEY_PATTERNS = [
 const JWT_REGEX = /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/;
 const BEARER_REGEX = /^Bearer\s+[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/i;
 
+function isSensitiveLogKey(key: string): boolean {
+  return key.toLowerCase().split(/[.\[\]]+/).some(part =>
+    SENSITIVE_KEYS.has(part) || SENSITIVE_KEY_PATTERNS.some(pattern => part.includes(pattern))
+  );
+}
+
+/** Redact decoded query keys before any raw request URL reaches a log sink. */
+export function redactLogUrl(value: string): string {
+  const queryStart = value.indexOf('?');
+  if (queryStart < 0) return value;
+  const query = new URLSearchParams(value.slice(queryStart + 1));
+  const sanitized = new URLSearchParams();
+  for (const [key, entry] of query) {
+    sanitized.append(key, isSensitiveLogKey(key) ? '[REDACTED]' : entry);
+  }
+  return value.slice(0, queryStart + 1) + sanitized.toString();
+}
+
 /**
  * Recursively deep-redacts sensitive fields and patterns from log data.
  */
@@ -94,10 +112,12 @@ export function redactPII(data: any, depth = 0): any {
       const lowerKey = key.toLowerCase();
 
       // Check if key matches sensitive patterns
-      const isSensitiveKey = SENSITIVE_KEYS.has(lowerKey) || SENSITIVE_KEY_PATTERNS.some((pattern) => lowerKey.includes(pattern));
+      const isSensitiveKey = isSensitiveLogKey(key);
 
       if (isSensitiveKey) {
         redacted[key] = '[REDACTED]';
+      } else if (['path', 'url', 'originalurl'].includes(lowerKey) && typeof value === 'string') {
+        redacted[key] = redactLogUrl(value);
       } else {
         redacted[key] = redactPII(value, depth + 1);
       }
