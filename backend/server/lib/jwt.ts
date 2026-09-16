@@ -104,7 +104,7 @@ setInterval(() => {
 }, 15 * 60 * 1000).unref();
 
 /**
- * Revokes a token or JTI synchronously and durably.
+ * Legacy offline demo helper; use revokeTokenAsync for durable revocation.
  */
 export const revokeToken = (tokenOrJti: string, ttlMs = 30 * 24 * 60 * 60 * 1000): void => {
   if (!tokenOrJti) return;
@@ -224,3 +224,25 @@ export const verifyRefreshToken = (token: string): TokenPayload => {
 
   return decoded;
 };
+
+// Verify the signature before consulting the shared revocation store. Never cache
+// a negative result: another process can revoke the token between requests.
+export async function verifyAccessTokenAsync(token: string): Promise<TokenPayload> {
+  const payload = verifyAccessToken(token);
+  if (await TokenRevocationService.isTokenRevokedAsync(token)) {
+    const error = new Error('Token has been revoked');
+    error.name = 'TokenRevokedError';
+    throw error;
+  }
+  return payload;
+}
+
+export async function verifyRefreshTokenAsync(token: string): Promise<TokenPayload> {
+  const payload = verifyRefreshToken(token);
+  if (await TokenRevocationService.isTokenRevokedAsync(token)) {
+    const error = new Error('Refresh token has been revoked');
+    error.name = 'TokenRevokedError';
+    throw error;
+  }
+  return payload;
+}

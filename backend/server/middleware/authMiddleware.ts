@@ -2,7 +2,7 @@ import { TokenRevocationService } from '../services/TokenRevocationService';
 import { AppError } from '../lib/errors';
 import { Request, Response, NextFunction } from 'express';
 import prisma, { isDatabaseConnected } from '../lib/prisma';
-import { verifyAccessToken, TokenPayload } from '../lib/jwt';
+import { verifyAccessTokenAsync } from '../lib/jwt';
 import { UnauthorizedError, ForbiddenError, OfficeScopeError } from '../lib/errors';
 import { sendError } from '../lib/response';
 import { Role } from '@prisma/client';
@@ -42,7 +42,7 @@ export const requireAuth = async (
   const token = authHeader.split(' ')[1];
 
   try {
-    const payload = verifyAccessToken(token);
+    const payload = await verifyAccessTokenAsync(token);
     
     let user: any = null;
     if (isDatabaseConnected()) {
@@ -84,6 +84,7 @@ export const requireAuth = async (
 
     next();
   } catch (err: any) {
+    if (err instanceof AppError && err.statusCode === 503) return sendError(res, err);
     if (err?.name === 'TokenRevokedError') {
       return sendError(res, new UnauthorizedError('Authentication token has been revoked or invalidated', 'TOKEN_REVOKED'));
     }

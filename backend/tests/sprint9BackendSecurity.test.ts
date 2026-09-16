@@ -121,7 +121,7 @@ describe('Sprint 9 — Backend Security, Persistence, & Observability Suite', ()
       assert.notStrictEqual(hash, rawToken);
     });
 
-    test('Async revocation API persists correctly', async () => {
+    test('Explicit offline demo revocation updates the demo cache (not durability proof)', async () => {
       const token = signAccessToken(samplePayload);
       await revokeTokenAsync(token, { reason: 'TEST_ADMIN_REVOKE' });
       assert.strictEqual(isTokenRevoked(token), true);

@@ -5,9 +5,8 @@ import prisma, { isDatabaseConnected } from '../lib/prisma';
 import {
   signAccessToken,
   signRefreshToken,
-  verifyRefreshToken,
-  revokeToken,
-  invalidateSession,
+  verifyRefreshTokenAsync,
+  revokeTokenAsync,
 } from '../lib/jwt';
 import { UnauthorizedError, NotFoundError } from '../lib/errors';
 import { AuditService } from './AuditService';
@@ -257,13 +256,10 @@ export class AuthService {
       if (!TokenRevocationService.isReady()) throw new AppError('Authentication temporarily unavailable', 503, 'AUTH_NOT_READY');
     }
     try {
-      const decoded = verifyRefreshToken(token);
+      const decoded = await verifyRefreshTokenAsync(token);
 
       // Invalidate the old refresh token immediately (rotation & single-use guarantee)
-      if (decoded.jti) {
-        revokeToken(decoded.jti);
-      }
-      revokeToken(token);
+      await TokenRevocationService.revokeToken(token, { reason: 'REFRESH_ROTATED' }, true);
 
       let user: any = null;
 
@@ -301,7 +297,7 @@ export class AuthService {
         refreshToken: newRefreshToken,
       };
     } catch (err: any) {
-      if (err instanceof UnauthorizedError) throw err;
+      if (err instanceof AppError) throw err;
       throw new UnauthorizedError('Invalid, expired, or already rotated refresh token', 'INVALID_REFRESH_TOKEN');
     }
   }
@@ -364,16 +360,16 @@ export class AuthService {
     const authHeader = req?.headers.authorization;
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.split(' ')[1];
-      revokeToken(token);
+      await revokeTokenAsync(token);
     }
 
     if (tokenToRevoke) {
-      revokeToken(tokenToRevoke);
+      await revokeTokenAsync(tokenToRevoke);
     }
 
     // Invalidate body refresh token if supplied
     if (req?.body?.refreshToken) {
-      revokeToken(req.body.refreshToken);
+      await revokeTokenAsync(req.body.refreshToken);
     }
 
     if (userId) {
