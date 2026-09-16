@@ -33,10 +33,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
-          cache: "npm"
-
-      - name: Install Monorepo Root Dependencies
-        run: npm ci
 
       - name: Install Frontend Dependencies
         working-directory: ./frontend
@@ -51,7 +47,9 @@ jobs:
         run: npx prisma generate
 
       - name: Execute Monorepo Build (Frontend Vite & Backend Typecheck)
-        run: npm run build
+        run: |
+          npm --prefix frontend run build
+          npm --prefix backend run typecheck
 
       - name: Verify Frontend Production Output
         run: |
@@ -96,4 +94,3 @@ jobs:
           generate_release_notes: true
           draft: false
           prerelease: false
-
