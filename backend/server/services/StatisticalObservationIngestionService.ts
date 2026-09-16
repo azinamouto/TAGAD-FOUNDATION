@@ -333,11 +333,8 @@ export class StatisticalObservationIngestionService {
           barangays
         );
         const { dimensions, dimensionsHash, error: dimError } = this.resolveDimensions(
-          record,
-          params.mapping.dimensions,
-          table
+          record, params.mapping.dimensions, table
         );
-
         for (const mc of measureColumns) {
           const rowErrors: string[] = [];
 
@@ -354,18 +351,8 @@ export class StatisticalObservationIngestionService {
           }
 
           // Numeric value from specific column
-          const rawVal = record[mc.columnName];
-          let numericValue: number | null = null;
-          if (rawVal === undefined || rawVal === null || String(rawVal).trim() === '') {
-            rowErrors.push(`Missing numeric value in column '${mc.columnName}'.`);
-          } else {
-            const parsedNum = parseFloat(String(rawVal).replace(/,/g, '').trim());
-            if (isNaN(parsedNum) || !isFinite(parsedNum)) {
-              rowErrors.push(`Invalid numeric value '${rawVal}' in column '${mc.columnName}'.`);
-            } else {
-              numericValue = parsedNum;
-            }
-          }
+          const { numericValue, error: numericError } = this.resolveNumericValue(record, mc.columnName);
+          if (numericError) rowErrors.push(numericError);
 
           const unit = mc.unit || tableIndicator?.unit || null;
           let status: PreviewRow['status'] = 'VALID';
@@ -989,10 +976,11 @@ export class StatisticalObservationIngestionService {
       return { numericValue: null, error: `Empty numeric value in column '${columnName}'.` };
     }
 
-    const clean = String(raw).replace(/,/g, '').trim();
-    const parsed = parseFloat(clean);
+    const value = String(raw).trim();
+    const numericSyntax = /^[+-]?(?:(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/;
+    const parsed = Number(value.replace(/,/g, ''));
 
-    if (isNaN(parsed) || !isFinite(parsed)) {
+    if (!numericSyntax.test(value) || !Number.isFinite(parsed)) {
       return { numericValue: null, error: `Invalid numeric value '${raw}' in column '${columnName}'.` };
     }
 
