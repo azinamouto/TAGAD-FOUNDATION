@@ -33,6 +33,19 @@ export const sendError = (
   statusCode: number = 500
 ): Response => {
   captureBackendError(error, error instanceof AppError ? error.statusCode : statusCode);
+  // Only deliberately constructed client errors are safe to disclose. Controller
+  // fallback status codes must not expose database messages, paths, or SDK details.
+  if (process.env.NODE_ENV === 'production' &&
+      (!(error instanceof AppError) || error.statusCode >= 500)) {
+    const unavailable = error instanceof AppError && error.statusCode === 503;
+    return res.status(unavailable ? 503 : 500).json({
+      success: false,
+      error: {
+        code: unavailable ? 'SERVICE_UNAVAILABLE' : 'INTERNAL_SERVER_ERROR',
+        message: unavailable ? 'Service temporarily unavailable' : 'Internal server error',
+      },
+    });
+  }
   if (error instanceof AppError) {
     const code = error.code || 'APP_ERROR';
     return res.status(error.statusCode).json({
