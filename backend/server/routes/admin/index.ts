@@ -17,6 +17,7 @@ import statisticalCatalogRoutes from '../statisticalCatalog';
 import statisticalImportRoutes from './statisticalImport';
 import movAttachmentRoutes from './movAttachments';
 import feedbackRoutes from './feedback';
+import statisticalSearchRoutes from './statisticalSearch';
 
 const router = Router();
 
@@ -41,6 +42,7 @@ router.use('/table-builder', tableBuilderRoutes);
 router.use('/statistical-catalog', statisticalCatalogRoutes);
 router.use('/statistical-import', statisticalImportRoutes);
 router.use('/feedback', feedbackRoutes);
+router.use('/statistical-search', statisticalSearchRoutes);
 
 // MOV Attachments — mounted under accomplishments for scope clarity
 router.use('/accomplishments/:accomplishmentId/mov', movAttachmentRoutes);

@@ -47,6 +47,7 @@ try {
   run(process.execPath, ['--import', 'tsx', 'scripts/e2e-qualification-issue16.ts']);
   run(process.execPath, ['--import', 'tsx', 'scripts/qualify-import-layout.ts']);
   run(process.execPath, ['--import', 'tsx', 'scripts/qualify-gad-workflow.ts']);
+  run(process.execPath, ['--import', 'tsx', 'scripts/qualify-statistical-search.ts']);
   run(process.execPath, ['--import', 'tsx', 'scripts/qualify-revocation.ts']);
   // Restore only synthetic qualification data into a second disposable database.
   // A local logical restore does not certify deployed backups or Supabase PITR.
