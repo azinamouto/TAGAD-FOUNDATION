@@ -332,10 +332,12 @@ export class StatisticalObservationIngestionService {
           table,
           barangays
         );
-        const { dimensions, dimensionsHash, error: dimError } = this.resolveDimensions(
-          record, params.mapping.dimensions, table
-        );
         for (const mc of measureColumns) {
+          const period = mc.period || this.resolvePeriod(record, params.mapping.period);
+          const columnDimensions = Object.fromEntries(Object.entries(mc.dimensions || {}).map(([key, value]) => [key, { constantValue: value }]));
+          const { dimensions, dimensionsHash, error: dimError } = this.resolveDimensions(
+            record, { ...params.mapping.dimensions, ...columnDimensions }, table
+          );
           const rowErrors: string[] = [];
 
           if (!period) rowErrors.push('Missing reporting period.');

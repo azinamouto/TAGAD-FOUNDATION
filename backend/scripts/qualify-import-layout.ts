@@ -33,6 +33,35 @@ try {
     if (action === 'execute') assert.equal(result.data.insertedCount, 1);
   }
   assert.equal(await prisma.statisticalObservation.count({ where: { datasetId: dataset.id, period: '2091', numericValue: 12 } }), 1);
+  const indicator = await prisma.statisticalIndicator.findFirstOrThrow({ where: { tableDefinitionId: table.id } });
+  const matrix = {
+    csvContent: 'Talibon statistics,,\nBarangay,Population,\n,Male,Female\nBagacay,20,25',
+    datasetId: dataset.id, tableId: table.id, ingestionMode: 'MEASURE_COLUMNS', duplicateStrategy: 'REJECT',
+    mapping: { barangay: { sourceColumn: 'Barangay' }, measureColumns: [
+      { columnName: 'Population / Male', indicatorId: indicator.id, period: '2092', dimensions: { DIM_SEX: 'MALE' } },
+      { columnName: 'Population / Female', indicatorId: indicator.id, period: '2092', dimensions: { DIM_SEX: 'FEMALE' } },
+    ] },
+  };
+  const request = async (action: string, body: any) => {
+    const response = await fetch(`${base}/${action}`, { method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify(body) });
+    return { status: response.status, body: await response.json() };
+  };
+  const preview = await request('preview', matrix);
+  assert.equal(preview.status, 200, JSON.stringify(preview.body));
+  assert.equal(preview.body.data.valid, true, JSON.stringify(preview.body));
+  assert.equal(preview.body.data.rows.length, 2);
+  assert.notEqual(preview.body.data.rows[0].coordinate.dimensionsHash, preview.body.data.rows[1].coordinate.dimensionsHash);
+  const imported = await request('execute', matrix);
+  assert.equal(imported.status, 201, JSON.stringify(imported.body));
+  assert.equal(imported.body.data.insertedCount, 2);
+  assert.equal(await prisma.statisticalObservation.count({ where: { datasetId: dataset.id, period: '2092', indicatorId: indicator.id } }), 2);
+  const bad = { ...matrix, csvContent: matrix.csvContent.replace('20,25', '20people,25') };
+  assert.equal((await request('preview', bad)).body.data.valid, false);
+  const before = await prisma.statisticalObservation.count();
+  assert.ok((await request('execute', bad)).status >= 400);
+  assert.equal(await prisma.statisticalObservation.count(), before);
+  console.log('Matrix PostgreSQL/HTTP PASS: one indicator, two dimension coordinates, per-column period, and invalid-number atomic rejection.');
   console.log('Import layout PostgreSQL/HTTP PASS: discover, preview source record number, execute and persisted value.');
 } finally {
   await new Promise<void>(resolve => server.close(() => resolve()));

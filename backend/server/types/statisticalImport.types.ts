@@ -6,7 +6,11 @@ export interface ColumnMappingConfig {
   barangay?: { sourceColumn?: string; constantValue?: string | null };
   indicator?: { sourceColumn?: string; constantIndicatorId?: string };
   numericValueColumn?: string;
-  measureColumns?: Array<{ columnName: string; indicatorId: string; unit?: string }>;
+  measureColumns?: Array<{
+    columnName: string; indicatorId: string; unit?: string;
+    period?: string;
+    dimensions?: Record<string, string>;
+  }>;
   unit?: { sourceColumn?: string; constantValue?: string };
   dimensions?: Record<string, { sourceColumn?: string; constantValue?: string }>;
 }
