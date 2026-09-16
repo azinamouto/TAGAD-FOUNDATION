@@ -43,7 +43,7 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction) =
     }
 
     const durationMs = req.startTime ? Number((performance.now() - req.startTime).toFixed(2)) : 0;
-    const clientIp = (req.headers['x-forwarded-for'] as string) || req.socket.remoteAddress || 'unknown';
+    const clientIp = req.ip || req.socket?.remoteAddress || 'unknown';
     const userAgent = req.headers['user-agent'] || 'unknown';
     const userId = (req as any).user?.id || (req as any).user?.userId;
 
@@ -55,7 +55,7 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction) =
       path: requestPath,
       statusCode: res.statusCode,
       durationMs,
-      clientIp: Array.isArray(clientIp) ? clientIp[0] : String(clientIp).split(',')[0].trim(),
+      clientIp: String(clientIp),
       userAgent: String(userAgent),
       userId,
       query: Object.keys(req.query).length > 0 ? req.query : undefined,

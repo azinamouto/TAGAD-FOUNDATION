@@ -19,7 +19,7 @@ export const loginRateLimiter = rateLimit({
   legacyHeaders: false,
   skipSuccessfulRequests: false,
   handler: (req: Request, res: Response) => {
-    const clientIp = req.ip || (req.headers['x-forwarded-for'] as string) || req.socket.remoteAddress || 'unknown';
+    const clientIp = req.ip || req.socket?.remoteAddress || 'unknown';
     logger.warn('RATE_LIMIT_EXCEEDED_LOGIN', { clientIp, path: req.originalUrl });
 
     return sendError(
@@ -48,7 +48,7 @@ export const feedbackRateLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   handler: (req: Request, res: Response) => {
-    const clientIp = req.ip || (req.headers['x-forwarded-for'] as string) || req.socket.remoteAddress || 'unknown';
+    const clientIp = req.ip || req.socket?.remoteAddress || 'unknown';
     logger.warn('RATE_LIMIT_EXCEEDED_FEEDBACK', { clientIp, path: req.originalUrl });
 
     return sendError(
