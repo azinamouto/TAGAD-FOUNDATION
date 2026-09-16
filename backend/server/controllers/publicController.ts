@@ -10,6 +10,7 @@ import { StatisticalDatasetService } from '../services/StatisticalDatasetService
 import { AuditService } from '../services/AuditService';
 import { sendSuccess, sendError } from '../lib/response';
 import { StatisticalPublicationStatus } from '@prisma/client';
+import { FeedbackService } from '../services/FeedbackService';
 
 export const getPublicDashboard = async (req: Request, res: Response) => {
   try {
@@ -86,12 +87,7 @@ export const getPublicBarangays = async (req: Request, res: Response) => {
 export const submitPublicFeedback = async (req: Request, res: Response) => {
   try {
     const { name, email, subject, message } = req.body;
-    await AuditService.logAction({
-      action: 'PUBLIC_FEEDBACK_SUBMITTED',
-      entityType: 'Feedback',
-      afterState: { name, email, subject, messageLength: message?.length },
-      req,
-    });
+    await FeedbackService.submit({ name, email, subject, message });
     return sendSuccess(res, { message: 'Feedback submitted successfully. Thank you for participating in Talibon GAD!' });
   } catch (error: any) {
     return sendError(res, error, error.statusCode || 500);

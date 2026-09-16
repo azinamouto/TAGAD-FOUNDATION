@@ -153,8 +153,8 @@ export const updateOfficeSchema = createOfficeSchema.partial();
 
 // Public Feedback Schema
 export const publicFeedbackSchema = z.object({
-  name: z.string().min(1, { message: 'Name is required' }),
-  email: z.string().email({ message: 'Valid email is required' }),
-  subject: z.string().min(3, { message: 'Subject is required' }),
-  message: z.string().min(10, { message: 'Message must be at least 10 characters' }),
+  name: z.string().trim().min(1, { message: 'Name is required' }).max(255),
+  email: z.string().trim().email({ message: 'Valid email is required' }).max(255),
+  subject: z.string().trim().min(3, { message: 'Subject is required' }).max(255),
+  message: z.string().trim().min(10, { message: 'Message must be at least 10 characters' }).max(10000),
 });

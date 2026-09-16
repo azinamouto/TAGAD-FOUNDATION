@@ -138,6 +138,7 @@ model User {
   importedDatasets    StatisticalDataset[] @relation("DatasetImportedBy")
   provenanceRecords   StatisticalProvenance[] @relation("ProvenanceImportedBy")
   revokedTokens       RevokedToken[]
+  reviewedFeedback    CitizenFeedback[]
 
   @@map("tagad_users")
 }
@@ -540,4 +541,22 @@ model RevokedToken {
   @@index([expiresAt])
   @@index([userId])
   @@map("tagad_revoked_tokens")
+}
+
+model CitizenFeedback {
+  id           String   @id @default(uuid()) @db.Uuid
+  name         String   @db.VarChar(255)
+  email        String   @db.VarChar(255)
+  subject      String   @db.VarChar(255)
+  message      String   @db.Text
+  status       String   @default("NEW") @db.VarChar(20)
+  reviewNote   String?  @map("review_note") @db.VarChar(2000)
+  reviewedById String?  @map("reviewed_by_id") @db.Uuid
+  reviewedAt   DateTime? @map("reviewed_at")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  reviewedBy   User? @relation(fields: [reviewedById], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+  @@map("tagad_citizen_feedback")
 }
