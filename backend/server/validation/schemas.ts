@@ -122,6 +122,7 @@ export const updateGADPlanSchema = createGADPlanSchema.partial();
 
 export const updatePlanStatusSchema = z.object({
   status: z.enum(['DRAFT', 'SUBMITTED', 'APPROVED', 'REVISED']),
+  remarks: z.string().trim().max(2000).optional(),
 });
 
 // Accomplishment Schemas

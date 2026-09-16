@@ -1,6 +1,6 @@
 ﻿import prisma, { isDatabaseConnected } from '../lib/prisma';
 import { GADPlanStatus, Role } from '@prisma/client';
-import { NotFoundError, OfficeScopeError, ForbiddenError, ValidationError } from '../lib/errors';
+import { NotFoundError, OfficeScopeError, ForbiddenError, ValidationError, ConflictError, AppError } from '../lib/errors';
 import { AuditService } from './AuditService';
 import { GadBudgetValidator } from './GadBudgetValidator';
 import { HgdgScoringService } from './HgdgScoringService';
@@ -8,6 +8,24 @@ import { Request } from 'express';
 import { FALLBACK_GAD_PLANS } from '../lib/fallbackStore';
 
 const MEMORY_GAD_PLANS: any[] = JSON.parse(JSON.stringify(FALLBACK_GAD_PLANS));
+
+function assertGadWriter(actor: { role: Role; officeId: string | null }) {
+  if (![Role.ADMIN, Role.SUPER_ADMIN, Role.ENCODER].includes(actor.role as any)) throw new ForbiddenError('GAD write access required.');
+  if (actor.role === Role.ENCODER && !actor.officeId) throw new OfficeScopeError('Encoder office assignment required.');
+  if (process.env.NODE_ENV === 'production' && !isDatabaseConnected()) throw new AppError('GAD storage temporarily unavailable', 503);
+}
+
+function assertEditablePlan(plan: any, actor: { role: Role; officeId: string | null }) {
+  assertGadWriter(actor);
+  if (actor.role === Role.ENCODER && plan.officeId !== actor.officeId) throw new OfficeScopeError('Encoders cannot modify plans of other offices.');
+  if (![GADPlanStatus.DRAFT, GADPlanStatus.REVISED].includes(plan.status)) throw new ForbiddenError('Only DRAFT or REVISED GAD Plans can be edited.');
+}
+
+async function lockEditablePlan(tx: any, planId: string, actor: { role: Role; officeId: string | null }) {
+  const changed = await tx.gADPlan.updateMany({ where: { id: planId, status: { in: ['DRAFT', 'REVISED'] },
+    ...(actor.role === Role.ENCODER ? { officeId: actor.officeId } : {}) }, data: { updatedAt: new Date() } });
+  if (changed.count !== 1) throw new ForbiddenError('GAD Plan is locked or outside your office scope.');
+}
 
 // â”€â”€â”€ State Machine â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Allowed transitions per role. ENCODER may only submit/resubmit.
@@ -39,7 +57,7 @@ function assertTransitionRole(
     if (next !== GADPlanStatus.SUBMITTED) {
       throw new ForbiddenError('ENCODER may only submit a GAD Plan, not change its status otherwise.');
     }
-    if (actorOfficeId && actorOfficeId !== planOfficeId) {
+    if (!actorOfficeId || actorOfficeId !== planOfficeId) {
       throw new OfficeScopeError('Encoders cannot modify plans of other offices.');
     }
     return;
@@ -334,6 +352,8 @@ export class GADPlanService {
     actorUser: { id: string; role: Role; officeId: string | null },
     req?: Request
   ) {
+    assertGadWriter(actorUser);
+    if (data.status && data.status !== GADPlanStatus.DRAFT) throw new ValidationError('New GAD Plans must start in DRAFT.');
     let effectiveOfficeId = data.officeId;
 
     if (actorUser.role === Role.ENCODER) {
@@ -345,6 +365,7 @@ export class GADPlanService {
 
     if (!isDatabaseConnected()) {
       let activePlan = MEMORY_GAD_PLANS.find((p) => p.officeId === effectiveOfficeId && p.fiscalYear === fYear);
+      if (activePlan) assertEditablePlan(activePlan, actorUser);
       if (!activePlan) {
         activePlan = {
           id: `plan-${Date.now()}`,
@@ -416,6 +437,7 @@ export class GADPlanService {
         include: { office: true },
       });
 
+      if (activePlan) await lockEditablePlan(tx, activePlan.id, actorUser);
       if (!activePlan) {
         activePlan = await tx.gADPlan.create({
           data: {
@@ -496,14 +518,16 @@ export class GADPlanService {
     actorUser: { id: string; role: Role; officeId: string | null },
     req?: Request
   ) {
-    // ENCODER cannot inject status changes
-    if (data.status !== undefined && actorUser.role === Role.ENCODER) {
-      throw new ForbiddenError('ENCODER cannot change GAD Plan status directly.');
+    assertGadWriter(actorUser);
+    // Status changes go through the shared workflow.
+    if (data.status !== undefined) {
+      throw new ForbiddenError('Use the GAD Plan workflow endpoint to change status.');
     }
 
     if (!isDatabaseConnected()) {
       for (const p of MEMORY_GAD_PLANS) {
         if (p.id === id) {
+          assertEditablePlan(p, actorUser);
           if (actorUser.role === Role.ENCODER && p.officeId !== actorUser.officeId) {
             throw new OfficeScopeError('Encoders cannot modify GAD plans of other offices');
           }
@@ -525,6 +549,7 @@ export class GADPlanService {
         }
         const itemIdx = (p.items || []).findIndex((i: any) => i.id === id);
         if (itemIdx !== -1) {
+          assertEditablePlan(p, actorUser);
           if (actorUser.role === Role.ENCODER && p.officeId !== actorUser.officeId) {
             throw new OfficeScopeError('Encoders cannot modify GAD plans of other offices');
           }
@@ -556,6 +581,7 @@ export class GADPlanService {
     });
 
     if (existingItem) {
+      assertEditablePlan(existingItem.gadPlan, actorUser);
       if (actorUser.role === Role.ENCODER && existingItem.gadPlan.officeId !== actorUser.officeId) {
         throw new OfficeScopeError('Encoders cannot modify GAD plans of other offices');
       }
@@ -578,6 +604,7 @@ export class GADPlanService {
       }
 
       const updated = await prisma.$transaction(async (tx) => {
+        await lockEditablePlan(tx, existingItem.gadPlanId, actorUser);
         const itemRes = await tx.gADPlanItem.update({
           where: { id },
           data: updateData,
@@ -638,6 +665,7 @@ export class GADPlanService {
       throw new OfficeScopeError('Encoders cannot modify GAD plans of other offices');
     }
 
+    assertEditablePlan(existingPlan, actorUser);
     const planData: any = {};
     if (data.status) {
       if (
@@ -653,6 +681,7 @@ export class GADPlanService {
     if (data.gadBudget !== undefined) planData.gadBudget = parseFloat(String(data.gadBudget));
 
     const updatedPlan = await prisma.$transaction(async (tx) => {
+      await lockEditablePlan(tx, existingPlan.id, actorUser);
       const planRes = await tx.gADPlan.update({
         where: { id },
         data: planData,
@@ -681,95 +710,75 @@ export class GADPlanService {
   }
 
   public static async updatePlanStatus(
-    id: string,
-    status: GADPlanStatus,
-    actorUser: { id: string; role: Role; officeId: string | null },
-    req?: Request
+    id: string, status: GADPlanStatus,
+    actorUser: { id: string; role: Role; officeId: string | null }, req?: Request
   ) {
-    // VIEWER is completely forbidden
-    if (actorUser.role === Role.VIEWER) {
-      throw new ForbiddenError('VIEWER role cannot change GAD Plan status.');
-    }
-    // ENCODER can only submit â€” reject all other status changes
-    if (actorUser.role === Role.ENCODER && status !== GADPlanStatus.SUBMITTED) {
-      throw new ForbiddenError('ENCODER may only submit a GAD Plan, not change its status otherwise.');
-    }
-    // Non-ADMIN/SUPER_ADMIN cannot approve
-    if (
-      status === GADPlanStatus.APPROVED &&
-      actorUser.role !== Role.ADMIN &&
-      actorUser.role !== Role.SUPER_ADMIN
-    ) {
-      throw new ForbiddenError('Only administrators can approve GAD Plans');
-    }
+    return this.transitionPlan(id, status, actorUser, req?.body?.remarks, false, undefined, req);
+  }
 
-    // SUPER_ADMIN may approve directly regardless of prior state (override privilege)
-    const isSuperAdminApproval = actorUser.role === Role.SUPER_ADMIN && status === GADPlanStatus.APPROVED;
-
+  private static async transitionPlan(
+    id: string, status: GADPlanStatus,
+    actor: { id: string; role: Role; officeId: string | null },
+    remarks?: string, forceApproval = false, overrideReason?: string, req?: Request
+  ) {
+    if (actor.role === Role.VIEWER) throw new ForbiddenError('VIEWER cannot change GAD Plan status.');
+    if (actor.role === Role.ENCODER && status !== GADPlanStatus.SUBMITTED) {
+      throw new ForbiddenError('ENCODER may only submit a GAD Plan.');
+    }
+    if (typeof forceApproval !== 'boolean') throw new ValidationError('forceApproval must be boolean.');
+    for (const text of [remarks, overrideReason]) {
+      if (text !== undefined && (typeof text !== 'string' || text.length > 2000)) throw new ValidationError('Workflow remarks must be text up to 2000 characters.');
+    }
+    const validatePlan = (plan: any) => {
+      assertTransitionRole(status, actor.role, actor.officeId, plan.officeId);
+      assertValidTransition(plan.status, status);
+      if (status === GADPlanStatus.REVISED && !remarks?.trim()) throw new ValidationError('Revision remarks are required.');
+      if (status === GADPlanStatus.APPROVED) {
+        const validation = GadBudgetValidator.validate({
+          fiscalYear: plan.fiscalYear, totalBudget: Number(plan.totalBudget ?? 0),
+          explicitGadBudget: Number(plan.gadBudget ?? 0), officeId: plan.officeId,
+        });
+        if (!validation.isCompliant) {
+          if (!forceApproval) throw new ValidationError(validation.errors[0] || 'Statutory GAD budget deficit.');
+          if (!overrideReason?.trim()) throw new ValidationError('Deficit override approval requires an explicit justification reason.');
+        }
+      }
+    };
+    const after = { status, remarks: remarks?.trim() || null, forceApproval, overrideReason: overrideReason?.trim() || null };
     if (!isDatabaseConnected()) {
+      if (process.env.NODE_ENV === 'production') throw new AppError('GAD storage temporarily unavailable', 503);
       const plan = findPlanInMemory(id);
       if (!plan) throw new NotFoundError('GAD Plan');
-      if (actorUser.role === Role.ENCODER && plan.officeId !== actorUser.officeId) {
-        throw new OfficeScopeError('Encoders cannot modify plans of other offices');
-      }
-      if (!isSuperAdminApproval) {
-        assertValidTransition(plan.status, status);
-      }
+      validatePlan(plan);
+      const beforeState = { status: plan.status };
       plan.status = status;
-      await AuditService.logActionTx(null, {
-        userId: actorUser.id,
-        action: 'GAD_PLAN_STATUS_CHANGED',
-        entityType: 'GADPlan',
-        entityId: id,
-        beforeState: { status: plan.status },
-        afterState: { status },
-        req,
-      });
+      if (status === GADPlanStatus.REVISED) plan.revisionRemarks = remarks;
+      if (status === GADPlanStatus.SUBMITTED && remarks) plan.submissionRemarks = remarks;
+      if (forceApproval) plan.overrideReason = overrideReason;
+      await AuditService.logActionTx(null, { userId: actor.id, action: 'GAD_PLAN_STATUS_CHANGED', entityType: 'GADPlan',
+        entityId: plan.id, beforeState, afterState: after, req });
       return plan;
     }
-
-    // Resolve if ID is item or plan
-    const item = await prisma.gADPlanItem.findUnique({
-      where: { id },
-      select: { gadPlanId: true },
-    });
-
-    const targetPlanId = item ? item.gadPlanId : id;
-
-    const existing = await prisma.gADPlan.findUnique({ where: { id: targetPlanId } });
-    if (!existing) {
-      throw new NotFoundError('GAD Plan');
+    try {
+      return await prisma.$transaction(async tx => {
+        const item = await tx.gADPlanItem.findUnique({ where: { id }, select: { gadPlanId: true } });
+        const planId = item?.gadPlanId || id;
+        const plan = await tx.gADPlan.findUnique({ where: { id: planId } });
+        if (!plan) throw new NotFoundError('GAD Plan');
+        validatePlan(plan);
+        const changed = await tx.gADPlan.updateMany({
+          where: { id: planId, status: plan.status, updatedAt: plan.updatedAt }, data: { status },
+        });
+        if (changed.count !== 1) throw new ConflictError('GAD Plan changed. Refresh before changing status.');
+        // Audit failure must roll back the approval, including its override reason.
+        await tx.auditLog.create({ data: { userId: actor.id, action: 'GAD_PLAN_STATUS_CHANGED',
+          entityType: 'GADPlan', entityId: planId, beforeState: { status: plan.status }, afterState: after } });
+        return tx.gADPlan.findUniqueOrThrow({ where: { id: planId } });
+      }, { isolationLevel: 'Serializable' });
+    } catch (error: any) {
+      if (error?.code === 'P2034') throw new ConflictError('GAD Plan changed. Refresh before changing status.');
+      throw error;
     }
-
-    if (actorUser.role === Role.ENCODER && existing.officeId !== actorUser.officeId) {
-      throw new OfficeScopeError('Encoders cannot modify plans of other offices');
-    }
-
-    if (!isSuperAdminApproval) {
-      assertValidTransition(existing.status, status);
-    }
-
-    const updated = await prisma.$transaction(async (tx) => {
-      const p = await tx.gADPlan.update({
-        where: { id: targetPlanId },
-        data: { status },
-        include: { office: true },
-      });
-
-      await AuditService.logActionTx(tx, {
-        userId: actorUser.id,
-        action: 'GAD_PLAN_STATUS_CHANGED',
-        entityType: 'GADPlan',
-        entityId: targetPlanId,
-        beforeState: { status: existing.status },
-        afterState: { status: p.status },
-        req,
-      });
-
-      return p;
-    });
-
-    return updated;
   }
 
   public static async deleteGADPlan(
@@ -777,10 +786,12 @@ export class GADPlanService {
     actorUser: { id: string; role: Role; officeId: string | null },
     req?: Request
   ) {
+    assertGadWriter(actorUser);
     if (!isDatabaseConnected()) {
       for (let i = 0; i < MEMORY_GAD_PLANS.length; i++) {
         const p = MEMORY_GAD_PLANS[i];
         if (p.id === id) {
+          assertEditablePlan(p, actorUser);
           if (actorUser.role === Role.ENCODER && p.officeId !== actorUser.officeId) {
             throw new OfficeScopeError('Encoders cannot delete plans of other offices');
           }
@@ -796,6 +807,7 @@ export class GADPlanService {
         }
         const itemIdx = (p.items || []).findIndex((it: any) => it.id === id);
         if (itemIdx !== -1) {
+          assertEditablePlan(p, actorUser);
           if (actorUser.role === Role.ENCODER && p.officeId !== actorUser.officeId) {
             throw new OfficeScopeError('Encoders cannot delete items belonging to other offices');
           }
@@ -820,11 +832,13 @@ export class GADPlanService {
     });
 
     if (item) {
+      assertEditablePlan(item.gadPlan, actorUser);
       if (actorUser.role === Role.ENCODER && item.gadPlan.officeId !== actorUser.officeId) {
         throw new OfficeScopeError('Encoders cannot delete items belonging to other offices');
       }
 
       await prisma.$transaction(async (tx) => {
+        await lockEditablePlan(tx, item.gadPlanId, actorUser);
         await tx.gADPlanItem.delete({ where: { id } });
 
         await AuditService.logActionTx(tx, {
@@ -848,7 +862,9 @@ export class GADPlanService {
       throw new OfficeScopeError('Encoders cannot delete plans of other offices');
     }
 
+    assertEditablePlan(plan, actorUser);
     await prisma.$transaction(async (tx) => {
+      await lockEditablePlan(tx, plan.id, actorUser);
       await tx.gADPlan.delete({ where: { id } });
 
       await AuditService.logActionTx(tx, {
@@ -888,15 +904,14 @@ export class GADPlanService {
     actorUser: { id: string; role: Role; officeId: string | null },
     req?: Request
   ): Promise<any> {
+    assertGadWriter(actorUser);
     if (!isDatabaseConnected()) {
       const plan = findPlanInMemory(planId);
       if (!plan) throw new NotFoundError('GAD Plan');
       if (actorUser.role === Role.ENCODER && plan.officeId !== actorUser.officeId) {
         throw new OfficeScopeError('Encoders cannot add items to plans of other offices.');
       }
-      if (plan.status !== GADPlanStatus.DRAFT) {
-        throw new ForbiddenError('Cannot add items to a plan that is not in DRAFT status.');
-      }
+      assertEditablePlan(plan, actorUser);
       // Auto-compute attributedPercentage from hgdgScore
       let attributedPercentage: number | null = data.attributedPercentage ?? null;
       if (data.hgdgScore != null) {
@@ -933,13 +948,16 @@ export class GADPlanService {
       throw new OfficeScopeError('Encoders cannot add items to plans of other offices.');
     }
 
+    assertEditablePlan(plan, actorUser);
     let attributedPercentage: number | null = null;
     if (data.hgdgScore != null) {
       const tier = HgdgScoringService.getAttributionTier(Number(data.hgdgScore));
       attributedPercentage = tier.attributionPercentage;
     }
 
-    const item = await prisma.gADPlanItem.create({
+    const item = await prisma.$transaction(async tx => {
+      await lockEditablePlan(tx, planId, actorUser);
+      return tx.gADPlanItem.create({
       data: {
         gadPlanId: planId,
         genderIssue: data.genderIssue ?? 'Not Specified',
@@ -956,149 +974,23 @@ export class GADPlanService {
         attributedPercentage,
       },
     });
+    });
     return { ...item, hgdgScore: item.hgdgScore ? Number(item.hgdgScore) : null, attributedPercentage };
   }
 
   /**
    * ENCODER or ADMIN submits a plan (DRAFT/REVISED â†’ SUBMITTED).
    */
-  public static async submitPlan(
-    planId: string,
-    actorUser: { id: string; role: Role; officeId: string | null },
-    remarks?: string,
-    req?: Request
-  ): Promise<any> {
-    if (actorUser.role === Role.VIEWER) {
-      throw new ForbiddenError('VIEWER role cannot submit GAD Plans.');
-    }
-
-    if (!isDatabaseConnected()) {
-      const plan = findPlanInMemory(planId);
-      if (!plan) throw new NotFoundError('GAD Plan');
-      if (actorUser.role === Role.ENCODER && plan.officeId !== actorUser.officeId) {
-        throw new OfficeScopeError('Encoders cannot submit plans of other offices.');
-      }
-      assertValidTransition(plan.status, GADPlanStatus.SUBMITTED);
-      plan.status = GADPlanStatus.SUBMITTED;
-      if (remarks) plan.submissionRemarks = remarks;
-      return plan;
-    }
-
-    const plan = await prisma.gADPlan.findUnique({ where: { id: planId } });
-    if (!plan) throw new NotFoundError('GAD Plan');
-    if (actorUser.role === Role.ENCODER && plan.officeId !== actorUser.officeId) {
-      throw new OfficeScopeError('Encoders cannot submit plans of other offices.');
-    }
-    assertValidTransition(plan.status, GADPlanStatus.SUBMITTED);
-
-    return prisma.gADPlan.update({
-      where: { id: planId },
-      data: { status: GADPlanStatus.SUBMITTED },
-    });
+  public static async submitPlan(planId: string, actorUser: { id: string; role: Role; officeId: string | null }, remarks?: string, req?: Request): Promise<any> {
+    return this.transitionPlan(planId, GADPlanStatus.SUBMITTED, actorUser, remarks, false, undefined, req);
   }
 
-  /**
-   * ADMIN sends plan back to ENCODER for revision (SUBMITTED â†’ REVISED).
-   */
-  public static async revisePlan(
-    planId: string,
-    actorUser: { id: string; role: Role; officeId: string | null },
-    revisionRemarks: string,
-    req?: Request
-  ): Promise<any> {
-    if (actorUser.role !== Role.ADMIN && actorUser.role !== Role.SUPER_ADMIN) {
-      throw new ForbiddenError('Only ADMIN or SUPER_ADMIN can request revisions.');
-    }
-    if (!revisionRemarks || !revisionRemarks.trim()) {
-      throw new ValidationError('Revision remarks are required when returning a plan for revision.');
-    }
-
-    if (!isDatabaseConnected()) {
-      const plan = findPlanInMemory(planId);
-      if (!plan) throw new NotFoundError('GAD Plan');
-      assertValidTransition(plan.status, GADPlanStatus.REVISED);
-      plan.status = GADPlanStatus.REVISED;
-      plan.revisionRemarks = revisionRemarks;
-      return plan;
-    }
-
-    const plan = await prisma.gADPlan.findUnique({ where: { id: planId } });
-    if (!plan) throw new NotFoundError('GAD Plan');
-    assertValidTransition(plan.status, GADPlanStatus.REVISED);
-
-    // Note: revisionRemarks is not a DB column; stored in-memory for test path
-    return prisma.gADPlan.update({
-      where: { id: planId },
-      data: { status: GADPlanStatus.REVISED },
-    });
+  public static async revisePlan(planId: string, actorUser: { id: string; role: Role; officeId: string | null }, revisionRemarks: string, req?: Request): Promise<any> {
+    return this.transitionPlan(planId, GADPlanStatus.REVISED, actorUser, revisionRemarks, false, undefined, req);
   }
 
-  /**
-   * ADMIN approves plan (SUBMITTED â†’ APPROVED) with optional 5%-deficit override.
-   */
-  public static async approvePlan(
-    planId: string,
-    actorUser: { id: string; role: Role; officeId: string | null },
-    forceApproval: boolean = false,
-    overrideReason?: string,
-    req?: Request
-  ): Promise<any> {
-    if (actorUser.role !== Role.ADMIN && actorUser.role !== Role.SUPER_ADMIN) {
-      throw new ForbiddenError('Only ADMIN or SUPER_ADMIN can approve GAD Plans.');
-    }
-
-    if (!isDatabaseConnected()) {
-      const plan = findPlanInMemory(planId);
-      if (!plan) throw new NotFoundError('GAD Plan');
-      assertValidTransition(plan.status, GADPlanStatus.APPROVED);
-
-      // 5% budget enforcement
-      const validation = GadBudgetValidator.validate({
-        fiscalYear: plan.fiscalYear,
-        totalBudget: plan.totalBudget ?? 0,
-        explicitGadBudget: plan.gadBudget ?? 0,
-        officeId: plan.officeId,
-        officeName: plan.officeName,
-      });
-
-      if (!validation.isCompliant) {
-        if (!forceApproval) {
-          throw new ValidationError(validation.errors[0] || 'Statutory 5% GAD budget deficit.');
-        }
-        if (!overrideReason || !overrideReason.trim()) {
-          throw new ValidationError('Deficit override approval requires an explicit justification reason.');
-        }
-        plan.overrideReason = overrideReason;
-      }
-
-      plan.status = GADPlanStatus.APPROVED;
-      return plan;
-    }
-
-    const plan = await prisma.gADPlan.findUnique({ where: { id: planId } });
-    if (!plan) throw new NotFoundError('GAD Plan');
-    assertValidTransition(plan.status, GADPlanStatus.APPROVED);
-
-    const validation = GadBudgetValidator.validate({
-      fiscalYear: plan.fiscalYear,
-      totalBudget: Number(plan.totalBudget),
-      explicitGadBudget: Number(plan.gadBudget),
-      officeId: plan.officeId,
-    });
-
-    if (!validation.isCompliant) {
-      if (!forceApproval) {
-        throw new ValidationError(validation.errors[0] || 'Statutory 5% GAD budget deficit.');
-      }
-      if (!overrideReason || !overrideReason.trim()) {
-        throw new ValidationError('Deficit override approval requires an explicit justification reason.');
-      }
-    }
-
-    return prisma.gADPlan.update({
-      where: { id: planId },
-      data: { status: GADPlanStatus.APPROVED },
-    });
+  public static async approvePlan(planId: string, actorUser: { id: string; role: Role; officeId: string | null }, forceApproval = false, overrideReason?: string, req?: Request): Promise<any> {
+    return this.transitionPlan(planId, GADPlanStatus.APPROVED, actorUser, undefined, forceApproval, overrideReason, req);
   }
 
   /**

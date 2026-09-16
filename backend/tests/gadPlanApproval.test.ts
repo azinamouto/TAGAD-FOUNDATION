@@ -15,6 +15,7 @@ test('SUPER_ADMIN can approve a GAD plan through the status transition service',
     { id: 'usr-superadmin-01', role: Role.SUPER_ADMIN, officeId: null }
   );
 
+  await GADPlanService.submitPlan(created.planId, { id: 'usr-superadmin-01', role: Role.SUPER_ADMIN, officeId: null });
   const result = await GADPlanService.updatePlanStatus(
     created.planId,
     GADPlanStatus.APPROVED,
