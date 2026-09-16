@@ -68,58 +68,112 @@ export class OfficeService {
   }
 
   public static async createOffice(data: any, actorUserId?: string, req?: Request) {
+    if (!isDatabaseConnected()) {
+      const existing = FALLBACK_OFFICES.find((o) => o.code.toUpperCase() === data.code.toUpperCase().trim());
+      if (existing) {
+        throw new ConflictError(`Office with code '${data.code}' already exists`);
+      }
+      const office = {
+        id: `off-${Date.now()}`,
+        code: data.code.toUpperCase().trim(),
+        name: data.name.trim(),
+        headName: data.headName || null,
+        isActive: data.isActive !== undefined ? data.isActive : true,
+      };
+      FALLBACK_OFFICES.push(office);
+      await AuditService.logAction({
+        userId: actorUserId,
+        action: 'OFFICE_CREATED',
+        entityType: 'Office',
+        entityId: office.id,
+        afterState: office,
+        req,
+      });
+      return office;
+    }
+
     const existing = await prisma.office.findUnique({ where: { code: data.code.toUpperCase().trim() } });
     if (existing) {
       throw new ConflictError(`Office with code '${data.code}' already exists`);
     }
 
-    const office = await prisma.office.create({
-      data: {
-        code: data.code.toUpperCase().trim(),
-        name: data.name.trim(),
-        headName: data.headName || null,
-        isActive: data.isActive !== undefined ? data.isActive : true,
-      },
-    });
+    return await prisma.$transaction(async (tx) => {
+      const office = await tx.office.create({
+        data: {
+          code: data.code.toUpperCase().trim(),
+          name: data.name.trim(),
+          headName: data.headName || null,
+          isActive: data.isActive !== undefined ? data.isActive : true,
+        },
+      });
 
-    await AuditService.logAction({
-      userId: actorUserId,
-      action: 'OFFICE_CREATED',
-      entityType: 'Office',
-      entityId: office.id,
-      afterState: office,
-      req,
-    });
+      await AuditService.logActionTx(tx, {
+        userId: actorUserId,
+        action: 'OFFICE_CREATED',
+        entityType: 'Office',
+        entityId: office.id,
+        afterState: office,
+        req,
+      });
 
-    return office;
+      return office;
+    });
   }
 
   public static async updateOffice(id: string, data: any, actorUserId?: string, req?: Request) {
+    if (!isDatabaseConnected()) {
+      const existingIdx = FALLBACK_OFFICES.findIndex((o) => o.id === id);
+      if (existingIdx === -1) {
+        throw new NotFoundError('Office');
+      }
+      const existing = FALLBACK_OFFICES[existingIdx];
+      const updated = {
+        ...existing,
+        code: data.code ? data.code.toUpperCase().trim() : existing.code,
+        name: data.name ? data.name.trim() : existing.name,
+        headName: data.headName !== undefined ? data.headName : existing.headName,
+        isActive: data.isActive !== undefined ? data.isActive : existing.isActive,
+      };
+      FALLBACK_OFFICES[existingIdx] = updated;
+      await AuditService.logAction({
+        userId: actorUserId,
+        action: 'OFFICE_UPDATED',
+        entityType: 'Office',
+        entityId: id,
+        beforeState: existing,
+        afterState: updated,
+        req,
+      });
+      return updated;
+    }
+
     const existing = await prisma.office.findUnique({ where: { id } });
     if (!existing) {
       throw new NotFoundError('Office');
     }
 
-    const updated = await prisma.office.update({
-      where: { id },
-      data: {
-        code: data.code ? data.code.toUpperCase().trim() : undefined,
-        name: data.name ? data.name.trim() : undefined,
-        headName: data.headName !== undefined ? data.headName : undefined,
-        isActive: data.isActive !== undefined ? data.isActive : undefined,
-      },
-    });
+    return await prisma.$transaction(async (tx) => {
+      const updated = await tx.office.update({
+        where: { id },
+        data: {
+          code: data.code ? data.code.toUpperCase().trim() : undefined,
+          name: data.name ? data.name.trim() : undefined,
+          headName: data.headName !== undefined ? data.headName : undefined,
+          isActive: data.isActive !== undefined ? data.isActive : undefined,
+        },
+      });
 
-    await AuditService.logAction({
-      userId: actorUserId,
-      action: 'OFFICE_UPDATED',
-      entityType: 'Office',
-      entityId: id,
-      beforeState: existing,
-      afterState: updated,
-      req,
-    });
+      await AuditService.logActionTx(tx, {
+        userId: actorUserId,
+        action: 'OFFICE_UPDATED',
+        entityType: 'Office',
+        entityId: id,
+        beforeState: existing,
+        afterState: updated,
+        req,
+      });
 
-    return updated;
+      return updated;
+    });
   }
 }

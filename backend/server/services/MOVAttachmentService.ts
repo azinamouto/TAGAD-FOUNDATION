@@ -131,7 +131,7 @@ export class MOVAttachmentService {
       );
     }
 
-    // 6. Record in database
+    // 6. Record in database atomically with audit log
     if (!isDatabaseConnected()) {
       // In-memory path for testing without a real database
       const attachment: MOVUploadResult = {
@@ -157,24 +157,28 @@ export class MOVAttachmentService {
       return attachment;
     }
 
-    const record = await prisma.mOVAttachment.create({
-      data: {
-        accomplishmentId,
-        storagePath,
-        fileName: file.originalname,
-        fileType: file.mimetype,
-        fileSizeBytes: file.size,
-        uploadedById: actor.id,
-      },
-    });
+    const record = await prisma.$transaction(async (tx) => {
+      const createdRecord = await tx.mOVAttachment.create({
+        data: {
+          accomplishmentId,
+          storagePath,
+          fileName: file.originalname,
+          fileType: file.mimetype,
+          fileSizeBytes: file.size,
+          uploadedById: actor.id,
+        },
+      });
 
-    await AuditService.logActionTx(null, {
-      userId: actor.id,
-      action: 'MOV_ATTACHMENT_UPLOADED',
-      entityType: 'MOVAttachment',
-      entityId: record.id,
-      afterState: { storagePath, fileName: record.fileName, fileType: record.fileType },
-      req,
+      await AuditService.logActionTx(tx, {
+        userId: actor.id,
+        action: 'MOV_ATTACHMENT_UPLOADED',
+        entityType: 'MOVAttachment',
+        entityId: createdRecord.id,
+        afterState: { storagePath, fileName: createdRecord.fileName, fileType: createdRecord.fileType },
+        req,
+      });
+
+      return createdRecord;
     });
 
     return {

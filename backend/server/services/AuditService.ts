@@ -16,12 +16,29 @@ const MEMORY_AUDIT_LOGS: any[] = [];
 export class AuditService {
   public static async logActionTx(tx: any, params: AuditLogParams) {
     const ipAddress = params.req
-      ? (params.req.headers['x-forwarded-for'] as string) || params.req.socket?.remoteAddress || null
+      ? params.req.ip || params.req.socket?.remoteAddress || null
       : null;
 
     const userAgent = params.req ? (params.req.headers['user-agent'] as string) || null : null;
 
-    if (!isDatabaseConnected() || !tx) {
+    if (tx) {
+      // Direct write within transaction context: failures propagate to rollback the transaction
+      await tx.auditLog.create({
+        data: {
+          userId: params.userId || null,
+          action: params.action,
+          entityType: params.entityType,
+          entityId: params.entityId || null,
+          beforeState: params.beforeState ? JSON.parse(JSON.stringify(params.beforeState)) : null,
+          afterState: params.afterState ? JSON.parse(JSON.stringify(params.afterState)) : null,
+          ipAddress: ipAddress ? String(ipAddress).slice(0, 45) : null,
+          userAgent: userAgent ? String(userAgent).slice(0, 255) : null,
+        },
+      });
+      return;
+    }
+
+    if (!isDatabaseConnected()) {
       MEMORY_AUDIT_LOGS.unshift({
         id: `audit-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         userId: params.userId || null,
@@ -37,28 +54,23 @@ export class AuditService {
       return;
     }
 
-    try {
-      await tx.auditLog.create({
-        data: {
-          userId: params.userId || null,
-          action: params.action,
-          entityType: params.entityType,
-          entityId: params.entityId || null,
-          beforeState: params.beforeState ? JSON.parse(JSON.stringify(params.beforeState)) : null,
-          afterState: params.afterState ? JSON.parse(JSON.stringify(params.afterState)) : null,
-          ipAddress: ipAddress ? String(ipAddress).slice(0, 45) : null,
-          userAgent: userAgent ? String(userAgent).slice(0, 255) : null,
-        },
-      });
-    } catch (error) {
-      // In transaction context, we log warning so callers know if audit log failed
-      console.warn('AuditService.logActionTx error:', error);
-    }
+    await prisma.auditLog.create({
+      data: {
+        userId: params.userId || null,
+        action: params.action,
+        entityType: params.entityType,
+        entityId: params.entityId || null,
+        beforeState: params.beforeState ? JSON.parse(JSON.stringify(params.beforeState)) : null,
+        afterState: params.afterState ? JSON.parse(JSON.stringify(params.afterState)) : null,
+        ipAddress: ipAddress ? String(ipAddress).slice(0, 45) : null,
+        userAgent: userAgent ? String(userAgent).slice(0, 255) : null,
+      },
+    });
   }
 
   public static async logAction(params: AuditLogParams) {
     const ipAddress = params.req
-      ? (params.req.headers['x-forwarded-for'] as string) || params.req.socket?.remoteAddress || null
+      ? params.req.ip || params.req.socket?.remoteAddress || null
       : null;
 
     const userAgent = params.req ? (params.req.headers['user-agent'] as string) || null : null;
@@ -79,22 +91,18 @@ export class AuditService {
       return;
     }
 
-    try {
-      await prisma.auditLog.create({
-        data: {
-          userId: params.userId || null,
-          action: params.action,
-          entityType: params.entityType,
-          entityId: params.entityId || null,
-          beforeState: params.beforeState ? JSON.parse(JSON.stringify(params.beforeState)) : null,
-          afterState: params.afterState ? JSON.parse(JSON.stringify(params.afterState)) : null,
-          ipAddress: ipAddress ? String(ipAddress).slice(0, 45) : null,
-          userAgent: userAgent ? String(userAgent).slice(0, 255) : null,
-        },
-      });
-    } catch {
-      // Non-blocking error logging for audit logs so main business transaction does not abort
-    }
+    await prisma.auditLog.create({
+      data: {
+        userId: params.userId || null,
+        action: params.action,
+        entityType: params.entityType,
+        entityId: params.entityId || null,
+        beforeState: params.beforeState ? JSON.parse(JSON.stringify(params.beforeState)) : null,
+        afterState: params.afterState ? JSON.parse(JSON.stringify(params.afterState)) : null,
+        ipAddress: ipAddress ? String(ipAddress).slice(0, 45) : null,
+        userAgent: userAgent ? String(userAgent).slice(0, 255) : null,
+      },
+    });
   }
 
   public static async getLogs(params: {
