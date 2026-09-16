@@ -23,6 +23,12 @@ async function request(path: string, body: any, method = 'POST') {
 try {
   const direct = `/api/gad-plans/${plan.id}`;
   const legacy = `/api/admin/gad-plans/${plan.id}`;
+  assert.equal((await request(legacy, { gadBudget: 150 }, 'PUT')).status, 200);
+  const edited = await prisma.gADPlan.findUniqueOrThrow({ where: { id: plan.id } });
+  assert.equal(Number(edited.gadBudget), 150);
+  assert.equal(Number(edited.totalBudget), 100000);
+  assert.equal(Number(edited.mandatoryGADPercentage), 5);
+  assert.equal(edited.status, 'DRAFT');
   assert.equal((await request(legacy + '/status', { status: 'APPROVED' }, 'PATCH')).status, 422);
   assert.equal((await request(legacy, { status: 'APPROVED' }, 'PUT')).status, 403);
   assert.equal((await request(direct + '/submit', {})).status, 200);
@@ -33,9 +39,10 @@ try {
   assert.equal((await request(legacy, {}, 'DELETE')).status, 403);
   assert.equal((await request('/api/gad-plans', { fiscalYear: plan.fiscalYear, officeId: office.id, budget: 20 })).status, 403);
   const history = await prisma.auditLog.findMany({ where: { entityType: 'GADPlan', entityId: plan.id }, orderBy: { createdAt: 'asc' } });
-  assert.equal(history.length, 2);
-  assert.equal((history[0].beforeState as any).status, 'DRAFT');
-  assert.equal((history[1].afterState as any).overrideReason, 'Synthetic exception rationale');
+  const transitions = history.filter(entry => (entry.afterState as any)?.status === 'SUBMITTED' || (entry.afterState as any)?.overrideReason);
+  assert.equal(transitions.length, 2);
+  assert.equal((transitions[0].beforeState as any).status, 'DRAFT');
+  assert.equal((transitions[1].afterState as any).overrideReason, 'Synthetic exception rationale');
   await prisma.gADPlan.update({ where: { id: plan.id }, data: { status: 'DRAFT' } });
   await prisma.$executeRawUnsafe(`CREATE FUNCTION qualification_audit_failure() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'synthetic audit failure'; END $$`);
   await prisma.$executeRawUnsafe('CREATE TRIGGER qualification_audit_failure BEFORE INSERT ON tagad_audit_logs FOR EACH ROW EXECUTE FUNCTION qualification_audit_failure()');

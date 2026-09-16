@@ -118,7 +118,17 @@ export const createGADPlanSchema = z.object({
   items: z.array(gadPlanItemSchema).optional(),
 });
 
-export const updateGADPlanSchema = createGADPlanSchema.partial();
+// Update payloads must preserve omitted fields: creation defaults also execute
+// inside optional fields in Zod 4.
+export const updateGADPlanSchema = z.object({
+  officeId: z.string().optional(),
+  fiscalYear: z.coerce.number().int().min(2000).max(2100).optional(),
+  totalBudget: z.coerce.number().min(0).optional(),
+  mandatoryGADPercentage: z.coerce.number().min(0).max(100).optional(),
+  gadBudget: z.coerce.number().min(0).optional(),
+  status: z.enum(['DRAFT', 'SUBMITTED', 'APPROVED', 'REVISED']).optional(),
+  items: z.array(gadPlanItemSchema).optional(),
+});
 
 export const updatePlanStatusSchema = z.object({
   status: z.enum(['DRAFT', 'SUBMITTED', 'APPROVED', 'REVISED']),

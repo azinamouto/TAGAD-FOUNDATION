@@ -3,6 +3,14 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { GADPlanService as G } from '../server/services/GADPlanService';
 import { Role, GADPlanStatus as S } from '@prisma/client';
+import { updateGADPlanSchema } from '../server/validation/schemas';
+
+test('partial GAD updates preserve omitted budgets and workflow status', () => {
+  assert.deepEqual(updateGADPlanSchema.parse({ gadBudget: 150 }), { gadBudget: 150 });
+  assert.deepEqual(updateGADPlanSchema.parse({}), {});
+  assert.deepEqual(updateGADPlanSchema.parse({ status: 'APPROVED' }), { status: 'APPROVED' });
+  assert.equal(updateGADPlanSchema.safeParse({ gadBudget: -1 }).success, false);
+});
 
 test('all GAD status entry points enforce the same state and budget checks', async () => {
   G.resetMemoryStore();
