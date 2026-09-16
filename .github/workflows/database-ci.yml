@@ -52,7 +52,7 @@ jobs:
           cache: "npm"
           cache-dependency-path: backend/package-lock.json
 
-      - name: Install PostgreSQL Client
+      - name: Install PostgreSQL Client Tools
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y postgresql-client
@@ -69,6 +69,15 @@ jobs:
         working-directory: ./backend
         run: npx prisma generate
 
+      - name: Provision PostgreSQL Authorization Roles (Supabase Compatibility)
+        run: |
+          export PGPASSWORD=postgrespassword
+          psql -h localhost -p 5432 -U postgres -d tagad_verification -c "
+            DO \$\$ BEGIN CREATE ROLE anon; EXCEPTION WHEN duplicate_object THEN NULL; END \$\$;
+            DO \$\$ BEGIN CREATE ROLE authenticated; EXCEPTION WHEN duplicate_object THEN NULL; END \$\$;
+            DO \$\$ BEGIN CREATE ROLE service_role; EXCEPTION WHEN duplicate_object THEN NULL; END \$\$;
+          "
+
       - name: Test Supabase SQL Migrations In Timestamp Order
         run: |
           echo "Applying raw Supabase SQL migrations in sequential timestamp order..."
@@ -84,4 +93,3 @@ jobs:
         run: |
           echo "Validating that Prisma schema can push cleanly onto test database..."
           npx prisma db push --skip-generate
-
