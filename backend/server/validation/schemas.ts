@@ -87,7 +87,15 @@ export const createProgramSchema = z.object({
   actualFemale: z.coerce.number().int().min(0).default(0),
 });
 
-export const updateProgramSchema = createProgramSchema.partial();
+export const updateProgramSchema = createProgramSchema.extend({
+  status: createProgramSchema.shape.status.unwrap(),
+  budgetTarget: createProgramSchema.shape.budgetTarget.unwrap(),
+  budgetActual: createProgramSchema.shape.budgetActual.unwrap(),
+  targetMale: createProgramSchema.shape.targetMale.unwrap(),
+  targetFemale: createProgramSchema.shape.targetFemale.unwrap(),
+  actualMale: createProgramSchema.shape.actualMale.unwrap(),
+  actualFemale: createProgramSchema.shape.actualFemale.unwrap(),
+}).partial();
 
 // GAD Plan Item Schema
 export const gadPlanItemSchema = z.object({
@@ -150,7 +158,11 @@ export const createAccomplishmentSchema = z.object({
   varianceExplanation: z.string().optional().nullable(),
 });
 
-export const updateAccomplishmentSchema = createAccomplishmentSchema.partial();
+export const updateAccomplishmentSchema = createAccomplishmentSchema.extend({
+  actualMale: createAccomplishmentSchema.shape.actualMale.unwrap(),
+  actualFemale: createAccomplishmentSchema.shape.actualFemale.unwrap(),
+  actualBudgetUsed: createAccomplishmentSchema.shape.actualBudgetUsed.unwrap(),
+}).partial();
 
 // Office Schemas
 export const createOfficeSchema = z.object({
@@ -160,7 +172,9 @@ export const createOfficeSchema = z.object({
   isActive: z.boolean().default(true),
 });
 
-export const updateOfficeSchema = createOfficeSchema.partial();
+export const updateOfficeSchema = createOfficeSchema.extend({
+  isActive: createOfficeSchema.shape.isActive.unwrap(),
+}).partial();
 
 // Public Feedback Schema
 export const publicFeedbackSchema = z.object({
