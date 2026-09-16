@@ -1,0 +1,63 @@
+name: TAGAD Backend Qualification & E2E Pipeline
+
+on:
+  push:
+    branches: [main, master, develop]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-qualification-ci.yml'
+      - 'package.json'
+      - 'package-lock.json'
+  pull_request:
+    branches: [main, master, develop]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-qualification-ci.yml'
+      - 'package.json'
+      - 'package-lock.json'
+  workflow_dispatch:
+
+jobs:
+  qualification-suite:
+    name: Full Database Qualification (CBMS, GAD, Statistical, Snapshot DR)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      NODE_ENV: test
+      JWT_SECRET: "tagad_qualification_test_jwt_secret_signing_key_2026_super_secure"
+      JWT_REFRESH_SECRET: "tagad_qualification_test_jwt_refresh_secret_signing_key_2026_super_secure"
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install and Locate PostgreSQL Tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y postgresql postgresql-contrib postgresql-client
+          # Discover the PostgreSQL bin directory containing initdb, pg_ctl, createdb
+          PG_DIR=$(dirname "$(find /usr/lib/postgresql -name initdb | sort -V | tail -n 1)")
+          echo "Detected PG_BIN at $PG_DIR"
+          echo "PG_BIN=$PG_DIR" >> "$GITHUB_ENV"
+          echo "$PG_DIR" >> "$GITHUB_PATH"
+
+      - name: Install Backend Dependencies
+        working-directory: ./backend
+        run: npm ci
+
+      - name: Generate Prisma Client Engine
+        working-directory: ./backend
+        run: npx prisma generate
+
+      - name: Execute End-to-End Qualification Suite
+        working-directory: ./backend
+        run: npm run test:qualification
+
