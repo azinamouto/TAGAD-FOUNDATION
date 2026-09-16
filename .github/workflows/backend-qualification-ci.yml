@@ -39,10 +39,13 @@ jobs:
           cache: "npm"
           cache-dependency-path: backend/package-lock.json
 
-      - name: Install and Locate PostgreSQL Tools
+      - name: Install and Configure PostgreSQL Environment
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y postgresql postgresql-contrib postgresql-client
+          # Ensure socket directory exists with runner permissions
+          sudo mkdir -p /var/run/postgresql
+          sudo chown -R $USER:$USER /var/run/postgresql
           # Discover the PostgreSQL bin directory containing initdb, pg_ctl, createdb
           PG_DIR=$(dirname "$(find /usr/lib/postgresql -name initdb | sort -V | tail -n 1)")
           echo "Detected PG_BIN at $PG_DIR"
@@ -60,4 +63,3 @@ jobs:
       - name: Execute End-to-End Qualification Suite
         working-directory: ./backend
         run: npm run test:qualification
-
