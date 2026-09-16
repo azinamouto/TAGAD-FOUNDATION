@@ -87,6 +87,7 @@ export interface TokenPayload {
   barangayId?: string | null;
   jti?: string;
   sessionId?: string;
+  sessionVersion?: number;
 }
 
 // In-memory active refresh sessions tracker
@@ -161,14 +162,14 @@ export const revokeAllUserSessions = (userId: string): void => {
 export const signAccessToken = (payload: TokenPayload): string => {
   const jti = payload.jti || randomUUID();
   const sessionId = payload.sessionId || randomUUID();
-  return jwt.sign({ ...payload, jti, sessionId }, getJwtSecret(), { expiresIn: '8h' });
+  return jwt.sign({ ...payload, jti, sessionId, sessionVersion: 2 }, getJwtSecret(), { expiresIn: '8h' });
 };
 
 export const signRefreshToken = (payload: TokenPayload): string => {
   const jti = payload.jti || randomUUID();
   const sessionId = payload.sessionId || randomUUID();
   registerRefreshSession(sessionId, payload.id, jti);
-  return jwt.sign({ ...payload, jti, sessionId }, getJwtRefreshSecret(), { expiresIn: '30d' });
+  return jwt.sign({ ...payload, jti, sessionId, sessionVersion: 2 }, getJwtRefreshSecret(), { expiresIn: '30d' });
 };
 
 export const verifyAccessToken = (token: string): TokenPayload => {
@@ -206,6 +207,11 @@ export const verifyRefreshToken = (token: string): TokenPayload => {
   }
 
   const decoded = jwt.verify(token, getJwtRefreshSecret()) as TokenPayload;
+  // Older token pairs used unrelated session IDs and cannot be logged out together.
+  // Require a fresh login rather than perpetuating that incomplete contract.
+  if (decoded.sessionVersion !== 2 || !decoded.sessionId) {
+    throw new Error('Session upgrade requires a fresh login');
+  }
   if (decoded.jti && isTokenRevoked(decoded.jti)) {
     const err: any = new Error('Refresh token has been revoked or already rotated');
     err.name = 'TokenRevokedError';

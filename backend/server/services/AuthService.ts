@@ -1,11 +1,14 @@
 import { TokenRevocationService } from './TokenRevocationService';
 import { AppError } from '../lib/errors';
 import bcrypt from 'bcryptjs';
+import { randomUUID } from 'node:crypto';
 import prisma, { isDatabaseConnected } from '../lib/prisma';
 import {
   signAccessToken,
   signRefreshToken,
   verifyRefreshTokenAsync,
+  verifyAccessToken,
+  verifyRefreshToken,
   revokeTokenAsync,
 } from '../lib/jwt';
 import { UnauthorizedError, NotFoundError } from '../lib/errors';
@@ -161,6 +164,7 @@ export class AuthService {
           }
 
           const tokenPayload = {
+            sessionId: randomUUID(),
             id: user.id,
             email: user.email,
             role: user.role,
@@ -217,6 +221,7 @@ export class AuthService {
 
       if (isDemoPasswordValid) {
         const tokenPayload = {
+          sessionId: randomUUID(),
           id: demoUser.id,
           email: demoUser.email,
           role: demoUser.role,
@@ -282,6 +287,7 @@ export class AuthService {
       }
 
       const tokenPayload = {
+        sessionId: decoded.sessionId,
         id: user.id,
         email: user.email,
         role: user.role,
@@ -356,21 +362,34 @@ export class AuthService {
   }
 
   public static async logout(userId?: string, req?: Request, tokenToRevoke?: string) {
-    // Invalidate request access token if present
+    // The bearer token alone identifies the whole login session. Clients do not
+    // have to supply a refresh token to invalidate its current or rotated pair.
     const authHeader = req?.headers.authorization;
+    const sessions = new Set<string>();
+    const tokens: string[] = [];
+    let sessionUserId = userId;
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.split(' ')[1];
-      await revokeTokenAsync(token);
+      const payload = verifyAccessToken(token);
+      if (sessionUserId && payload.id !== sessionUserId) throw new UnauthorizedError('Token owner mismatch');
+      sessionUserId = payload.id;
+      if (payload.sessionId) sessions.add(payload.sessionId);
+      tokens.push(token);
     }
 
-    if (tokenToRevoke) {
-      await revokeTokenAsync(tokenToRevoke);
+    for (const token of [tokenToRevoke, req?.body?.refreshToken].filter(Boolean)) {
+      const payload = verifyRefreshToken(token);
+      if (sessionUserId && payload.id !== sessionUserId) throw new UnauthorizedError('Token owner mismatch');
+      if (sessions.size && !sessions.has(payload.sessionId!)) throw new UnauthorizedError('Token session mismatch');
+      sessionUserId = payload.id;
+      sessions.add(payload.sessionId!);
+      tokens.push(token);
     }
-
-    // Invalidate body refresh token if supplied
-    if (req?.body?.refreshToken) {
-      await revokeTokenAsync(req.body.refreshToken);
+    for (const sessionId of sessions) {
+      // Covers the maximum remaining lifetime of every token in this session.
+      await revokeTokenAsync(sessionId, { reason: 'SESSION_LOGOUT', ttlMs: 30 * 24 * 60 * 60 * 1000 });
     }
+    for (const token of tokens) await revokeTokenAsync(token);
 
     if (userId) {
       await AuditService.logAction({
