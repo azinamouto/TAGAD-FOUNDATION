@@ -17,6 +17,26 @@ describe('TAGAD Issue #16 — Statistical CSV Import Pipeline Suite', () => {
   let server: http.Server;
   let baseUrl: string;
 
+  test('explicit banner layout reaches the discover HTTP endpoint', async () => {
+    const body = {
+      csvContent: 'LGU,CBMS register\nYear,Barangay,Count,Sex\n2024,Bagacay,12,MALE',
+      csvLayout: { headerRow: 2, headerRowCount: 1 },
+      datasetId: testDatasetMpdc.id, tableId: testTable.id,
+      ingestionMode: 'RECORD_PER_ROW', duplicateStrategy: 'REJECT',
+      mapping: { period: { sourceColumn: 'Year' }, barangay: { sourceColumn: 'Barangay' },
+        numericValueColumn: 'Count', dimensions: { DIM_SEX: { sourceColumn: 'Sex' } } },
+    };
+    for (const action of ['discover']) {
+      const response = await fetch(`${baseUrl}/statistical-import/${action}`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${adminToken}` },
+        body: JSON.stringify(body),
+      });
+      const result = await response.json();
+      assert.equal(response.status, 200, JSON.stringify(result));
+      assert.equal(result.data.csvLayout.headerRow, 2);
+    }
+  });
+
   // Actor Tokens
   const superAdminToken = signAccessToken({
     id: 'usr-superadmin-01',

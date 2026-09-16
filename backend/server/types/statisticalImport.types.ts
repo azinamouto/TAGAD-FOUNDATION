@@ -34,6 +34,7 @@ export interface CandidateMappings {
 }
 
 export interface DiscoveryResult {
+  csvLayout: { headerRow: number; headerRowCount: number; skippedBannerRows: number };
   filename: string;
   totalRows: number;
   totalColumns: number;

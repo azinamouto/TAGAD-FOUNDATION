@@ -19,7 +19,7 @@ export class StatisticalImportController {
         : undefined;
 
       const result = await StatisticalObservationIngestionService.discover(
-        { csvContent, filename, tableId, datasetId },
+        { csvContent, filename, tableId, datasetId, csvLayout: req.body.csvLayout },
         actor
       );
 
@@ -44,7 +44,7 @@ export class StatisticalImportController {
 
       const { csvContent, filename, datasetId, tableId, ingestionMode, mapping, duplicateStrategy } = req.body;
       const result = await StatisticalObservationIngestionService.preview(
-        { csvContent, filename, datasetId, tableId, ingestionMode, mapping, duplicateStrategy },
+        { csvContent, filename, datasetId, tableId, ingestionMode, mapping, duplicateStrategy, csvLayout: req.body.csvLayout },
         actor
       );
 
@@ -82,6 +82,7 @@ export class StatisticalImportController {
       const result = await StatisticalObservationIngestionService.execute(
         {
           csvContent,
+          csvLayout: req.body.csvLayout,
           filename,
           datasetId,
           tableId,

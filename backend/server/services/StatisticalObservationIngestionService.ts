@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Request } from 'express';
 import prisma, { isDatabaseConnected } from '../lib/prisma';
-import { parseCsv } from '../lib/csvParser';
+import { parseCsv, CsvLayout } from '../lib/csvParser';
 import {
   ValidationError,
   NotFoundError,
@@ -41,6 +41,7 @@ const MUNICIPALITY_TOKENS = new Set([
 ]);
 
 export interface StatisticalImportExecuteParams {
+  csvLayout?: CsvLayout;
   csvContent: string;
   filename?: string;
   datasetId: string;
@@ -53,6 +54,7 @@ export interface StatisticalImportExecuteParams {
 }
 
 export interface StatisticalImportPreviewParams {
+  csvLayout?: CsvLayout;
   csvContent: string;
   filename?: string;
   datasetId: string;
@@ -63,6 +65,7 @@ export interface StatisticalImportPreviewParams {
 }
 
 export interface StatisticalImportDiscoverParams {
+  csvLayout?: CsvLayout;
   csvContent: string;
   filename?: string;
   tableId?: string;
@@ -79,7 +82,7 @@ export class StatisticalObservationIngestionService {
     actor?: ActorContext
   ): Promise<DiscoveryResult> {
     const filename = params.filename || 'import.csv';
-    const parsed = parseCsv(params.csvContent);
+    const parsed = parseCsv(params.csvContent, params.csvLayout);
 
     const headers = parsed.headers;
     const normalizedHeaders = headers.map((h) => this.normalizeColumnHeader(h));
@@ -156,6 +159,7 @@ export class StatisticalObservationIngestionService {
       columns,
       sampleRows,
       candidateMappings,
+      csvLayout: parsed.layout,
     };
   }
 
@@ -170,7 +174,7 @@ export class StatisticalObservationIngestionService {
   ): Promise<PreviewResult> {
     const { dataset, table } = await this.validateContext(params.datasetId, params.tableId, actor);
     const barangays = await BarangayService.getBarangays();
-    const parsed = parseCsv(params.csvContent);
+    const parsed = parseCsv(params.csvContent, params.csvLayout);
 
     // Fetch existing observations for this table and dataset
     const existingObservations = await this.getExistingObservations(dataset.id, table.id);
@@ -196,7 +200,7 @@ export class StatisticalObservationIngestionService {
     // Parse each row according to ingestion mode
     if (params.ingestionMode === 'RECORD_PER_ROW') {
       parsed.rawRecords.forEach((record, idx) => {
-        const rowNumber = idx + 2; // 1-based, accounts for header row
+        const rowNumber = parsed.rowNumbers[idx];
         const rowErrors: string[] = [];
 
         // 1. Period
@@ -318,7 +322,7 @@ export class StatisticalObservationIngestionService {
       }
 
       parsed.rawRecords.forEach((record, recordIdx) => {
-        const baseRowNumber = recordIdx + 2;
+        const baseRowNumber = parsed.rowNumbers[recordIdx];
 
         // Shared dimensions/period/barangay across measure columns in this row
         const period = this.resolvePeriod(record, params.mapping.period);
@@ -470,6 +474,7 @@ export class StatisticalObservationIngestionService {
     const preview = await this.preview(
       {
         csvContent: params.csvContent,
+        csvLayout: params.csvLayout,
         filename: params.filename,
         datasetId: params.datasetId,
         tableId: params.tableId,
