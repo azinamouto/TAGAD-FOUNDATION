@@ -13,8 +13,17 @@ on:
         type: string
 
 jobs:
+  backend-verification:
+    name: Backend Tests & Build
+    uses: ./.github/workflows/backend-ci.yml
+
+  backend-qualification:
+    name: Backend PostgreSQL Qualification
+    uses: ./.github/workflows/backend-qualification-ci.yml
+
   production-readiness:
     name: Production Build & Monorepo Verification
+    needs: [backend-verification, backend-qualification]
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -36,11 +45,11 @@ jobs:
 
       - name: Install Frontend Dependencies
         working-directory: ./frontend
-        run: npm ci
+        run: npm ci --include=dev
 
       - name: Install Backend Dependencies
         working-directory: ./backend
-        run: npm ci
+        run: npm ci --include=dev
 
       - name: Generate Prisma Engine
         working-directory: ./backend
