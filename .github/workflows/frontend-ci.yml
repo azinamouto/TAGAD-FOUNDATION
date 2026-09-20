@@ -10,21 +10,17 @@ on:
       - 'package-lock.json'
   pull_request:
     branches: [main, master, develop]
-    paths:
-      - 'frontend/**'
-      - '.github/workflows/frontend-ci.yml'
-      - 'package.json'
-      - 'package-lock.json'
+  workflow_call:
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   frontend-verification:
-    name: Frontend CI (Typecheck, Vite Build, Asset Check)
+    name: Frontend CI (Typecheck, Tests, Production Build)
     runs-on: ubuntu-latest
     timeout-minutes: 15
-
-    env:
-      NODE_ENV: production
 
     steps:
       - name: Checkout Repository
@@ -39,11 +35,15 @@ jobs:
 
       - name: Install Frontend Dependencies
         working-directory: ./frontend
-        run: npm ci
+        run: npm ci --include=dev
 
       - name: Typecheck Frontend Codebase
         working-directory: ./frontend
         run: npm run typecheck
+
+      - name: Test Frontend Behavior
+        working-directory: ./frontend
+        run: npm test
 
       - name: Compile Frontend Production Build
         working-directory: ./frontend
@@ -57,4 +57,3 @@ jobs:
             exit 1
           fi
           echo "Frontend build successfully generated dist/index.html and client assets."
-

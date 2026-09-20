@@ -1,3 +1,4 @@
+import { AuditService } from './AuditService';
 import { statisticalDataStatus } from '../lib/statisticalDataStatus';
 import {
   StatisticalTableClassification,
@@ -375,21 +376,25 @@ export class StatisticalCatalogService {
     const reportingYear = data.reportingYear || new Date().getFullYear();
 
     if (isDatabaseConnected()) {
-      return await prisma.statisticalDataset.create({
-        data: {
-          datasetCode: data.datasetCode,
-          name: data.name,
-          description: data.description,
-          sourceAgency: data.sourceAgency,
-          reportingYear,
-          reportingPeriod: data.reportingPeriod,
-          surveyRound: data.surveyRound,
-          geographicLevel: data.geographicLevel || 'MUNICIPALITY',
-          sourceFileName: data.sourceFileName,
-          importedById: data.importedById,
-          publicationStatus: StatisticalPublicationStatus.DRAFT,
-          verificationStatus: StatisticalVerificationStatus.UNVERIFIED,
-        },
+      return prisma.$transaction(async tx => {
+        const created = await tx.statisticalDataset.create({
+          data: {
+            datasetCode: data.datasetCode,
+            name: data.name,
+            description: data.description,
+            sourceAgency: data.sourceAgency,
+            reportingYear,
+            reportingPeriod: data.reportingPeriod,
+            surveyRound: data.surveyRound,
+            geographicLevel: data.geographicLevel || 'MUNICIPALITY',
+            sourceFileName: data.sourceFileName,
+            importedById: data.importedById,
+            publicationStatus: StatisticalPublicationStatus.DRAFT,
+            verificationStatus: StatisticalVerificationStatus.UNVERIFIED,
+          },
+        });
+        await AuditService.logActionTx(tx, { userId: data.importedById, action: 'DATASET_CREATED', entityType: 'StatisticalDataset', entityId: created.id, afterState: created });
+        return created;
       });
     }
 
@@ -433,20 +438,24 @@ export class StatisticalCatalogService {
     tableDefinitionId?: string;
   }): Promise<any> {
     if (isDatabaseConnected()) {
-      return await prisma.statisticalIndicator.create({
-        data: {
-          indicatorCode: data.indicatorCode,
-          name: data.name,
-          title: data.title,
-          description: data.description,
-          unit: data.unit,
-          classification: data.classification || StatisticalTableClassification.INDICATOR,
-          formula: data.formula,
-          numeratorDefinition: data.numeratorDefinition,
-          denominatorDefinition: data.denominatorDefinition,
-          tableDefinitionId: data.tableDefinitionId,
-          verificationStatus: StatisticalVerificationStatus.UNVERIFIED,
-        },
+      return prisma.$transaction(async tx => {
+        const created = await tx.statisticalIndicator.create({
+          data: {
+            indicatorCode: data.indicatorCode,
+            name: data.name,
+            title: data.title,
+            description: data.description,
+            unit: data.unit,
+            classification: data.classification || StatisticalTableClassification.INDICATOR,
+            formula: data.formula,
+            numeratorDefinition: data.numeratorDefinition,
+            denominatorDefinition: data.denominatorDefinition,
+            tableDefinitionId: data.tableDefinitionId,
+            verificationStatus: StatisticalVerificationStatus.UNVERIFIED,
+          },
+        });
+        await AuditService.logActionTx(tx, { action: 'INDICATOR_CREATED', entityType: 'StatisticalIndicator', entityId: created.id, afterState: created });
+        return created;
       });
     }
 
@@ -499,20 +508,24 @@ export class StatisticalCatalogService {
     suppressionReason?: string;
   }): Promise<any> {
     if (isDatabaseConnected()) {
-      return await prisma.statisticalObservation.create({
-        data: {
-          datasetId: data.datasetId,
-          tableDefinitionId: data.tableDefinitionId,
-          indicatorId: data.indicatorId,
-          barangayId: data.barangayId,
-          period: data.period,
-          numericValue: data.numericValue as any,
-          unit: data.unit,
-          dimensions: data.dimensions,
-          provenanceId: data.provenanceId,
-          suppressionStatus: data.suppressionStatus || 'NONE',
-          suppressionReason: data.suppressionReason,
-        },
+      return prisma.$transaction(async tx => {
+        const created = await tx.statisticalObservation.create({
+          data: {
+            datasetId: data.datasetId,
+            tableDefinitionId: data.tableDefinitionId,
+            indicatorId: data.indicatorId,
+            barangayId: data.barangayId,
+            period: data.period,
+            numericValue: data.numericValue as any,
+            unit: data.unit,
+            dimensions: data.dimensions,
+            provenanceId: data.provenanceId,
+            suppressionStatus: data.suppressionStatus || 'NONE',
+            suppressionReason: data.suppressionReason,
+          },
+        });
+        await AuditService.logActionTx(tx, { action: 'OBSERVATION_CREATED', entityType: 'StatisticalObservation', entityId: created.id, afterState: created });
+        return created;
       });
     }
 

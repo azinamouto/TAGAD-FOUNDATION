@@ -6,3 +6,10 @@ coverage/
 *.log
 .env*
 !.env.example
+!.env.production.example
+.vercel/
+# Production recovery artifacts must stay outside source control.
+*.dump
+*.dump.*
+*.backup
+deployment-evidence.local.md

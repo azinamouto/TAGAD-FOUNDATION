@@ -21,9 +21,13 @@ jobs:
     name: Backend PostgreSQL Qualification
     uses: ./.github/workflows/backend-qualification-ci.yml
 
+  frontend-verification:
+    name: Frontend Qualification
+    uses: ./.github/workflows/frontend-ci.yml
+
   production-readiness:
     name: Production Build & Monorepo Verification
-    needs: [backend-verification, backend-qualification]
+    needs: [backend-verification, backend-qualification, frontend-verification]
     runs-on: ubuntu-latest
     timeout-minutes: 20
 

@@ -1,0 +1,49 @@
+# Operator imports this Blueprint; no infrastructure is created by this file alone.
+# See docs/PHASE_3_DEPLOYMENT.md before creating the service (paid compute).
+services:
+  - type: web
+    name: tagad-api-production
+    runtime: node
+    region: singapore
+    plan: 0.5c-512mb
+    rootDir: backend
+    numInstances: 1
+    autoDeployTrigger: "off"
+    buildCommand: npm ci --include=dev && npx prisma generate && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/ready
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NODE_ENV
+        value: production
+      - key: DEMO_MODE
+        value: "false"
+      - key: DATABASE_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: CORS_ORIGINS
+        sync: false
+      # Enter only after verifying the actual ingress chain; false is a safe
+      # initial value but groups clients by proxy IP. Never enter true.
+      - key: TRUST_PROXY
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SUPABASE_MOV_BUCKET
+        value: mov-attachments
+      - key: SENTRY_DSN
+        sync: false
+      - key: SENTRY_RELEASE
+        sync: false
+      - key: RATE_LIMIT_LOGIN_MAX
+        value: "10"
+      - key: RATE_LIMIT_FEEDBACK_MAX
+        value: "5"

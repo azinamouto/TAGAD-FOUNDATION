@@ -22,6 +22,27 @@ describe('BE Phase 1 — Priority 1: Durable Auditing & Transactional Rollbacks 
   });
 
   describe('1. AuditService Error Propagation', () => {
+    it('rejects a missing transaction in connected mode', async () => {
+      await assert.rejects(AuditService.logActionTx(null, {
+        action: 'OFFICE_CREATED', entityType: 'Office',
+      }), /requires the business mutation transaction/);
+    });
+
+    it('never substitutes memory audit records in production when storage is unavailable', async () => {
+      const previous = process.env.NODE_ENV;
+      process.env.NODE_ENV = 'production';
+      setDatabaseConnected(false);
+      try {
+        await assert.rejects(AuditService.logActionTx(null, {
+          action: 'OFFICE_CREATED', entityType: 'Office',
+        }), /Audit storage unavailable/);
+      } finally {
+        if (previous === undefined) delete process.env.NODE_ENV;
+        else process.env.NODE_ENV = previous;
+        setDatabaseConnected(true);
+      }
+    });
+
     it('logActionTx throws immediately when tx.auditLog.create fails, propagating to abort transaction', async () => {
       const injectedError = new Error('INJECTED_AUDIT_DISK_FULL_ERROR');
       const mockTx = {
@@ -419,4 +440,3 @@ describe('BE Phase 1 — Priority 1: Durable Auditing & Transactional Rollbacks 
     });
   });
 });
-

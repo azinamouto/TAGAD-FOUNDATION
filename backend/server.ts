@@ -12,6 +12,7 @@ import { requestLogger } from './server/middleware/requestLogger';
 import { logger } from './server/lib/logger';
 import { sendError } from './server/lib/response';
 import { configureCors } from './server/lib/cors';
+import { parseTrustProxy } from './server/lib/trustProxy';
 import { logDemoModeWarning, validateDemoModeConfig } from './server/services/AuthService';
 
 // Route imports
@@ -62,15 +63,7 @@ async function startServer() {
   const PORT = Number(process.env.PORT || 3000);
   if (!Number.isInteger(PORT) || PORT < 1 || PORT > 65535) throw new Error('PORT must be an integer from 1 to 65535');
 
-  // BE-1/BE-2: Trust reverse proxy (1 hop for Cloud Run / Nginx container ingress)
-  // Ensures req.ip correctly resolves client IP for rate limiting and logging without header spoofing
-  const trustProxyConfig = process.env.TRUST_PROXY ? (
-    process.env.TRUST_PROXY === 'true' ? true :
-    process.env.TRUST_PROXY === 'false' ? false :
-    !isNaN(Number(process.env.TRUST_PROXY)) ? Number(process.env.TRUST_PROXY) :
-    process.env.TRUST_PROXY
-  ) : 1;
-  app.set('trust proxy', trustProxyConfig);
+  app.set('trust proxy', parseTrustProxy());
 
   // BE-2: Security Headers via Helmet
   app.use(

@@ -902,6 +902,20 @@ export class CsvIngestionService {
               });
             }
           }
+          // Outside row-level tolerant handling: audit failure must abort this chunk.
+          await AuditService.logActionTx(tx, {
+            userId: actorUser.id,
+            action: 'BATCH_CSV_INGESTION',
+            entityType: preview.datasetType,
+            entityId: batchId,
+            afterState: {
+              batchId, chunkStart, chunkRows: chunkRows.length,
+              datasetType: preview.datasetType, duplicateStrategy, ingestionMode,
+              targetOfficeId: officeResolution.officeId,
+              insertedCount, updatedCount, skippedCount, errorCount,
+            },
+            req,
+          });
         });
       } else {
         // Fallback in-memory processing
@@ -1025,7 +1039,7 @@ export class CsvIngestionService {
     const processingTimeMs = Date.now() - startTime;
 
     // 3. Centralized Audit Log with Zero Citizen PII
-    await AuditService.logAction({
+    if (!isDatabaseConnected()) await AuditService.logAction({
       userId: actorUser.id,
       action: 'BATCH_CSV_INGESTION',
       entityType: preview.datasetType,

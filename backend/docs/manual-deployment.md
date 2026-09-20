@@ -1,5 +1,9 @@
 # Backend deployment: manual, CI validates
 
+For the complete operator setup (Vercel frontend, Render API, Supabase database
+and Storage, backups, and monitoring), start with the
+[Phase 3 deployment guide](../../docs/PHASE_3_DEPLOYMENT.md).
+
 Deployment is **manual for now**. No automatic production promotion is enabled.
 The existing repository CI installs from backend/package-lock.json, validates
 Prisma, generates the client, typechecks and runs backend tests. It does not

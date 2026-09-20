@@ -54,11 +54,15 @@ jobs:
 
       - name: Install Backend Dependencies
         working-directory: ./backend
-        run: npm ci
+        run: npm ci --include=dev
 
       - name: Generate Prisma Client Engine
         working-directory: ./backend
         run: npx prisma generate
+
+      - name: Typecheck Backend
+        working-directory: ./backend
+        run: npm run typecheck
 
       - name: Execute End-to-End Qualification Suite
         working-directory: ./backend
