@@ -105,6 +105,9 @@ Security is enforced at the database level using PostgreSQL Row Level Security:
 
 ## 6. Local Development Setup
 
+For production hosting, environment templates, backups, monitoring, and the issue #28
+completion checklist, follow [Phase 3 deployment guide](docs/PHASE_3_DEPLOYMENT.md).
+
 1. **Install dependencies:**
    ```bash
    cd backend && npm install
