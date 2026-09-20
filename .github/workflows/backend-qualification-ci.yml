@@ -6,16 +6,16 @@ on:
     paths:
       - 'backend/**'
       - '.github/workflows/backend-qualification-ci.yml'
+      - '.github/workflows/release-readiness.yml'
       - 'package.json'
       - 'package-lock.json'
   pull_request:
     branches: [main, master, develop]
-    paths:
-      - 'backend/**'
-      - '.github/workflows/backend-qualification-ci.yml'
-      - 'package.json'
-      - 'package-lock.json'
+  workflow_call:
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   qualification-suite:
@@ -62,4 +62,16 @@ jobs:
 
       - name: Execute End-to-End Qualification Suite
         working-directory: ./backend
-        run: npm run test:qualification
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run test:qualification 2>&1 | tee qualification.log
+
+      - name: Retain Qualification Evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-qualification-${{ github.run_id }}-${{ github.run_attempt }}
+          path: backend/qualification.log
+          if-no-files-found: warn
+          retention-days: 14

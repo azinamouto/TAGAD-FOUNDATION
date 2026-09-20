@@ -3,14 +3,41 @@
 Deployment is **manual for now**. No automatic production promotion is enabled.
 The existing repository CI installs from backend/package-lock.json, validates
 Prisma, generates the client, typechecks and runs backend tests. It does not
-deploy or establish production database readiness. This session changes no
-frontend pipeline or root workflow.
+deploy or establish production database readiness.
 
 The backend `posttest` npm lifecycle hook runs `npm run build` after the test
 suite succeeds. Thus the existing GitHub Actions `npm test` step now performs
-tests followed by the build check and fails if either fails, without a workflow
-file change outside backend/. Local `npm test` has the same behavior. Calling
+tests followed by the build check and fails if either fails. Local `npm test`
+has the same behavior. Calling
 tsx directly bypasses npm lifecycle hooks and is only a targeted test command.
+
+## Automated qualification gates
+
+`backend-qualification-ci.yml` runs on every pull request targeting `main`,
+`master`, or `develop`, including PRs that only change workflows. It also runs
+on relevant pushes to those branches and supports manual dispatch. PRs have
+no path filter so this check can be required without remaining pending on
+unrelated changes.
+
+The runner provisions a disposable local PostgreSQL cluster and checks CBMS
+catalog reconciliation, statistical data governance, HTTP import/layout,
+GAD workflow and statistical search, multi-process token revocation, and a
+synthetic backup/restore with table-count and content-fingerprint comparison.
+A failing command fails the job; piping output to the retained log does not
+hide its exit status. Qualification logs are uploaded even after test failures
+and retained for 14 days.
+
+`release-readiness.yml` calls the same backend test/build and PostgreSQL
+qualification workflows at the release commit. Both must pass before the
+production build, artifact upload, and tag-triggered GitHub release can run.
+Release installs explicitly include development dependencies needed for builds.
+
+Repository administrators should require the check
+`Full Database Qualification (CBMS, GAD, Statistical, Snapshot DR)` in the
+branch protection/ruleset for each protected branch. Workflow YAML runs the
+check but does not itself enforce merge protection. Before a manual deployment,
+confirm successful backend CI and qualification runs for the exact commit
+being deployed; these synthetic checks do not certify production migrations.
 
 ## Prepare and validate
 
