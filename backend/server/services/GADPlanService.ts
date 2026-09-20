@@ -957,23 +957,28 @@ export class GADPlanService {
 
     const item = await prisma.$transaction(async tx => {
       await lockEditablePlan(tx, planId, actorUser);
-      return tx.gADPlanItem.create({
-      data: {
-        gadPlanId: planId,
-        genderIssue: data.genderIssue ?? 'Not Specified',
-        causeOfIssue: data.causeOfIssue ?? null,
-        gadResult: data.gadResult ?? 'GAD Result',
-        activity: data.activity ?? 'GAD Activity',
-        performanceIndicator: data.performanceIndicator ?? 'Target accomplished',
-        targetGroup: data.targetGroup ?? 'General beneficiaries',
-        timeline: data.timeline ?? `FY ${plan.fiscalYear}`,
-        responsibleOffice: data.responsibleOffice ?? '',
-        budget: Number(data.budget ?? 0),
-        fundSource: data.fundSource ?? 'General Fund (5% GAD)',
-        hgdgScore: data.hgdgScore != null ? Number(data.hgdgScore) : null,
-        attributedPercentage,
-      },
-    });
+      const created = await tx.gADPlanItem.create({
+        data: {
+          gadPlanId: planId,
+          genderIssue: data.genderIssue ?? 'Not Specified',
+          causeOfIssue: data.causeOfIssue ?? null,
+          gadResult: data.gadResult ?? 'GAD Result',
+          activity: data.activity ?? 'GAD Activity',
+          performanceIndicator: data.performanceIndicator ?? 'Target accomplished',
+          targetGroup: data.targetGroup ?? 'General beneficiaries',
+          timeline: data.timeline ?? `FY ${plan.fiscalYear}`,
+          responsibleOffice: data.responsibleOffice ?? '',
+          budget: Number(data.budget ?? 0),
+          fundSource: data.fundSource ?? 'General Fund (5% GAD)',
+          hgdgScore: data.hgdgScore != null ? Number(data.hgdgScore) : null,
+          attributedPercentage,
+        },
+      });
+      await AuditService.logActionTx(tx, {
+        userId: actorUser.id, action: 'GAD_PLAN_ITEM_CREATED', entityType: 'GADPlanItem',
+        entityId: created.id, afterState: created, req,
+      });
+      return created;
     });
     return { ...item, hgdgScore: item.hgdgScore ? Number(item.hgdgScore) : null, attributedPercentage };
   }

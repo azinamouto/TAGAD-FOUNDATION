@@ -1,3 +1,5 @@
+import type { Prisma } from '@prisma/client';
+import { AppError } from '../lib/errors';
 import prisma, { isDatabaseConnected } from '../lib/prisma';
 import { Request } from 'express';
 
@@ -14,7 +16,7 @@ export interface AuditLogParams {
 const MEMORY_AUDIT_LOGS: any[] = [];
 
 export class AuditService {
-  public static async logActionTx(tx: any, params: AuditLogParams) {
+  public static async logActionTx(tx: Prisma.TransactionClient | null, params: AuditLogParams) {
     const ipAddress = params.req
       ? params.req.ip || params.req.socket?.remoteAddress || null
       : null;
@@ -38,34 +40,9 @@ export class AuditService {
       return;
     }
 
-    if (!isDatabaseConnected()) {
-      MEMORY_AUDIT_LOGS.unshift({
-        id: `audit-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        userId: params.userId || null,
-        action: params.action,
-        entityType: params.entityType,
-        entityId: params.entityId || null,
-        beforeState: params.beforeState ? JSON.parse(JSON.stringify(params.beforeState)) : null,
-        afterState: params.afterState ? JSON.parse(JSON.stringify(params.afterState)) : null,
-        ipAddress: ipAddress ? String(ipAddress).slice(0, 45) : null,
-        userAgent: userAgent ? String(userAgent).slice(0, 255) : null,
-        createdAt: new Date(),
-      });
-      return;
-    }
+    if (!isDatabaseConnected()) return this.logAction(params);
 
-    await prisma.auditLog.create({
-      data: {
-        userId: params.userId || null,
-        action: params.action,
-        entityType: params.entityType,
-        entityId: params.entityId || null,
-        beforeState: params.beforeState ? JSON.parse(JSON.stringify(params.beforeState)) : null,
-        afterState: params.afterState ? JSON.parse(JSON.stringify(params.afterState)) : null,
-        ipAddress: ipAddress ? String(ipAddress).slice(0, 45) : null,
-        userAgent: userAgent ? String(userAgent).slice(0, 255) : null,
-      },
-    });
+    throw new Error('Mandatory audit requires the business mutation transaction');
   }
 
   public static async logAction(params: AuditLogParams) {
@@ -76,6 +53,9 @@ export class AuditService {
     const userAgent = params.req ? (params.req.headers['user-agent'] as string) || null : null;
 
     if (!isDatabaseConnected()) {
+      if (process.env.NODE_ENV === 'production') {
+        throw new AppError('Audit storage unavailable', 503, 'AUDIT_UNAVAILABLE');
+      }
       MEMORY_AUDIT_LOGS.unshift({
         id: `audit-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         userId: params.userId || null,

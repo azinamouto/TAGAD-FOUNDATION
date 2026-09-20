@@ -38,6 +38,12 @@ export async function reconcileCbmsCatalog(client: PrismaClient, source: Statist
         updated++;
       }
     }
-    return { count: source.length, seeded, updated, removed: obsolete.length };
+    const result = { count: source.length, seeded, updated, removed: obsolete.length };
+    if (seeded || updated || obsolete.length) {
+      await tx.auditLog.create({ data: {
+        action: 'CBMS_CATALOG_RECONCILED', entityType: 'StatisticalCatalog', afterState: result,
+      } });
+    }
+    return result;
   }, { isolationLevel: 'Serializable', timeout: 60000 });
 }
