@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { FileDown, Table as TableIcon, FileText, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Badge } from '../components/ui/badge';
+import { apiUrl } from '../api/apiUrl';
 
 const Reports: React.FC = () => {
   const [year, setYear] = useState(new Date().getFullYear().toString());
@@ -17,13 +18,13 @@ const Reports: React.FC = () => {
       let filename = '';
       
       if (type === 'gpb') {
-        url = `/api/reports/gpb-excel?year=${year}`;
+        url = apiUrl(`/reports/gpb-excel?year=${year}`);
         filename = `GPB_Report_${year}.xlsx`;
       } else if (type === 'gar') {
-        url = `/api/reports/gar-excel?year=${year}`;
+        url = apiUrl(`/reports/gar-excel?year=${year}`);
         filename = `GAR_Report_${year}.xlsx`;
       } else if (type === 'beneficiaries') {
-        url = `/api/reports/beneficiaries-pdf?year=${year}`;
+        url = apiUrl(`/reports/beneficiaries-pdf?year=${year}`);
         filename = `Beneficiary_List_${year}.pdf`;
       }
 

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { apiUrl } from '../../api/apiUrl';
 import { AppRole, UserProfile } from '../../types';
 
 export const authService = {
@@ -7,7 +8,7 @@ export const authService = {
    */
   async login(email: string, password: string): Promise<{ user: UserProfile; token: string; roles: AppRole[] }> {
     try {
-      const response = await axios.post('/api/auth/login', {
+      const response = await axios.post(apiUrl('/auth/login'), {
         email: email.trim().toLowerCase(),
         password,
       });
@@ -82,7 +83,7 @@ export const authService = {
     try {
       if (token) {
         await axios.post(
-          '/api/auth/logout',
+          apiUrl('/auth/logout'),
           {},
           {
             headers: { Authorization: `Bearer ${token}` },
@@ -115,7 +116,7 @@ export const authService = {
           const refreshToken = localStorage.getItem('tagad_refresh_token');
           if (refreshToken) {
             try {
-              const refreshRes = await axios.post('/api/auth/refresh', { refreshToken });
+              const refreshRes = await axios.post(apiUrl('/auth/refresh'), { refreshToken });
               const refData = refreshRes.data?.data || refreshRes.data;
               if (refData.accessToken) {
                 localStorage.setItem('tagad_token', refData.accessToken);
@@ -139,7 +140,7 @@ export const authService = {
 
       // Restore user from /api/auth/me
       const currentToken = localStorage.getItem('tagad_token') || storedToken;
-      const response = await axios.get('/api/auth/me', {
+      const response = await axios.get(apiUrl('/auth/me'), {
         headers: { Authorization: `Bearer ${currentToken}` },
       });
 
