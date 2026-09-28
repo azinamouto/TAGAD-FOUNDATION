@@ -1,4 +1,5 @@
 import React from 'react';
+import talibonMark from '../../resources/talibon-municipal-hall.png';
 
 interface LogoProps {
   size?: 'sm' | 'md' | 'lg';
@@ -25,15 +26,13 @@ export const Logo: React.FC<LogoProps> = ({
 
   return (
     <div className={`flex items-center gap-2.5 ${className}`}>
-      <div className={`${iconSizes[size]} rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-white shadow-sm shrink-0 tracking-wider`}>
-        TG
-      </div>
+      <img src={talibonMark} alt="Municipality of Talibon" className={`${iconSizes[size]} object-contain shrink-0`} width={48} height={48} />
       <div className="flex flex-col">
-        <span className={`${titleSizes[size]} text-slate-900 dark:text-white tracking-tight leading-none`}>
+        <span className={`${titleSizes[size]} text-foreground dark:text-foreground tracking-tight leading-none`}>
           TAGAD
         </span>
         {showSubtitle && (
-          <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 leading-tight mt-0.5 whitespace-nowrap">
+          <span className="text-[11px] font-medium text-muted-foreground dark:text-muted-foreground leading-tight mt-0.5 whitespace-nowrap">
             Municipality of Talibon
           </span>
         )}

@@ -13,9 +13,9 @@ export const LoadingSpinner: React.FC<{ size?: 'sm' | 'md' | 'lg'; text?: string
   return (
     <div className="flex flex-col items-center justify-center gap-3 p-4">
       <div
-        className={`${sizeClasses[size]} border-indigo-600 border-t-transparent rounded-full animate-spin`}
+        className={`${sizeClasses[size]} border-primary border-t-transparent rounded-full animate-spin`}
       />
-      {text && <p className="text-xs text-slate-500 font-medium">{text}</p>}
+      {text && <p className="text-xs text-muted-foreground font-medium">{text}</p>}
     </div>
   );
 };
