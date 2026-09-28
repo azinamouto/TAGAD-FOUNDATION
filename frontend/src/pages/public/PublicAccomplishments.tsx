@@ -61,31 +61,31 @@ export const PublicAccomplishments: React.FC = () => {
     <div className="max-w-6xl mx-auto px-4 sm:px-8 py-12 space-y-12">
       {/* Header Section */}
       <section className="space-y-4">
-        <div className="text-xs font-semibold tracking-wider uppercase text-slate-500 dark:text-slate-400">
+        <div className="text-xs font-semibold tracking-wider uppercase text-muted-foreground dark:text-muted-foreground">
           Accomplishment Feed • Municipality of Talibon
         </div>
-        <h1 className="text-3xl font-semibold text-slate-900 dark:text-white tracking-tight">
+        <h1 className="text-3xl font-semibold text-foreground dark:text-foreground tracking-tight">
           GAD Accomplishments & Verification
         </h1>
-        <p className="text-sm text-slate-600 dark:text-slate-400 max-w-3xl leading-relaxed">
+        <p className="text-sm text-muted-foreground dark:text-muted-foreground max-w-3xl leading-relaxed">
           Physical and financial accomplishments verified by the Talibon Gender and Development Focal Point System (GFPS). Records of public fund utilization and citizen reach.
         </p>
       </section>
 
-      <hr className="border-slate-200 dark:border-slate-800" />
+      <hr className="border-border dark:border-border" />
 
       {/* Filter and Search Bar */}
       <section className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex flex-wrap items-center gap-4 text-xs">
           <div className="flex items-center gap-2">
-            <label htmlFor="accomp-year" className="font-medium text-slate-600 dark:text-slate-400">
+            <label htmlFor="accomp-year" className="font-medium text-muted-foreground dark:text-muted-foreground">
               Year:
             </label>
             <select
               id="accomp-year"
               value={selectedYear}
               onChange={(e) => setSelectedYear(parseInt(e.target.value, 10))}
-              className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2.5 py-1 text-slate-900 dark:text-slate-100"
+              className="bg-card dark:bg-background border border-border dark:border-border rounded px-2.5 py-1 text-foreground dark:text-foreground"
             >
               <option value={2026}>2026</option>
               <option value={2025}>2025</option>
@@ -94,14 +94,14 @@ export const PublicAccomplishments: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2">
-            <label htmlFor="accomp-quarter" className="font-medium text-slate-600 dark:text-slate-400">
+            <label htmlFor="accomp-quarter" className="font-medium text-muted-foreground dark:text-muted-foreground">
               Quarter:
             </label>
             <select
               id="accomp-quarter"
               value={selectedQuarter}
               onChange={(e) => setSelectedQuarter(e.target.value)}
-              className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2.5 py-1 text-slate-900 dark:text-slate-100"
+              className="bg-card dark:bg-background border border-border dark:border-border rounded px-2.5 py-1 text-foreground dark:text-foreground"
             >
               <option value="">All Quarters</option>
               <option value="1">Q1 (Jan - Mar)</option>
@@ -113,13 +113,13 @@ export const PublicAccomplishments: React.FC = () => {
         </div>
 
         <div className="relative w-full md:w-64">
-          <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input
             type="text"
             placeholder="Search output or office..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-8 pr-3 py-1 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-slate-500"
+            className="w-full pl-8 pr-3 py-1 text-xs bg-card dark:bg-background border border-border dark:border-border rounded text-foreground dark:text-foreground placeholder-slate-400 focus:outline-none focus:border-border"
           />
         </div>
       </section>
@@ -127,23 +127,23 @@ export const PublicAccomplishments: React.FC = () => {
       {/* Aggregate Metric Banner */}
       {!loading && !error && filteredAccomplishments.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 pt-2">
-          <div className="space-y-1 border-l-2 border-slate-900 dark:border-white pl-4">
-            <div className="text-xs text-slate-500 font-medium">Recorded Entries</div>
-            <div className="text-2xl font-semibold text-slate-900 dark:text-white tabular-nums">
+          <div className="space-y-1 border-l-2 border-border dark:border-white pl-4">
+            <div className="text-xs text-muted-foreground font-medium">Recorded Entries</div>
+            <div className="text-2xl font-semibold text-foreground dark:text-foreground tabular-nums">
               {filteredAccomplishments.length} Reports
             </div>
           </div>
 
-          <div className="space-y-1 border-l-2 border-slate-300 dark:border-slate-700 pl-4">
-            <div className="text-xs text-slate-500 font-medium">Verified Budget Expended</div>
-            <div className="text-2xl font-semibold text-slate-900 dark:text-white tabular-nums">
+          <div className="space-y-1 border-l-2 border-border dark:border-border pl-4">
+            <div className="text-xs text-muted-foreground font-medium">Verified Budget Expended</div>
+            <div className="text-2xl font-semibold text-foreground dark:text-foreground tabular-nums">
               {formatCurrency(totalUtilized)}
             </div>
           </div>
 
-          <div className="space-y-1 border-l-2 border-slate-300 dark:border-slate-700 pl-4">
-            <div className="text-xs text-slate-500 font-medium">Direct Citizen Reach</div>
-            <div className="text-2xl font-semibold text-slate-900 dark:text-white tabular-nums">
+          <div className="space-y-1 border-l-2 border-border dark:border-border pl-4">
+            <div className="text-xs text-muted-foreground font-medium">Direct Citizen Reach</div>
+            <div className="text-2xl font-semibold text-foreground dark:text-foreground tabular-nums">
               {totalBeneficiariesServed.toLocaleString()}
             </div>
           </div>
@@ -162,11 +162,11 @@ export const PublicAccomplishments: React.FC = () => {
           <h3 className="text-sm font-semibold text-rose-700 dark:text-rose-400">
             Connection Error
           </h3>
-          <p className="text-xs text-slate-600 dark:text-slate-400">{error}</p>
+          <p className="text-xs text-muted-foreground dark:text-muted-foreground">{error}</p>
           <button
             type="button"
             onClick={loadAccomplishments}
-            className="text-xs font-medium text-slate-900 dark:text-white underline"
+            className="text-xs font-medium text-foreground dark:text-foreground underline"
           >
             Retry
           </button>
@@ -175,7 +175,7 @@ export const PublicAccomplishments: React.FC = () => {
 
       {/* Accomplishments Feed List */}
       {!loading && !error && (
-        <div className="divide-y divide-slate-200 dark:divide-slate-800">
+        <div className="divide-y divide-border dark:divide-border">
           {filteredAccomplishments.map((item) => (
             <div
               key={item.id}
@@ -183,48 +183,48 @@ export const PublicAccomplishments: React.FC = () => {
             >
               <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
                 <div className="space-y-1">
-                  <div className="text-xs text-slate-500 dark:text-slate-400">
+                  <div className="text-xs text-muted-foreground dark:text-muted-foreground">
                     Q{item.quarter} FY {item.fiscalYear} • {item.office}
                   </div>
-                  <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+                  <h3 className="text-lg font-semibold text-foreground dark:text-foreground">
                     {item.activityTitle}
                   </h3>
                 </div>
 
-                <div className="text-xs font-medium text-slate-600 dark:text-slate-400 shrink-0">
-                  Expended: <span className="text-slate-900 dark:text-white font-semibold tabular-nums">{formatCurrency(item.actualBudgetUsed)}</span>
+                <div className="text-xs font-medium text-muted-foreground dark:text-muted-foreground shrink-0">
+                  Expended: <span className="text-foreground dark:text-foreground font-semibold tabular-nums">{formatCurrency(item.actualBudgetUsed)}</span>
                 </div>
               </div>
 
               <div className="space-y-2 max-w-4xl">
-                <div className="text-xs font-medium text-slate-500">Actual Physical Output</div>
-                <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+                <div className="text-xs font-medium text-muted-foreground">Actual Physical Output</div>
+                <p className="text-xs text-foreground dark:text-foreground leading-relaxed">
                   {item.actualOutput}
                 </p>
                 {item.outputSummary && (
-                  <p className="text-xs text-slate-500 italic">
+                  <p className="text-xs text-muted-foreground italic">
                     Note: {item.outputSummary}
                   </p>
                 )}
               </div>
 
               {/* Reach Stats */}
-              <div className="flex flex-wrap items-center gap-6 text-xs text-slate-600 dark:text-slate-400 pt-1">
+              <div className="flex flex-wrap items-center gap-6 text-xs text-muted-foreground dark:text-muted-foreground pt-1">
                 <div>
-                  <span className="text-slate-400 mr-1.5">Total Served:</span>
-                  <span className="font-semibold text-slate-900 dark:text-white tabular-nums">
+                  <span className="text-muted-foreground mr-1.5">Total Served:</span>
+                  <span className="font-semibold text-foreground dark:text-foreground tabular-nums">
                     {item.totalBeneficiaries.toLocaleString()}
                   </span>
                 </div>
                 <div>
-                  <span className="text-slate-400 mr-1.5">Female:</span>
-                  <span className="font-semibold text-slate-900 dark:text-white tabular-nums">
+                  <span className="text-muted-foreground mr-1.5">Female:</span>
+                  <span className="font-semibold text-foreground dark:text-foreground tabular-nums">
                     {item.actualFemale.toLocaleString()}
                   </span>
                 </div>
                 <div>
-                  <span className="text-slate-400 mr-1.5">Male:</span>
-                  <span className="font-semibold text-slate-900 dark:text-white tabular-nums">
+                  <span className="text-muted-foreground mr-1.5">Male:</span>
+                  <span className="font-semibold text-foreground dark:text-foreground tabular-nums">
                     {item.actualMale.toLocaleString()}
                   </span>
                 </div>
@@ -233,7 +233,7 @@ export const PublicAccomplishments: React.FC = () => {
           ))}
 
           {filteredAccomplishments.length === 0 && (
-            <div className="py-12 text-center text-xs text-slate-400">
+            <div className="py-12 text-center text-xs text-muted-foreground">
               No accomplishment records found for the selected filters.
             </div>
           )}
