@@ -17,10 +17,10 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-900 text-slate-100">
+      <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm text-slate-400 font-medium tracking-wide">
+          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm text-muted-foreground font-medium tracking-wide">
             Verifying TAGAD security credentials...
           </p>
         </div>
@@ -42,18 +42,18 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   if (allowedRoles && !hasRole(allowedRoles)) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-900 p-4">
-        <div className="max-w-md w-full bg-slate-800 border border-slate-700 rounded-xl p-6 text-center shadow-xl">
+      <div className="min-h-screen flex items-center justify-center bg-background p-4">
+        <div className="max-w-md w-full bg-muted border border-border rounded-xl p-6 text-center shadow-xl">
           <div className="w-12 h-12 rounded-full bg-rose-500/10 text-rose-400 flex items-center justify-center mx-auto mb-4 text-xl font-bold">
             !
           </div>
           <h2 className="text-lg font-semibold text-white mb-2">Access Restricted</h2>
-          <p className="text-sm text-slate-400 mb-6">
+          <p className="text-sm text-muted-foreground mb-6">
             Your authenticated role does not have authorization to view this GAD administrative module.
           </p>
           <a
             href="/dashboard"
-            className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors"
+            className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary transition-colors"
           >
             Return to Authorized Dashboard
           </a>

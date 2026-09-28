@@ -114,3 +114,15 @@ test('access token rejection refreshes and validates the new token with the back
   assert.equal(localStorage.getItem('tagad_token'), 'new');
   assert.equal(calls, 2);
 });
+
+test('late session response cannot restore authentication after logout', async () => {
+  localStorage.setItem('tagad_token', 'old');
+  let resolve: (value: any) => void = () => {};
+  mock.method(axios, 'get', () => new Promise(done => { resolve = done; }));
+  mock.method(axios, 'post', async () => ({ data: {} }));
+  const pending = authService.getCurrentUser();
+  await authService.logout();
+  resolve({ data: { data: { id: 'old', role: 'ADMIN' } } });
+  assert.equal(await pending, null);
+  assert.equal(localStorage.getItem('tagad_user'), null);
+});

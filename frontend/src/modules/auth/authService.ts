@@ -6,6 +6,8 @@ export class SessionError extends Error {
   constructor(public kind: 'expired' | 'forbidden' | 'unavailable', message: string) { super(message); }
 }
 
+let sessionVersion = 0;
+
 export const authService = {
   /**
    * Log in user via TAGAD canonical backend API
@@ -85,6 +87,7 @@ export const authService = {
    * Distinguishes between local sign-out and confirmed server revocation
    */
   async logout(): Promise<{ success: boolean; serverConfirmed: boolean; error?: string }> {
+    sessionVersion++;
     const token = localStorage.getItem('tagad_token');
     try {
       if (!token) return { success: true, serverConfirmed: false };
@@ -101,6 +104,7 @@ export const authService = {
    * Get current session and profile using /api/auth/me
    */
   async getCurrentUser(): Promise<UserProfile | null> {
+    const version = sessionVersion;
     const storedToken = localStorage.getItem('tagad_token');
     if (!storedToken) {
       return null;
@@ -124,11 +128,13 @@ export const authService = {
           this.clearStorage();
           throw { response: { status: 401 } };
         }
+        if (version !== sessionVersion) return null;
         localStorage.setItem('tagad_token', data.accessToken);
         if (data.refreshToken) localStorage.setItem('tagad_refresh_token', data.refreshToken);
         response = await axios.get(apiUrl('/auth/me'), { headers: { Authorization: `Bearer ${data.accessToken}` } });
       }
 
+      if (version !== sessionVersion) return null;
       const resData = response.data?.data || response.data;
       const apiUser = resData;
       if (!apiUser?.id || !['SUPER_ADMIN', 'ADMIN', 'ENCODER', 'VIEWER'].includes(apiUser.role)) {
@@ -168,6 +174,7 @@ export const authService = {
 
       return userProfile;
     } catch (error: any) {
+      if (version !== sessionVersion) return null;
       const status = error.response?.status;
       if (status === 401 || status === 403) {
         this.clearStorage();
