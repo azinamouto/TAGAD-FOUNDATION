@@ -46,24 +46,24 @@ export const PublicFeedback: React.FC = () => {
     <div className="max-w-4xl mx-auto px-4 sm:px-8 py-12 space-y-12">
       {/* Header Section */}
       <section className="space-y-4">
-        <div className="text-xs font-semibold tracking-wider uppercase text-slate-500 dark:text-slate-400">
+        <div className="text-xs font-semibold tracking-wider uppercase text-muted-foreground dark:text-muted-foreground">
           Citizen Desk • Municipality of Talibon
         </div>
-        <h1 className="text-3xl font-semibold text-slate-900 dark:text-white tracking-tight">
+        <h1 className="text-3xl font-semibold text-foreground dark:text-foreground tracking-tight">
           Citizen Inquiries & Feedback
         </h1>
-        <p className="text-sm text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed">
+        <p className="text-sm text-muted-foreground dark:text-muted-foreground max-w-2xl leading-relaxed">
           Submit community suggestions, inquiries regarding GAD programs, or report localized gender issues to the Talibon Gender and Development Focal Point System (GFPS).
         </p>
       </section>
 
-      <hr className="border-slate-200 dark:border-slate-800" />
+      <hr className="border-border dark:border-border" />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
         {/* Contact Information (1 Col) */}
-        <div className="space-y-6 text-xs text-slate-600 dark:text-slate-400">
+        <div className="space-y-6 text-xs text-muted-foreground dark:text-muted-foreground">
           <div className="space-y-1">
-            <h2 className="font-semibold text-slate-900 dark:text-white text-sm">
+            <h2 className="font-semibold text-foreground dark:text-foreground text-sm">
               GFPS Focal Desk
             </h2>
             <p>Municipal Hall of Talibon</p>
@@ -71,17 +71,17 @@ export const PublicFeedback: React.FC = () => {
           </div>
 
           <div className="space-y-1">
-            <span className="font-medium text-slate-900 dark:text-white block">Email</span>
+            <span className="font-medium text-foreground dark:text-foreground block">Email</span>
             <p>gad.talibon@gmail.com</p>
           </div>
 
           <div className="space-y-1">
-            <span className="font-medium text-slate-900 dark:text-white block">Telephone</span>
+            <span className="font-medium text-foreground dark:text-foreground block">Telephone</span>
             <p>(038) 515-9000</p>
           </div>
 
           <div className="space-y-1">
-            <span className="font-medium text-slate-900 dark:text-white block">Office Hours</span>
+            <span className="font-medium text-foreground dark:text-foreground block">Office Hours</span>
             <p>Monday – Friday, 8:00 AM – 5:00 PM</p>
           </div>
         </div>
@@ -103,7 +103,7 @@ export const PublicFeedback: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label htmlFor="feedback-name" className="text-xs font-medium text-slate-700 dark:text-slate-300">
+                <label htmlFor="feedback-name" className="text-xs font-medium text-foreground dark:text-foreground">
                   Full Name
                 </label>
                 <input
@@ -113,12 +113,12 @@ export const PublicFeedback: React.FC = () => {
                   placeholder="e.g. Maria Santos"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-3 py-2 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded text-slate-900 dark:text-white focus:outline-none focus:border-slate-500"
+                  className="w-full px-3 py-2 text-xs bg-card dark:bg-background border border-border dark:border-border rounded text-foreground dark:text-foreground focus:outline-none focus:border-border"
                 />
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="feedback-email" className="text-xs font-medium text-slate-700 dark:text-slate-300">
+                <label htmlFor="feedback-email" className="text-xs font-medium text-foreground dark:text-foreground">
                   Email Address
                 </label>
                 <input
@@ -128,20 +128,20 @@ export const PublicFeedback: React.FC = () => {
                   placeholder="e.g. maria@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-3 py-2 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded text-slate-900 dark:text-white focus:outline-none focus:border-slate-500"
+                  className="w-full px-3 py-2 text-xs bg-card dark:bg-background border border-border dark:border-border rounded text-foreground dark:text-foreground focus:outline-none focus:border-border"
                 />
               </div>
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="feedback-category" className="text-xs font-medium text-slate-700 dark:text-slate-300">
+              <label htmlFor="feedback-category" className="text-xs font-medium text-foreground dark:text-foreground">
                 Topic
               </label>
               <select
                 id="feedback-category"
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
-                className="w-full px-3 py-2 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded text-slate-900 dark:text-white focus:outline-none focus:border-slate-500"
+                className="w-full px-3 py-2 text-xs bg-card dark:bg-background border border-border dark:border-border rounded text-foreground dark:text-foreground focus:outline-none focus:border-border"
               >
                 <option value="Program Inquiry">Program Inquiry & Beneficiary Qualifications</option>
                 <option value="Barangay Suggestion">Barangay GAD Project Suggestion</option>
@@ -152,7 +152,7 @@ export const PublicFeedback: React.FC = () => {
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="feedback-message" className="text-xs font-medium text-slate-700 dark:text-slate-300">
+              <label htmlFor="feedback-message" className="text-xs font-medium text-foreground dark:text-foreground">
                 Message
               </label>
               <textarea
@@ -162,14 +162,14 @@ export const PublicFeedback: React.FC = () => {
                 placeholder="Enter details here..."
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                className="w-full px-3 py-2 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded text-slate-900 dark:text-white focus:outline-none focus:border-slate-500"
+                className="w-full px-3 py-2 text-xs bg-card dark:bg-background border border-border dark:border-border rounded text-foreground dark:text-foreground focus:outline-none focus:border-border"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="px-5 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 text-white text-xs font-medium rounded disabled:opacity-50 transition-colors"
+              className="px-5 py-2 bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-medium rounded disabled:opacity-50 transition-colors"
             >
               {loading ? 'Submitting...' : 'Submit Message'}
             </button>
