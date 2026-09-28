@@ -9,6 +9,7 @@ import { Label } from '../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { toast } from 'sonner';
 import { Plus, Edit, Trash2, Loader2 } from 'lucide-react';
+import { MOVAttachmentWidget } from '../modules/documents/components/MOVAttachmentWidget';
 import { Card, CardContent } from '../components/ui/card';
 import { cn } from '../lib/utils';
 
@@ -163,54 +164,65 @@ const Accomplishments: React.FC = () => {
                 const planActivity = a.gadPlan?.activity || a.program?.title || 'GAD Activity';
                 
                 return (
-                  <TableRow key={a.id} className="hover:bg-indigo-50/20 border-b border-gray-50 last:border-0 transition-colors group">
-                    <TableCell className="py-5 pl-6">
-                      <div className="font-bold text-[#111827] text-sm leading-tight mb-1">{planActivity}</div>
-                      <div className="text-[11px] text-[#6B7280] font-medium italic line-clamp-1 bg-gray-50 py-1 px-2 rounded-md inline-block">
-                        {a.actualOutput}
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-5">
-                      <div className="text-sm font-bold text-[#111827]">
-                        {(actMale + actFemale).toLocaleString()} <span className="text-[10px] text-[#6B7280] font-medium ml-1">total</span>
-                      </div>
-                      <div className="text-[10px] font-bold uppercase tracking-wider text-[#9CA3AF] mt-1 space-x-2">
-                        <span>M: {actMale}</span>
-                        <span className="text-gray-300">|</span>
-                        <span>F: {actFemale}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-5">
-                      <div className="font-bold text-[#111827] text-sm">₱{totalActual.toLocaleString()}</div>
-                      <div className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider mt-1">Target: ₱{totalTarget.toLocaleString()}</div>
-                    </TableCell>
-                    <TableCell className="py-5">
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between gap-4">
-                          <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden min-w-[100px]">
-                            <div 
-                              className={cn("h-full rounded-full transition-all duration-700", utilization > 100 ? "bg-red-500" : "bg-[#6366F1]")} 
-                              style={{ width: `${Math.min(utilization, 100)}%` }} 
-                            />
-                          </div>
-                          <span className={cn("text-[10px] font-extrabold px-1.5 py-0.5 rounded uppercase tracking-tighter shrink-0", 
-                            utilization > 100 ? "bg-red-50 text-red-500" : "bg-[#EEF2FF] text-[#6366F1]")}>
-                            {utilization.toFixed(1)}%
-                          </span>
+                  <React.Fragment key={a.id}>
+                    <TableRow className="hover:bg-indigo-50/20 border-b border-gray-50 last:border-0 transition-colors group">
+                      <TableCell className="py-5 pl-6">
+                        <div className="font-bold text-[#111827] text-sm leading-tight mb-1">{planActivity}</div>
+                        <div className="text-[11px] text-[#6B7280] font-medium italic line-clamp-1 bg-gray-50 py-1 px-2 rounded-md inline-block">
+                          {a.actualOutput}
                         </div>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right py-5 pr-6">
-                      <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        {!isViewer && (
-                          <Button variant="ghost" size="icon" onClick={() => handleEdit(a)} className="h-8 w-8 text-[#6366F1] hover:bg-white hover:shadow-sm"><Edit className="h-4 w-4" /></Button>
-                        )}
-                        {isAdmin && (
-                          <Button variant="ghost" size="icon" onClick={() => handleDelete(a.id)} className="h-8 w-8 text-red-400 hover:bg-white hover:shadow-sm"><Trash2 className="h-4 w-4" /></Button>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
+                      </TableCell>
+                      <TableCell className="py-5">
+                        <div className="text-sm font-bold text-[#111827]">
+                          {(actMale + actFemale).toLocaleString()} <span className="text-[10px] text-[#6B7280] font-medium ml-1">total</span>
+                        </div>
+                        <div className="text-[10px] font-bold uppercase tracking-wider text-[#9CA3AF] mt-1 space-x-2">
+                          <span>M: {actMale}</span>
+                          <span className="text-gray-300">|</span>
+                          <span>F: {actFemale}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="py-5">
+                        <div className="font-bold text-[#111827] text-sm">₱{totalActual.toLocaleString()}</div>
+                        <div className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider mt-1">Target: ₱{totalTarget.toLocaleString()}</div>
+                      </TableCell>
+                      <TableCell className="py-5">
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between gap-4">
+                            <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden min-w-[100px]">
+                              <div 
+                                className={cn("h-full rounded-full transition-all duration-700", utilization > 100 ? "bg-red-500" : "bg-[#6366F1]")} 
+                                style={{ width: `${Math.min(utilization, 100)}%` }} 
+                              />
+                            </div>
+                            <span className={cn("text-[10px] font-extrabold px-1.5 py-0.5 rounded uppercase tracking-tighter shrink-0", 
+                              utilization > 100 ? "bg-red-50 text-red-500" : "bg-[#EEF2FF] text-[#6366F1]")}>
+                              {utilization.toFixed(1)}%
+                            </span>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right py-5 pr-6">
+                        <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          {!isViewer && (
+                            <Button variant="ghost" size="icon" onClick={() => handleEdit(a)} className="h-8 w-8 text-[#6366F1] hover:bg-white hover:shadow-sm"><Edit className="h-4 w-4" /></Button>
+                          )}
+                          {isAdmin && (
+                            <Button variant="ghost" size="icon" onClick={() => handleDelete(a.id)} className="h-8 w-8 text-red-400 hover:bg-white hover:shadow-sm"><Trash2 className="h-4 w-4" /></Button>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                    {/* MOV Attachments — full-width row beneath each accomplishment */}
+                    <TableRow className="border-b border-gray-50 last:border-0 bg-slate-50/30">
+                      <TableCell colSpan={5} className="px-6 py-3">
+                        <MOVAttachmentWidget
+                          accomplishmentId={a.id}
+                          canUpload={!isViewer}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  </React.Fragment>
                 );
               })}
             </TableBody>
