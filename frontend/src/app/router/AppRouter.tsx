@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { PublicLayout } from '../../components/layout/PublicLayout';
 import { AppLayout } from '../../components/layout/AppLayout';
@@ -6,36 +6,37 @@ import { ProtectedRoute } from '../../modules/auth/ProtectedRoute';
 import { ErrorBoundary } from '../../components/common/ErrorBoundary';
 
 // Public Citizen Portal Views (Sprint 3)
-import { LandingPage } from '../../pages/public/LandingPage';
-import { PublicDemographics } from '../../pages/public/PublicDemographics';
-import { PublicPrograms } from '../../pages/public/PublicPrograms';
-import { PublicAccomplishments } from '../../pages/public/PublicAccomplishments';
-import { PublicGADPlans } from '../../pages/public/PublicGADPlans';
-import { PublicFeedback } from '../../pages/public/PublicFeedback';
+const LandingPage = lazy(() => import('../../pages/public/LandingPage').then(module => ({ default: module.LandingPage })));
+const PublicDemographics = lazy(() => import('../../pages/public/PublicDemographics').then(module => ({ default: module.PublicDemographics })));
+const PublicPrograms = lazy(() => import('../../pages/public/PublicPrograms').then(module => ({ default: module.PublicPrograms })));
+const PublicAccomplishments = lazy(() => import('../../pages/public/PublicAccomplishments').then(module => ({ default: module.PublicAccomplishments })));
+const PublicGADPlans = lazy(() => import('../../pages/public/PublicGADPlans').then(module => ({ default: module.PublicGADPlans })));
+const PublicFeedback = lazy(() => import('../../pages/public/PublicFeedback').then(module => ({ default: module.PublicFeedback })));
 
 // Authentication Portal
-import { LoginPage } from '../../pages/auth/LoginPage';
+const LoginPage = lazy(() => import('../../pages/auth/LoginPage').then(module => ({ default: module.LoginPage })));
 
 // Authenticated GAD Workspace Pages (Protected)
-import Dashboard from '../../pages/Dashboard';
-import ProgramMonitoring from '../../pages/ProgramMonitoring';
-import GADPlan from '../../pages/GADPlan';
-import Accomplishments from '../../pages/Accomplishments';
-import DataEncoding from '../../pages/DataEncoding';
-import Reports from '../../pages/Reports';
-import UserManagement from '../../pages/UserManagement';
-import StatisticalCatalog from '../../pages/StatisticalCatalog';
-import TableBuilderPage from '../../pages/admin/TableBuilderPage';
-import StatisticalDataEntryPage from '../../pages/admin/StatisticalDataEntryPage';
+const Dashboard = lazy(() => import('../../pages/Dashboard'));
+const ProgramMonitoring = lazy(() => import('../../pages/ProgramMonitoring'));
+const GADPlan = lazy(() => import('../../pages/GADPlan'));
+const Accomplishments = lazy(() => import('../../pages/Accomplishments'));
+const DataEncoding = lazy(() => import('../../pages/DataEncoding'));
+const Reports = lazy(() => import('../../pages/Reports'));
+const UserManagement = lazy(() => import('../../pages/UserManagement'));
+const StatisticalCatalog = lazy(() => import('../../pages/StatisticalCatalog'));
+const TableBuilderPage = lazy(() => import('../../pages/admin/TableBuilderPage'));
+const StatisticalDataEntryPage = lazy(() => import('../../pages/admin/StatisticalDataEntryPage'));
 
 // Error Pages
-import { NotFoundPage } from '../../pages/error/NotFoundPage';
-import { UnauthorizedPage } from '../../pages/error/UnauthorizedPage';
+const NotFoundPage = lazy(() => import('../../pages/error/NotFoundPage').then(module => ({ default: module.NotFoundPage })));
+const UnauthorizedPage = lazy(() => import('../../pages/error/UnauthorizedPage').then(module => ({ default: module.UnauthorizedPage })));
 
 export const AppRouter: React.FC = () => {
   return (
     <ErrorBoundary>
       <BrowserRouter>
+        <Suspense fallback={<div role="status" className="p-8 text-muted-foreground">Loading page...</div>}>
         <Routes>
           {/* Public Citizen Portal (Unauthenticated) */}
           <Route element={<PublicLayout />}>
@@ -45,10 +46,10 @@ export const AppRouter: React.FC = () => {
             <Route path="/public-accomplishments" element={<PublicAccomplishments />} />
             <Route path="/public-plans" element={<PublicGADPlans />} />
             <Route path="/statistical-catalog" element={<StatisticalCatalog />} />
-            <Route path="/statistical-data" element={<StatisticalDataEntryPage />} />
-            <Route path="/statistical-data/:tableId" element={<StatisticalDataEntryPage />} />
-            <Route path="/table-builder" element={<TableBuilderPage />} />
-            <Route path="/table-builder/:id" element={<TableBuilderPage />} />
+            <Route path="/statistical-data" element={<ProtectedRoute><StatisticalDataEntryPage /></ProtectedRoute>} />
+            <Route path="/statistical-data/:tableId" element={<ProtectedRoute><StatisticalDataEntryPage /></ProtectedRoute>} />
+            <Route path="/table-builder" element={<ProtectedRoute><TableBuilderPage /></ProtectedRoute>} />
+            <Route path="/table-builder/:id" element={<ProtectedRoute><TableBuilderPage /></ProtectedRoute>} />
             <Route path="/feedback" element={<PublicFeedback />} />
           </Route>
 
@@ -112,6 +113,7 @@ export const AppRouter: React.FC = () => {
           {/* 404 Catch-All */}
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
+        </Suspense>
       </BrowserRouter>
     </ErrorBoundary>
   );
