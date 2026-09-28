@@ -54,30 +54,30 @@ export const DashboardPage: React.FC = () => {
   return (
     <div className="space-y-8 max-w-6xl">
       {/* Welcome & Identity Surface */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 shadow-sm">
+      <div className="bg-card dark:bg-background border border-border dark:border-border rounded-2xl p-6 sm:p-8 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1.5">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
+              <span className="text-xs font-bold uppercase tracking-wider text-primary dark:text-primary">
                 Talibon GFPS Workspace
               </span>
-              <span className="text-slate-300 dark:text-slate-700">•</span>
-              <span className="text-xs text-slate-500 dark:text-slate-400">
+              <span className="text-foreground dark:text-foreground">•</span>
+              <span className="text-xs text-muted-foreground dark:text-muted-foreground">
                 Sprint 1 Foundation Active
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground dark:text-foreground tracking-tight">
               Welcome, {user?.full_name || 'Official'}
             </h1>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-              Assigned Office: <span className="font-semibold text-slate-800 dark:text-slate-200">{user?.office?.name || user?.office_id || 'Municipal Planning & Development Office'}</span>
+            <p className="text-xs sm:text-sm text-muted-foreground dark:text-muted-foreground">
+              Assigned Office: <span className="font-semibold text-foreground dark:text-foreground">{user?.office?.name || user?.office_id || 'Municipal Planning & Development Office'}</span>
             </p>
           </div>
 
           <div className="flex flex-col sm:items-end gap-2 shrink-0">
             <div className="flex items-center gap-1.5 flex-wrap">
               {roles.map((role) => (
-                <Badge key={role} variant="secondary" className="bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border-indigo-200">
+                <Badge key={role} variant="secondary" className="bg-accent text-primary dark:bg-accent/60 dark:text-primary border-primary">
                   {formatRole(role)}
                 </Badge>
               ))}
@@ -92,12 +92,12 @@ export const DashboardPage: React.FC = () => {
 
       {/* Sprint 1 System Readiness Card */}
       <Card className="p-6 space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div className="flex items-center justify-between border-b border-border dark:border-border pb-3">
           <div>
-            <h2 className="text-sm font-bold text-slate-900 dark:text-white">
+            <h2 className="text-sm font-bold text-foreground dark:text-foreground">
               Sprint 1 Core Readiness Verification
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-muted-foreground dark:text-muted-foreground">
               Technical foundation, database entities, authentication, and security rules.
             </p>
           </div>
@@ -110,7 +110,7 @@ export const DashboardPage: React.FC = () => {
           {sprintChecklist.map((item) => (
             <div
               key={item.label}
-              className="flex items-center gap-2.5 p-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-100 dark:border-slate-800/80 text-xs font-medium text-slate-700 dark:text-slate-300"
+              className="flex items-center gap-2.5 p-2.5 rounded-lg bg-muted dark:bg-background/60 border border-border dark:border-border/80 text-xs font-medium text-foreground dark:text-foreground"
             >
               <span className="w-4 h-4 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-[10px] font-bold shrink-0">
                 ✓
@@ -124,10 +124,10 @@ export const DashboardPage: React.FC = () => {
       {/* Core Domain Modules Navigation Grid */}
       <div className="space-y-4">
         <div>
-          <h2 className="text-base font-bold text-slate-900 dark:text-white">
+          <h2 className="text-base font-bold text-foreground dark:text-foreground">
             GAD Domain Modules
           </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-xs text-muted-foreground dark:text-muted-foreground">
             Select a module to review its initial data structure and workflow.
           </p>
         </div>
@@ -137,21 +137,21 @@ export const DashboardPage: React.FC = () => {
             <Link
               key={module.title}
               to={module.path}
-              className="group p-5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-indigo-500 dark:hover:border-indigo-500 transition-all shadow-sm flex flex-col justify-between"
+              className="group p-5 rounded-xl bg-card dark:bg-background border border-border dark:border-border hover:border-primary dark:hover:border-primary transition-all shadow-sm flex flex-col justify-between"
             >
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                  <span className="text-xs font-semibold px-2 py-0.5 rounded bg-muted dark:bg-muted text-muted-foreground dark:text-muted-foreground">
                     {module.badge}
                   </span>
-                  <span className="text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors text-sm">
+                  <span className="text-muted-foreground group-hover:text-primary dark:group-hover:text-primary transition-colors text-sm">
                     →
                   </span>
                 </div>
-                <h3 className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                <h3 className="text-sm font-bold text-foreground dark:text-foreground group-hover:text-primary dark:group-hover:text-primary transition-colors">
                   {module.title}
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                <p className="text-xs text-muted-foreground dark:text-muted-foreground leading-relaxed">
                   {module.description}
                 </p>
               </div>
@@ -161,21 +161,21 @@ export const DashboardPage: React.FC = () => {
           {isAdmin && (
             <Link
               to="/users"
-              className="group p-5 rounded-xl bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-200 dark:border-indigo-800/60 hover:border-indigo-500 transition-all shadow-sm flex flex-col justify-between"
+              className="group p-5 rounded-xl bg-accent/50 dark:bg-accent/20 border border-primary dark:border-primary/60 hover:border-primary transition-all shadow-sm flex flex-col justify-between"
             >
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold px-2 py-0.5 rounded bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300">
+                  <span className="text-xs font-semibold px-2 py-0.5 rounded bg-accent dark:bg-accent text-primary dark:text-primary">
                     Admin
                   </span>
-                  <span className="text-indigo-600 dark:text-indigo-400 text-sm">
+                  <span className="text-primary dark:text-primary text-sm">
                     →
                   </span>
                 </div>
-                <h3 className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                <h3 className="text-sm font-bold text-foreground dark:text-foreground group-hover:text-primary dark:group-hover:text-primary transition-colors">
                   User & Role Management
                 </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                <p className="text-xs text-muted-foreground dark:text-muted-foreground leading-relaxed">
                   Provision accounts for MPDC, MSWDO, MHO, MAO, and Barangay Focal units.
                 </p>
               </div>

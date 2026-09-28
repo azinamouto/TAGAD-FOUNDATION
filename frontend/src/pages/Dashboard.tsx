@@ -57,7 +57,7 @@ const Dashboard: React.FC = () => {
         <h3 className="text-sm font-semibold text-rose-700 dark:text-rose-400">
           Failed to load analytics
         </h3>
-        <p className="text-xs text-slate-600 dark:text-slate-400">
+        <p className="text-xs text-muted-foreground dark:text-muted-foreground">
           There was an error fetching the dashboard statistics. Please refresh the page.
         </p>
       </div>
@@ -76,7 +76,7 @@ const Dashboard: React.FC = () => {
   const byBarangay = Array.isArray(rawData?.byBarangay) ? rawData.byBarangay : [];
   const recentBeneficiaries = Array.isArray(rawData?.recentBeneficiaries) ? rawData.recentBeneficiaries : [];
 
-  const GENDER_COLORS = ['#334155', '#94a3b8'];
+  const GENDER_COLORS = ['var(--chart-1)', 'var(--chart-2)'];
 
   const genderData = [
     { name: 'Male', value: totalMale },
@@ -99,21 +99,21 @@ const Dashboard: React.FC = () => {
       {/* Header & Controls */}
       <section className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-4">
         <div className="space-y-1">
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground dark:text-foreground">
             Overview
           </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-xs text-muted-foreground dark:text-muted-foreground">
             Municipality of Talibon • Gender and Development Statistics
           </p>
         </div>
 
         <div className="flex items-center gap-2 text-xs">
-          <label htmlFor="dash-year" className="font-medium text-slate-600 dark:text-slate-400">
+          <label htmlFor="dash-year" className="font-medium text-muted-foreground dark:text-muted-foreground">
             Year:
           </label>
           <select
             id="dash-year"
-            className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2.5 py-1 text-slate-900 dark:text-slate-100"
+            className="bg-card dark:bg-background border border-border dark:border-border rounded px-2.5 py-1 text-foreground dark:text-foreground"
             value={year}
             onChange={(e) => setYear(parseInt(e.target.value, 10))}
           >
@@ -128,59 +128,59 @@ const Dashboard: React.FC = () => {
 
       {/* Metrics Row */}
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-        <div className="space-y-1 border-l-2 border-slate-900 dark:border-white pl-4">
-          <div className="text-xs text-slate-500 font-medium">Total Beneficiaries</div>
-          <div className="text-2xl font-semibold text-slate-900 dark:text-white tabular-nums">
+        <div className="space-y-1 border-l-2 border-border dark:border-white pl-4">
+          <div className="text-xs text-muted-foreground font-medium">Total Beneficiaries</div>
+          <div className="text-2xl font-semibold text-foreground dark:text-foreground tabular-nums">
             {totalBeneficiaries.toLocaleString()}
           </div>
-          <div className="text-[11px] text-slate-500">
+          <div className="text-[11px] text-muted-foreground">
             M: {totalMale.toLocaleString()} • F: {totalFemale.toLocaleString()}
           </div>
         </div>
 
-        <div className="space-y-1 border-l-2 border-slate-300 dark:border-slate-700 pl-4">
-          <div className="text-xs text-slate-500 font-medium">Active Programs</div>
-          <div className="text-2xl font-semibold text-slate-900 dark:text-white tabular-nums">
+        <div className="space-y-1 border-l-2 border-border dark:border-border pl-4">
+          <div className="text-xs text-muted-foreground font-medium">Active Programs</div>
+          <div className="text-2xl font-semibold text-foreground dark:text-foreground tabular-nums">
             {totalPrograms}
           </div>
-          <div className="text-[11px] text-slate-500">FY {year} Monitoring</div>
+          <div className="text-[11px] text-muted-foreground">FY {year} Monitoring</div>
         </div>
 
-        <div className="space-y-1 border-l-2 border-slate-300 dark:border-slate-700 pl-4">
-          <div className="text-xs text-slate-500 font-medium">GAD Budget Allocated</div>
-          <div className="text-2xl font-semibold text-slate-900 dark:text-white tabular-nums">
+        <div className="space-y-1 border-l-2 border-border dark:border-border pl-4">
+          <div className="text-xs text-muted-foreground font-medium">GAD Budget Allocated</div>
+          <div className="text-2xl font-semibold text-foreground dark:text-foreground tabular-nums">
             {formatCurrency(totalBudgetAllocated)}
           </div>
-          <div className="text-[11px] text-slate-500">Annual GAD Plan Total</div>
+          <div className="text-[11px] text-muted-foreground">Annual GAD Plan Total</div>
         </div>
 
-        <div className="space-y-1 border-l-2 border-slate-300 dark:border-slate-700 pl-4">
-          <div className="text-xs text-slate-500 font-medium">Budget Utilized</div>
-          <div className="text-2xl font-semibold text-slate-900 dark:text-white tabular-nums">
+        <div className="space-y-1 border-l-2 border-border dark:border-border pl-4">
+          <div className="text-xs text-muted-foreground font-medium">Budget Utilized</div>
+          <div className="text-2xl font-semibold text-foreground dark:text-foreground tabular-nums">
             {formatCurrency(totalBudgetUsed)}
           </div>
-          <div className="text-[11px] text-slate-500">
+          <div className="text-[11px] text-muted-foreground">
             {budgetUsagePercent.toFixed(1)}% of planned budget
           </div>
         </div>
       </section>
 
-      <hr className="border-slate-200 dark:border-slate-800" />
+      <hr className="border-border dark:border-border" />
 
       {/* Charts Section */}
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-12">
         {/* Barangay Distribution (2 cols) */}
         <div className="lg:col-span-2 space-y-4">
           <div className="space-y-1">
-            <h2 className="text-sm font-semibold text-slate-900 dark:text-white">
+            <h2 className="text-sm font-semibold text-foreground dark:text-foreground">
               Beneficiaries by Barangay
             </h2>
-            <p className="text-xs text-slate-500">Disaggregated demographic distribution</p>
+            <p className="text-xs text-muted-foreground">Disaggregated demographic distribution</p>
           </div>
           <div className="h-72 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={byBarangay} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
                 <XAxis
                   dataKey="barangay"
                   fontSize={10}
@@ -188,21 +188,21 @@ const Dashboard: React.FC = () => {
                   angle={-45}
                   textAnchor="end"
                   height={50}
-                  stroke="#94A3B8"
-                  tick={{ fill: '#64748B' }}
+                  stroke="var(--chart-2)"
+                  tick={{ fill: 'var(--muted-foreground)' }}
                 />
-                <YAxis fontSize={10} stroke="#94A3B8" tick={{ fill: '#64748B' }} />
+                <YAxis fontSize={10} stroke="var(--chart-2)" tick={{ fill: 'var(--muted-foreground)' }} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#FFFFFF',
-                    border: '1px solid #E2E8F0',
+                    backgroundColor: 'var(--card)',
+                    border: '1px solid var(--border)',
                     fontSize: '12px',
                     borderRadius: '4px',
                   }}
                 />
                 <Legend iconType="circle" wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }} />
-                <Bar dataKey="male" stackId="a" fill="#334155" name="Male" />
-                <Bar dataKey="female" stackId="a" fill="#94A3B8" name="Female" />
+                <Bar dataKey="male" stackId="a" fill="var(--chart-1)" name="Male" />
+                <Bar dataKey="female" stackId="a" fill="var(--chart-2)" name="Female" />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -211,10 +211,10 @@ const Dashboard: React.FC = () => {
         {/* Gender Ratio (1 col) */}
         <div className="space-y-4">
           <div className="space-y-1">
-            <h2 className="text-sm font-semibold text-slate-900 dark:text-white">
+            <h2 className="text-sm font-semibold text-foreground dark:text-foreground">
               Gender Distribution
             </h2>
-            <p className="text-xs text-slate-500">Male and Female participant ratio</p>
+            <p className="text-xs text-muted-foreground">Male and Female participant ratio</p>
           </div>
           <div className="h-72 w-full flex items-center justify-center">
             <ResponsiveContainer width="100%" height="100%">
@@ -226,7 +226,7 @@ const Dashboard: React.FC = () => {
                   innerRadius={50}
                   outerRadius={80}
                   dataKey="value"
-                  stroke="#FFFFFF"
+                  stroke="var(--card)"
                   strokeWidth={2}
                 >
                   {genderData.map((_, index) => (
@@ -235,8 +235,8 @@ const Dashboard: React.FC = () => {
                 </Pie>
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#FFFFFF',
-                    border: '1px solid #E2E8F0',
+                    backgroundColor: 'var(--card)',
+                    border: '1px solid var(--border)',
                     fontSize: '12px',
                     borderRadius: '4px',
                   }}
@@ -248,21 +248,21 @@ const Dashboard: React.FC = () => {
         </div>
       </section>
 
-      <hr className="border-slate-200 dark:border-slate-800" />
+      <hr className="border-border dark:border-border" />
 
       {/* Recent Entries */}
       <section className="space-y-4">
         <div className="space-y-1">
-          <h2 className="text-sm font-semibold text-slate-900 dark:text-white">
+          <h2 className="text-sm font-semibold text-foreground dark:text-foreground">
             Recent Data Entries
           </h2>
-          <p className="text-xs text-slate-500">Latest encoded demographic records</p>
+          <p className="text-xs text-muted-foreground">Latest encoded demographic records</p>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400">
+              <tr className="border-b border-border dark:border-border text-muted-foreground dark:text-muted-foreground">
                 <th className="py-2.5 px-3 font-semibold">Beneficiary</th>
                 <th className="py-2.5 px-3 font-semibold">Sex</th>
                 <th className="py-2.5 px-3 font-semibold">Barangay</th>
@@ -270,16 +270,16 @@ const Dashboard: React.FC = () => {
                 <th className="py-2.5 px-3 font-semibold text-right">Date Encoded</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+            <tbody className="divide-y divide-border dark:divide-border">
               {recentBeneficiaries.map((b: any) => (
-                <tr key={b.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
-                  <td className="py-2.5 px-3 font-medium text-slate-900 dark:text-white">
+                <tr key={b.id} className="hover:bg-muted dark:hover:bg-muted/40">
+                  <td className="py-2.5 px-3 font-medium text-foreground dark:text-foreground">
                     {b.firstName} {b.lastName}
                   </td>
-                  <td className="py-2.5 px-3 text-slate-600 dark:text-slate-400">{b.sex}</td>
-                  <td className="py-2.5 px-3 text-slate-600 dark:text-slate-400">{b.barangay}</td>
-                  <td className="py-2.5 px-3 text-slate-600 dark:text-slate-400">{b.sector}</td>
-                  <td className="py-2.5 px-3 text-right text-slate-500 dark:text-slate-400">
+                  <td className="py-2.5 px-3 text-muted-foreground dark:text-muted-foreground">{b.sex}</td>
+                  <td className="py-2.5 px-3 text-muted-foreground dark:text-muted-foreground">{b.barangay}</td>
+                  <td className="py-2.5 px-3 text-muted-foreground dark:text-muted-foreground">{b.sector}</td>
+                  <td className="py-2.5 px-3 text-right text-muted-foreground dark:text-muted-foreground">
                     {b.dateEncoded
                       ? new Date(b.dateEncoded).toLocaleDateString(undefined, {
                           month: 'short',
@@ -292,7 +292,7 @@ const Dashboard: React.FC = () => {
               ))}
               {recentBeneficiaries.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="py-8 text-center text-slate-400">
+                  <td colSpan={5} className="py-8 text-center text-muted-foreground">
                     No recent data entries recorded for this period.
                   </td>
                 </tr>
