@@ -256,21 +256,21 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
 
   if (loading) {
     return (
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-16 text-center space-y-3">
-        <RefreshCw className="w-8 h-8 animate-spin text-indigo-600 mx-auto" />
-        <p className="text-xs text-slate-500 font-medium">Loading statistical table specification...</p>
+      <div className="bg-card dark:bg-background border border-border dark:border-border rounded-xl p-16 text-center space-y-3">
+        <RefreshCw className="w-8 h-8 animate-spin text-primary mx-auto" />
+        <p className="text-xs text-muted-foreground font-medium">Loading statistical table specification...</p>
       </div>
     );
   }
 
   if (error || !table) {
     return (
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-8 space-y-4">
+      <div className="bg-card dark:bg-background border border-border dark:border-border rounded-xl p-8 space-y-4">
         <div className="flex items-center gap-2 text-rose-600 dark:text-rose-400">
           <AlertCircle className="w-5 h-5" />
           <h2 className="text-base font-bold">Error Loading Table</h2>
         </div>
-        <p className="text-xs text-slate-600 dark:text-slate-400">
+        <p className="text-xs text-muted-foreground dark:text-muted-foreground">
           {error || 'The requested table could not be found or access is restricted.'}
         </p>
         <Button size="sm" variant="outline" onClick={onBack} className="text-xs">
@@ -294,7 +294,7 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
           variant="outline"
           size="sm"
           onClick={onBack}
-          className="text-xs w-fit bg-white dark:bg-slate-900"
+          className="text-xs w-fit bg-card dark:bg-background"
         >
           <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
           Back to Table Catalog
@@ -305,7 +305,7 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
             variant="outline"
             size="sm"
             onClick={handleCopySpec}
-            className="text-xs bg-white dark:bg-slate-900"
+            className="text-xs bg-card dark:bg-background"
           >
             {copiedSpec ? (
               <>
@@ -324,7 +324,7 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
             variant="outline"
             size="sm"
             onClick={fetchTableDetail}
-            className="text-xs bg-white dark:bg-slate-900"
+            className="text-xs bg-card dark:bg-background"
           >
             <RefreshCw className="w-3.5 h-3.5 mr-1.5" />
             Refresh
@@ -333,7 +333,7 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
           <Button
             size="sm"
             onClick={() => navigate(`/admin/statistical-data/${table.id}`)}
-            className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-medium shadow-xs"
+            className="text-xs bg-primary hover:bg-primary text-white font-medium shadow-xs"
           >
             <FileSpreadsheet className="w-3.5 h-3.5 mr-1.5" />
             Enter Observations
@@ -345,7 +345,7 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
                 size="sm"
                 variant="outline"
                 onClick={() => setIsEditMetaOpen(true)}
-                className="text-xs bg-white dark:bg-slate-900 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/40"
+                className="text-xs bg-card dark:bg-background text-primary dark:text-primary border-primary dark:border-primary hover:bg-accent dark:hover:bg-accent/40"
               >
                 <Edit3 className="w-3.5 h-3.5 mr-1.5" />
                 Edit Metadata
@@ -368,12 +368,12 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
       </div>
 
       {/* Table Header Card */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-xs space-y-4">
+      <div className="bg-card dark:bg-background border border-border dark:border-border rounded-xl p-6 shadow-xs space-y-4">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="font-mono text-xs font-bold px-2.5 py-1 rounded bg-indigo-100 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-300">
+          <span className="font-mono text-xs font-bold px-2.5 py-1 rounded bg-accent dark:bg-accent/60 text-primary dark:text-primary">
             {table.tableCode}
           </span>
-          <span className="text-xs font-semibold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+          <span className="text-xs font-semibold px-2 py-0.5 rounded bg-muted dark:bg-muted text-foreground dark:text-foreground">
             Table #{table.tableNumber}
           </span>
           {table.isSystemTable ? (
@@ -410,7 +410,7 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
             className={`text-xs font-medium px-2 py-0.5 rounded ${
               isIndicator
                 ? 'bg-purple-100 text-purple-800 dark:bg-purple-950/60 dark:text-purple-300'
-                : 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200'
+                : 'bg-muted text-foreground dark:bg-muted dark:text-foreground'
             }`}
           >
             {isIndicator ? 'Analytical Indicator' : 'Aggregated Statistics'}
@@ -418,12 +418,12 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
         </div>
 
         <div>
-          <h1 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white tracking-tight leading-snug">
+          <h1 className="text-xl md:text-2xl font-bold text-foreground dark:text-foreground tracking-tight leading-snug">
             {table.title}
           </h1>
-          <p className="text-xs md:text-sm text-slate-600 dark:text-slate-300 mt-1">
+          <p className="text-xs md:text-sm text-muted-foreground dark:text-foreground mt-1">
             Canonical Domain:{' '}
-            <strong className="text-slate-900 dark:text-white font-semibold">
+            <strong className="text-foreground dark:text-foreground font-semibold">
               {table.domain}
             </strong>
           </p>
@@ -441,14 +441,14 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
       </div>
 
       {/* Tabs Navigation */}
-      <div className="flex border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 rounded-t-xl">
+      <div className="flex border-b border-border dark:border-border bg-card dark:bg-background px-6 rounded-t-xl">
         <button
           type="button"
           onClick={() => setActiveTab('specs')}
           className={`py-3 px-4 text-xs font-bold border-b-2 transition-colors flex items-center gap-2 ${
             activeTab === 'specs'
-              ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
-              : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+              ? 'border-primary text-primary dark:text-primary'
+              : 'border-transparent text-muted-foreground hover:text-foreground dark:hover:text-foreground'
           }`}
         >
           <FileSpreadsheet className="w-4 h-4" />
@@ -460,8 +460,8 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
           onClick={() => setActiveTab('dimensions')}
           className={`py-3 px-4 text-xs font-bold border-b-2 transition-colors flex items-center gap-2 ${
             activeTab === 'dimensions'
-              ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
-              : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+              ? 'border-primary text-primary dark:text-primary'
+              : 'border-transparent text-muted-foreground hover:text-foreground dark:hover:text-foreground'
           }`}
         >
           <SlidersHorizontal className="w-4 h-4" />
@@ -473,8 +473,8 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
           onClick={() => setActiveTab('indicators')}
           className={`py-3 px-4 text-xs font-bold border-b-2 transition-colors flex items-center gap-2 ${
             activeTab === 'indicators'
-              ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
-              : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+              ? 'border-primary text-primary dark:text-primary'
+              : 'border-transparent text-muted-foreground hover:text-foreground dark:hover:text-foreground'
           }`}
         >
           <Activity className="w-4 h-4" />
@@ -486,60 +486,60 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
       {/* SECTION 1: Table Specifications */}
       {/* ========================================================================= */}
       {activeTab === 'specs' && (
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-b-xl p-6 shadow-xs space-y-6">
+        <div className="bg-card dark:bg-background border border-border dark:border-border rounded-b-xl p-6 shadow-xs space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-200 dark:border-slate-700/60 space-y-3">
-              <h3 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+            <div className="p-4 bg-muted dark:bg-muted/40 rounded-xl border border-border dark:border-border/60 space-y-3">
+              <h3 className="text-xs font-bold text-foreground dark:text-foreground uppercase tracking-wider">
                 Statistical Grain & Scope
               </h3>
 
               <div className="space-y-2 text-xs">
                 <div>
-                  <span className="text-slate-500 dark:text-slate-400">Row Grain:</span>
-                  <div className="font-semibold text-slate-800 dark:text-slate-200 mt-0.5">
+                  <span className="text-muted-foreground dark:text-muted-foreground">Row Grain:</span>
+                  <div className="font-semibold text-foreground dark:text-foreground mt-0.5">
                     {table.rowGrain || 'BARANGAY (25 Official Administrative Units)'}
                   </div>
                 </div>
 
                 <div>
-                  <span className="text-slate-500 dark:text-slate-400">Expected Unit of Measure:</span>
-                  <div className="font-semibold text-slate-800 dark:text-slate-200 mt-0.5">
+                  <span className="text-muted-foreground dark:text-muted-foreground">Expected Unit of Measure:</span>
+                  <div className="font-semibold text-foreground dark:text-foreground mt-0.5">
                     {table.expectedUnit || 'Persons / Households'}
                   </div>
                 </div>
 
                 <div>
-                  <span className="text-slate-500 dark:text-slate-400">Measure Structure:</span>
-                  <div className="font-semibold text-slate-800 dark:text-slate-200 mt-0.5">
+                  <span className="text-muted-foreground dark:text-muted-foreground">Measure Structure:</span>
+                  <div className="font-semibold text-foreground dark:text-foreground mt-0.5">
                     {table.measureStructure || 'Aggregated Count Disaggregated by Sex & Age Cohort'}
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="p-4 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-200 dark:border-slate-700/60 space-y-3">
-              <h3 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+            <div className="p-4 bg-muted dark:bg-muted/40 rounded-xl border border-border dark:border-border/60 space-y-3">
+              <h3 className="text-xs font-bold text-foreground dark:text-foreground uppercase tracking-wider">
                 Data Collection & Ingestion
               </h3>
 
               <div className="space-y-2 text-xs">
                 <div>
-                  <span className="text-slate-500 dark:text-slate-400">Source Format:</span>
-                  <div className="font-semibold text-slate-800 dark:text-slate-200 mt-0.5">
+                  <span className="text-muted-foreground dark:text-muted-foreground">Source Format:</span>
+                  <div className="font-semibold text-foreground dark:text-foreground mt-0.5">
                     {table.sourceFormat || 'PSA Census / CBMS Administrative Records'}
                   </div>
                 </div>
 
                 <div>
-                  <span className="text-slate-500 dark:text-slate-400">Dimensions Summary:</span>
-                  <div className="font-semibold text-slate-800 dark:text-slate-200 mt-0.5">
+                  <span className="text-muted-foreground dark:text-muted-foreground">Dimensions Summary:</span>
+                  <div className="font-semibold text-foreground dark:text-foreground mt-0.5">
                     {table.dimensionsSummary || `${boundDimensions.length} dimension(s) configured`}
                   </div>
                 </div>
 
                 <div>
-                  <span className="text-slate-500 dark:text-slate-400">Verification Standard:</span>
-                  <div className="font-semibold text-slate-800 dark:text-slate-200 mt-0.5">
+                  <span className="text-muted-foreground dark:text-muted-foreground">Verification Standard:</span>
+                  <div className="font-semibold text-foreground dark:text-foreground mt-0.5">
                     {table.verificationStatus}
                   </div>
                 </div>
@@ -549,18 +549,18 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
 
           {/* Methodological Description */}
           {table.description && (
-            <div className="p-4 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-200 dark:border-slate-700/60 space-y-1.5">
-              <h3 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+            <div className="p-4 bg-muted dark:bg-muted/40 rounded-xl border border-border dark:border-border/60 space-y-1.5">
+              <h3 className="text-xs font-bold text-foreground dark:text-foreground uppercase tracking-wider">
                 Methodological Description & Scope
               </h3>
-              <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">
+              <p className="text-xs text-foreground dark:text-foreground leading-relaxed whitespace-pre-wrap">
                 {table.description}
               </p>
             </div>
           )}
 
           {/* Timestamps */}
-          <div className="flex items-center gap-4 text-[11px] text-slate-400 border-t border-slate-100 dark:border-slate-800 pt-4">
+          <div className="flex items-center gap-4 text-[11px] text-muted-foreground border-t border-border dark:border-border pt-4">
             <span>Created: {table.createdAt ? new Date(table.createdAt).toLocaleDateString() : 'System Boot'}</span>
             <span>Last Updated: {table.updatedAt ? new Date(table.updatedAt).toLocaleDateString() : 'N/A'}</span>
           </div>
@@ -571,13 +571,13 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
       {/* SECTION 2: Bound Dimensions */}
       {/* ========================================================================= */}
       {activeTab === 'dimensions' && (
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-b-xl p-6 shadow-xs space-y-4">
+        <div className="bg-card dark:bg-background border border-border dark:border-border rounded-b-xl p-6 shadow-xs space-y-4">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <h2 className="text-sm font-bold text-slate-900 dark:text-white">
+              <h2 className="text-sm font-bold text-foreground dark:text-foreground">
                 Bound Disaggregation Dimensions
               </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                 Dimensions control the structural hierarchy and breakdown axes when reporting data for this table.
               </p>
             </div>
@@ -586,7 +586,7 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
               <Button
                 size="sm"
                 onClick={() => setIsBindDimOpen(true)}
-                className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white"
+                className="text-xs bg-primary hover:bg-primary text-white"
               >
                 <PlusCircle className="w-3.5 h-3.5 mr-1.5" />
                 Bind Dimension
@@ -595,19 +595,19 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
           </div>
 
           {boundDimensions.length === 0 ? (
-            <div className="p-12 text-center text-xs text-slate-500 border border-dashed border-slate-200 dark:border-slate-800 rounded-xl space-y-3">
-              <SlidersHorizontal className="w-8 h-8 text-slate-300 dark:text-slate-600 mx-auto" />
-              <p className="font-semibold text-slate-700 dark:text-slate-300 text-sm">
+            <div className="p-12 text-center text-xs text-muted-foreground border border-dashed border-border dark:border-border rounded-xl space-y-3">
+              <SlidersHorizontal className="w-8 h-8 text-foreground dark:text-muted-foreground mx-auto" />
+              <p className="font-semibold text-foreground dark:text-foreground text-sm">
                 No dimensions bound to this table yet
               </p>
-              <p className="max-w-md mx-auto text-slate-400">
+              <p className="max-w-md mx-auto text-muted-foreground">
                 Bind canonical dimensions such as Sex (Male/Female), Age Group cohorts, or Barangay geographic hierarchy to configure data grain.
               </p>
               {canMutate && (
                 <Button
                   size="sm"
                   onClick={() => setIsBindDimOpen(true)}
-                  className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white mt-2"
+                  className="text-xs bg-primary hover:bg-primary text-white mt-2"
                 >
                   <PlusCircle className="w-3.5 h-3.5 mr-1.5" />
                   Bind First Dimension
@@ -615,9 +615,9 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
               )}
             </div>
           ) : (
-            <div className="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+            <div className="border border-border dark:border-border rounded-xl overflow-hidden">
               <table className="w-full text-left text-xs">
-                <thead className="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 uppercase tracking-wider font-semibold">
+                <thead className="bg-muted dark:bg-muted/60 border-b border-border dark:border-border text-muted-foreground dark:text-muted-foreground uppercase tracking-wider font-semibold">
                   <tr>
                     <th className="py-3 px-4 w-16 text-center">Order</th>
                     <th className="py-3 px-4 w-36">Dimension Code</th>
@@ -628,7 +628,7 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
                     {canMutate && <th className="py-3 px-4 w-32 text-right">Actions</th>}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                <tbody className="divide-y divide-border dark:divide-border">
                   {boundDimensions.map((binding, idx) => {
                     const dim = binding.dimension;
                     const isFirst = idx === 0;
@@ -637,11 +637,11 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
                     return (
                       <tr
                         key={binding.id || binding.dimensionId}
-                        className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors"
+                        className="hover:bg-muted/80 dark:hover:bg-muted/40 transition-colors"
                       >
                         {/* Order Sequence with Up/Down buttons */}
                         <td className="py-3 px-4 text-center">
-                          <div className="inline-flex items-center gap-1 font-mono font-bold text-slate-700 dark:text-slate-300">
+                          <div className="inline-flex items-center gap-1 font-mono font-bold text-foreground dark:text-foreground">
                             <span>#{binding.displayOrder}</span>
                             {canMutate && boundDimensions.length > 1 && (
                               <div className="flex flex-col ml-1">
@@ -650,7 +650,7 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
                                   disabled={isFirst}
                                   onClick={() => handleReorder(idx, 'up')}
                                   title="Move Up"
-                                  className="text-slate-400 hover:text-indigo-600 disabled:opacity-20 disabled:hover:text-slate-400 p-0.5"
+                                  className="text-muted-foreground hover:text-primary disabled:opacity-20 disabled:hover:text-muted-foreground p-0.5"
                                 >
                                   <MoveUp className="w-3 h-3" />
                                 </button>
@@ -659,7 +659,7 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
                                   disabled={isLast}
                                   onClick={() => handleReorder(idx, 'down')}
                                   title="Move Down"
-                                  className="text-slate-400 hover:text-indigo-600 disabled:opacity-20 disabled:hover:text-slate-400 p-0.5"
+                                  className="text-muted-foreground hover:text-primary disabled:opacity-20 disabled:hover:text-muted-foreground p-0.5"
                                 >
                                   <MoveDown className="w-3 h-3" />
                                 </button>
@@ -670,7 +670,7 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
 
                         {/* Code */}
                         <td className="py-3 px-4">
-                          <span className="font-mono font-bold text-indigo-700 dark:text-indigo-400">
+                          <span className="font-mono font-bold text-primary dark:text-primary">
                             {dim?.dimensionCode || 'DIM_CUSTOM'}
                           </span>
                         </td>
@@ -678,16 +678,16 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
                         {/* Name & Desc */}
                         <td className="py-3 px-4">
                           <div className="space-y-0.5">
-                            <div className="font-semibold text-slate-900 dark:text-white">
+                            <div className="font-semibold text-foreground dark:text-foreground">
                               {dim?.name || 'Dimension'}
                             </div>
                             {dim?.description && (
-                              <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                              <p className="text-[11px] text-muted-foreground dark:text-muted-foreground">
                                 {dim.description}
                               </p>
                             )}
                             {binding.allowedValues && (
-                              <div className="text-[10px] text-slate-400 font-mono">
+                              <div className="text-[10px] text-muted-foreground font-mono">
                                 Allowed:{' '}
                                 {typeof binding.allowedValues === 'object'
                                   ? JSON.stringify(binding.allowedValues)
@@ -699,7 +699,7 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
 
                         {/* Data Type */}
                         <td className="py-3 px-4">
-                          <span className="font-mono text-[11px] text-slate-600 dark:text-slate-300">
+                          <span className="font-mono text-[11px] text-muted-foreground dark:text-foreground">
                             {dim?.dataType || 'string'}
                           </span>
                         </td>
@@ -711,7 +711,7 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
                               Mandatory
                             </span>
                           ) : (
-                            <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400">
+                            <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-muted text-muted-foreground dark:bg-muted dark:text-muted-foreground">
                               Optional
                             </span>
                           )}
@@ -759,13 +759,13 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
       {/* SECTION 3: Analytical Indicators */}
       {/* ========================================================================= */}
       {activeTab === 'indicators' && (
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-b-xl p-6 shadow-xs space-y-4">
+        <div className="bg-card dark:bg-background border border-border dark:border-border rounded-b-xl p-6 shadow-xs space-y-4">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <h2 className="text-sm font-bold text-slate-900 dark:text-white">
+              <h2 className="text-sm font-bold text-foreground dark:text-foreground">
                 Computed Analytical Indicators
               </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                 Formulas and derived gender metrics computed from this statistical tabulation.
               </p>
             </div>
@@ -776,7 +776,7 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
                 onClick={() =>
                   setIndicatorModalState({ isOpen: true, indicator: null })
                 }
-                className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white"
+                className="text-xs bg-primary hover:bg-primary text-white"
               >
                 <PlusCircle className="w-3.5 h-3.5 mr-1.5" />
                 Add Indicator
@@ -785,12 +785,12 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
           </div>
 
           {indicators.length === 0 ? (
-            <div className="p-12 text-center text-xs text-slate-500 border border-dashed border-slate-200 dark:border-slate-800 rounded-xl space-y-3">
-              <Activity className="w-8 h-8 text-slate-300 dark:text-slate-600 mx-auto" />
-              <p className="font-semibold text-slate-700 dark:text-slate-300 text-sm">
+            <div className="p-12 text-center text-xs text-muted-foreground border border-dashed border-border dark:border-border rounded-xl space-y-3">
+              <Activity className="w-8 h-8 text-foreground dark:text-muted-foreground mx-auto" />
+              <p className="font-semibold text-foreground dark:text-foreground text-sm">
                 No indicators registered for this table yet
               </p>
-              <p className="max-w-md mx-auto text-slate-400">
+              <p className="max-w-md mx-auto text-muted-foreground">
                 You can attach computed ratios (e.g., Sex Ratio, Dependency Ratio, Literacy Rate) with mathematical formulas.
               </p>
               {canMutate && (
@@ -799,7 +799,7 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
                   onClick={() =>
                     setIndicatorModalState({ isOpen: true, indicator: null })
                   }
-                  className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white mt-2"
+                  className="text-xs bg-primary hover:bg-primary text-white mt-2"
                 >
                   <PlusCircle className="w-3.5 h-3.5 mr-1.5" />
                   Add First Indicator
@@ -815,7 +815,7 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
                 return (
                   <div
                     key={ind.id || ind.indicatorCode}
-                    className="p-4 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-200 dark:border-slate-700/60 space-y-3 flex flex-col justify-between"
+                    className="p-4 bg-muted dark:bg-muted/40 rounded-xl border border-border dark:border-border/60 space-y-3 flex flex-col justify-between"
                   >
                     <div className="space-y-2">
                       <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -824,7 +824,7 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
                         </span>
                         <div className="flex items-center gap-1.5">
                           {ind.unit && (
-                            <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
+                            <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-background dark:bg-background text-foreground dark:text-foreground">
                               Unit: {ind.unit}
                             </span>
                           )}
@@ -841,19 +841,19 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
                       </div>
 
                       <div>
-                        <h4 className="text-xs font-bold text-slate-900 dark:text-white">
+                        <h4 className="text-xs font-bold text-foreground dark:text-foreground">
                           {ind.title || ind.name}
                         </h4>
                         {ind.description && (
-                          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                          <p className="text-[11px] text-muted-foreground dark:text-muted-foreground mt-0.5">
                             {ind.description}
                           </p>
                         )}
                       </div>
 
                       {ind.formula && (
-                        <div className="p-2 bg-white dark:bg-slate-900 rounded border border-slate-200 dark:border-slate-800 text-[11px]">
-                          <span className="text-slate-400 block text-[10px] uppercase font-bold">
+                        <div className="p-2 bg-card dark:bg-background rounded border border-border dark:border-border text-[11px]">
+                          <span className="text-muted-foreground block text-[10px] uppercase font-bold">
                             Formula
                           </span>
                           <code className="text-purple-600 dark:text-purple-300 font-mono">
@@ -865,17 +865,17 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
                       {(ind.numeratorDefinition || ind.denominatorDefinition) && (
                         <div className="grid grid-cols-2 gap-2 text-[10px] pt-1">
                           {ind.numeratorDefinition && (
-                            <div className="p-2 bg-slate-100 dark:bg-slate-800/80 rounded">
-                              <span className="font-semibold block text-slate-500">Numerator:</span>
-                              <span className="text-slate-700 dark:text-slate-300">
+                            <div className="p-2 bg-muted dark:bg-muted/80 rounded">
+                              <span className="font-semibold block text-muted-foreground">Numerator:</span>
+                              <span className="text-foreground dark:text-foreground">
                                 {ind.numeratorDefinition}
                               </span>
                             </div>
                           )}
                           {ind.denominatorDefinition && (
-                            <div className="p-2 bg-slate-100 dark:bg-slate-800/80 rounded">
-                              <span className="font-semibold block text-slate-500">Denominator:</span>
-                              <span className="text-slate-700 dark:text-slate-300">
+                            <div className="p-2 bg-muted dark:bg-muted/80 rounded">
+                              <span className="font-semibold block text-muted-foreground">Denominator:</span>
+                              <span className="text-foreground dark:text-foreground">
                                 {ind.denominatorDefinition}
                               </span>
                             </div>
@@ -885,14 +885,14 @@ export const TableDetailView: React.FC<TableDetailViewProps> = ({
                     </div>
 
                     {canMutate && (
-                      <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-200 dark:border-slate-700/60">
+                      <div className="flex items-center justify-end gap-2 pt-2 border-t border-border dark:border-border/60">
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() =>
                             setIndicatorModalState({ isOpen: true, indicator: ind })
                           }
-                          className="text-xs h-7 px-2 text-indigo-600 hover:text-indigo-700 dark:text-indigo-400"
+                          className="text-xs h-7 px-2 text-primary hover:text-primary dark:text-primary"
                         >
                           <Edit3 className="w-3 h-3 mr-1" />
                           Edit
