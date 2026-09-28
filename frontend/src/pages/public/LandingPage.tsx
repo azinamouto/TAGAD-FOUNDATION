@@ -20,6 +20,8 @@ import {
   BarangayNetworkArtwork,
   TopographicWave,
   CardCornerFlourish,
+  LandingBackgroundOverlays,
+  MunicipalSealWatermark,
 } from '../../components/illustrations';
 
 const SECTOR_COLORS = ['#334155', '#475569', '#64748b', '#0284c7', '#059669', '#d97706', '#dc2626'];
@@ -73,8 +75,16 @@ export const LandingPage: React.FC = () => {
     : [];
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-8 py-12 space-y-16">
-      {/* Header & Mandate Introduction */}
+    <div className="relative w-full overflow-x-clip min-h-screen">
+      {/* Soft translucent geometric diagonal background overlays */}
+      <LandingBackgroundOverlays />
+
+      {/* Oversized circular municipal seal watermark in the lower-right area */}
+      <MunicipalSealWatermark className="top-80 sm:top-88 lg:top-[320px] -right-24 sm:-right-36 lg:-right-44" />
+
+      {/* Existing page content layout & structure (100% preserved) */}
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-8 py-12 space-y-16">
+        {/* Header & Mandate Introduction */}
       <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-50/80 via-amber-50/20 to-white dark:from-slate-900/60 dark:via-slate-900 dark:to-slate-900 border border-slate-200/70 dark:border-slate-800 p-6 sm:p-10 lg:p-12 transition-all">
         {/* Subtle layered ambient topographic wave */}
         <TopographicWave className="bottom-0 left-0 right-0 h-24" />
@@ -438,7 +448,8 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
     </div>
-  );
+  </div>
+);
 };
 
 
