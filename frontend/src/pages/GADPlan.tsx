@@ -18,6 +18,9 @@ const GADPlan: React.FC = () => {
   const [year, setYear] = useState(new Date().getFullYear());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [revisionId, setRevisionId] = useState<string | null>(null);
+  const [revisionRemarks, setRevisionRemarks] = useState('');
+  const [transitioning, setTransitioning] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const defaultOfficeName = user?.office?.code || user?.office?.name || '';
@@ -93,14 +96,20 @@ const GADPlan: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleStatusUpdate = async (id: string, status: string) => {
+  const handleStatusUpdate = async (id: string, status: string, remarks?: string) => {
+    if (status === 'REVISED' && !remarks?.trim()) return;
+    setTransitioning(true);
     try {
-      await api.patch(`/gad-plans/${id}/status`, { status });
+      const action = status === 'SUBMITTED' ? 'submit' : status === 'APPROVED' ? 'approve' : 'revise';
+      await api.post(`/gad-plans/${id}/${action}`, remarks ? { remarks: remarks.trim() } : {});
+      setRevisionId(null);
       toast.success(`Plan ${status.toLowerCase()} successfully`);
       fetchData();
     } catch (error: any) {
       const msg = error.response?.data?.error?.message || error.response?.data?.message || 'Failed to update status';
       toast.error(msg);
+    } finally {
+      setTransitioning(false);
     }
   };
 
@@ -207,20 +216,21 @@ const GADPlan: React.FC = () => {
                       )}>
                         {statusNormalized}
                       </span>
+                      {p.revisionRemarks && <p className="text-sm text-muted-foreground mt-2">Revision: {p.revisionRemarks}</p>}
                     </TableCell>
                     <TableCell className="text-right py-4 pr-6">
-                      <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        {statusNormalized === 'DRAFT' && !isViewer && (
+                      <div className="flex justify-end gap-1 opacity-100 transition-opacity">
+                        {['DRAFT', 'REVISED'].includes(statusNormalized) && !isViewer && (
                           <Button variant="ghost" size="icon" onClick={() => handleEdit(p)} className="h-8 w-8 text-[#6366F1] hover:bg-white hover:shadow-sm"><Edit className="h-4 w-4" /></Button>
                         )}
-                        {statusNormalized === 'DRAFT' && !isViewer && (
-                          <Button variant="ghost" size="icon" onClick={() => handleStatusUpdate(p.id, 'SUBMITTED')} className="h-8 w-8 text-[#6366F1] hover:bg-white hover:shadow-sm"><Send className="h-4 w-4" /></Button>
+                        {['DRAFT', 'REVISED'].includes(statusNormalized) && !isViewer && (
+                          <Button variant="ghost" size="icon" aria-label={statusNormalized === 'REVISED' ? 'Resubmit plan' : 'Submit plan'} disabled={transitioning} onClick={() => handleStatusUpdate(p.id, 'SUBMITTED')} className="h-8 w-8 text-[#6366F1] hover:bg-white hover:shadow-sm"><Send className="h-4 w-4" /></Button>
                         )}
                         {statusNormalized === 'SUBMITTED' && isAdmin && (
-                          <Button variant="ghost" size="icon" onClick={() => handleStatusUpdate(p.id, 'APPROVED')} className="h-8 w-8 text-emerald-600 hover:bg-white hover:shadow-sm"><CheckCircle className="h-4 w-4" /></Button>
+                          <Button variant="ghost" size="icon" aria-label="Approve plan" disabled={transitioning} onClick={() => handleStatusUpdate(p.id, 'APPROVED')} className="h-8 w-8 text-emerald-600 hover:bg-white hover:shadow-sm"><CheckCircle className="h-4 w-4" /></Button>
                         )}
                         {statusNormalized === 'SUBMITTED' && isAdmin && (
-                          <Button variant="ghost" size="icon" onClick={() => handleStatusUpdate(p.id, 'DRAFT')} className="h-8 w-8 text-orange-500 hover:bg-white hover:shadow-sm"><Trash2 className="h-4 w-4 rotate-180" /></Button>
+                          <Button variant="ghost" size="icon" aria-label="Request revision" disabled={transitioning} onClick={() => { setRevisionId(p.id); setRevisionRemarks(''); }} className="h-8 w-8 text-orange-500 hover:bg-white hover:shadow-sm"><Trash2 className="h-4 w-4 rotate-180" /></Button>
                         )}
                         {isAdmin && (
                           <Button variant="ghost" size="icon" onClick={() => handleDelete(p.id)} className="h-8 w-8 text-red-400 hover:bg-white hover:shadow-sm"><Trash2 className="h-4 w-4" /></Button>
@@ -235,6 +245,15 @@ const GADPlan: React.FC = () => {
         </CardContent>
       </Card>
 
+      <Dialog open={!!revisionId} onOpenChange={(open) => { if (!open && !transitioning) setRevisionId(null); }}>
+        <DialogContent><DialogHeader><DialogTitle>Request plan revision</DialogTitle></DialogHeader>
+          <form onSubmit={(event) => { event.preventDefault(); if (revisionId) void handleStatusUpdate(revisionId, 'REVISED', revisionRemarks); }} className="space-y-4">
+            <Label htmlFor="revision-remarks">Revision remarks (required)</Label>
+            <textarea id="revision-remarks" required maxLength={2000} value={revisionRemarks} onChange={event => setRevisionRemarks(event.target.value)} className="w-full border border-input bg-background p-3" />
+            <Button type="submit" disabled={transitioning || !revisionRemarks.trim()}>Request revision</Button>
+          </form>
+        </DialogContent>
+      </Dialog>
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl p-8 border-none shadow-xl">
           <DialogHeader>

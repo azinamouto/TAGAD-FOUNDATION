@@ -15,3 +15,9 @@ test('split hosting sends auth and report paths to the configured backend', () =
   }
   assert.equal(apiUrl('', base), 'https://tagad-api.example.test/api');
 });
+
+test('unsafe or ambiguous API roots fail before sending credentials', () => {
+  for (const base of ['//evil.test/api', 'javascript:alert(1)', 'https://user:pass@host/api', '/api?key=x', '/api#fragment', '   ']) {
+    assert.throws(() => apiUrl('/auth/login', base));
+  }
+});
