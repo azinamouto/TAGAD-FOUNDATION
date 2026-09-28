@@ -77,9 +77,13 @@ export const authService = {
 
   /**
    * Log out user via TAGAD backend API and clear local session
+   * Distinguishes between local sign-out and confirmed server revocation
    */
-  async logout(): Promise<void> {
+  async logout(): Promise<{ success: boolean; serverConfirmed: boolean; error?: string }> {
     const token = localStorage.getItem('tagad_token');
+    let serverConfirmed = false;
+    let error: string | undefined;
+
     try {
       if (token) {
         await axios.post(
@@ -89,12 +93,38 @@ export const authService = {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
+        serverConfirmed = true;
       }
-    } catch {
-      // Ignore network errors on logout
-    } finally {
-      this.clearStorage();
+    } catch (err: any) {
+      // Distinguish between network errors and server rejections
+      if (err.response) {
+        // Server responded with error status
+        error = err.response?.data?.error?.message || err.response?.data?.message || 'Server rejected logout';
+        // Don't clear storage if server explicitly rejects - token may still be valid
+        if (err.response.status >= 400 && err.response.status < 500) {
+          return { success: false, serverConfirmed: false, error };
+        }
+      } else if (err.request) {
+        // Network error - server didn't respond
+        error = 'Network error during logout - local session cleared but server not confirmed';
+        // Continue with local cleanup for network errors
+      } else {
+        // Other errors
+        error = err.message || 'Unknown error during logout';
+      }
     }
+
+    // Only clear storage if we have a reasonable expectation it's safe
+    // (network errors or successful server confirmation)
+    if (serverConfirmed || (error && error.includes('Network'))) {
+      this.clearStorage();
+      return { success: true, serverConfirmed, error };
+    }
+
+    // If we get here, something went wrong but we should still clear local storage
+    // to prevent local access, even if server revocation failed
+    this.clearStorage();
+    return { success: false, serverConfirmed: false, error: error || 'Logout completed with warnings' };
   },
 
   /**
