@@ -80,11 +80,6 @@ export const LandingPage: React.FC = () => {
         <TopographicWave className="bottom-0 left-0 right-0 h-24" />
 
         <div className="relative z-10 max-w-2xl space-y-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 dark:bg-amber-500/20 text-amber-900 dark:text-amber-200 text-xs font-semibold tracking-wide">
-            <span>Municipality of Talibon, Bohol</span>
-            <span className="w-1 h-1 rounded-full bg-amber-500" />
-            <span>Republic Act No. 9710</span>
-          </div>
 
           <div className="space-y-4">
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-slate-900 dark:text-white leading-tight">
