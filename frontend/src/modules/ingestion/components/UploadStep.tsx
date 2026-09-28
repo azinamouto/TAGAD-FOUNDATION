@@ -161,8 +161,8 @@ export const UploadStep: React.FC<UploadStepProps> = ({
           onDrop={handleDrop}
           onClick={() => fileInputRef.current?.click()}
           className={cn(
-            'border-2 border-dashed rounded-2xl p-10 text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-4 bg-gray-50/50 hover:bg-indigo-50/30 hover:border-[#6366F1]',
-            dragActive ? 'border-[#6366F1] bg-indigo-50/40 ring-4 ring-indigo-100' : 'border-gray-300'
+            'border-2 border-dashed rounded-2xl p-10 text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-4 bg-muted/50 hover:bg-accent/30 hover:border-[#6366F1]',
+            dragActive ? 'border-[#6366F1] bg-accent/40 ring-4 ring-primary' : 'border-border'
           )}
         >
           <input
@@ -175,7 +175,7 @@ export const UploadStep: React.FC<UploadStepProps> = ({
             aria-label="Upload CSV File"
           />
 
-          <div className="w-14 h-14 rounded-2xl bg-indigo-100/70 text-[#6366F1] flex items-center justify-center shadow-xs">
+          <div className="w-14 h-14 rounded-2xl bg-accent/70 text-[#6366F1] flex items-center justify-center shadow-xs">
             <UploadCloud className="w-7 h-7" />
           </div>
 
@@ -184,7 +184,7 @@ export const UploadStep: React.FC<UploadStepProps> = ({
               Click to select or drag and drop your CSV file here
             </p>
             <p className="text-xs text-[#6B7280]">
-              Supports standard UTF-8 encoded <code className="text-indigo-600 font-mono">.csv</code> files up to 5 MB
+              Supports standard UTF-8 encoded <code className="text-primary font-mono">.csv</code> files up to 5 MB
             </p>
           </div>
 
@@ -192,14 +192,14 @@ export const UploadStep: React.FC<UploadStepProps> = ({
             type="button"
             variant="outline"
             size="sm"
-            className="rounded-lg font-semibold border-gray-300 hover:border-[#6366F1] hover:text-[#6366F1] text-xs pointer-events-none"
+            className="rounded-lg font-semibold border-border hover:border-[#6366F1] hover:text-[#6366F1] text-xs pointer-events-none"
           >
             Browse from Computer
           </Button>
         </div>
       ) : (
         /* Selected File Card */
-        <div className="border border-indigo-100 bg-indigo-50/30 rounded-2xl p-6 space-y-4">
+        <div className="border border-primary bg-accent/30 rounded-2xl p-6 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-[#6366F1] text-white flex items-center justify-center shadow-sm">
@@ -233,7 +233,7 @@ export const UploadStep: React.FC<UploadStepProps> = ({
             </Button>
           </div>
 
-          <div className="bg-white/80 border border-indigo-100 rounded-xl p-3 flex items-center gap-2.5 text-xs text-[#4F46E5]">
+          <div className="bg-card/80 border border-primary rounded-xl p-3 flex items-center gap-2.5 text-xs text-[#4F46E5]">
             <Info className="w-4 h-4 shrink-0" />
             <span>Ready for schema analysis. Clicking continue will profile column types and infer canonical field mappings.</span>
           </div>
@@ -242,7 +242,7 @@ export const UploadStep: React.FC<UploadStepProps> = ({
 
       {/* Discovery Loading State */}
       {isDiscovering && (
-        <div className="p-6 rounded-2xl bg-indigo-50/60 border border-indigo-200 text-center space-y-3">
+        <div className="p-6 rounded-2xl bg-accent/60 border border-primary text-center space-y-3">
           <Loader2 className="w-8 h-8 animate-spin text-[#6366F1] mx-auto" />
           <div className="space-y-1">
             <p className="text-sm font-bold text-[#111827]">Analyzing dataset schema...</p>

@@ -104,13 +104,13 @@ export const PreviewStep: React.FC<PreviewStepProps> = ({
         </Card>
 
         {/* Duplicates */}
-        <Card className="border-indigo-200 bg-indigo-50/40 rounded-xl shadow-xs">
+        <Card className="border-primary bg-accent/40 rounded-xl shadow-xs">
           <CardContent className="p-3.5 flex items-center justify-between">
             <div className="space-y-0.5">
               <span className="text-[10px] font-bold uppercase tracking-wider text-[#4F46E5]">Duplicates</span>
-              <p className="text-xl font-bold text-indigo-900">{preview.duplicateRows.toLocaleString()}</p>
+              <p className="text-xl font-bold text-primary">{preview.duplicateRows.toLocaleString()}</p>
             </div>
-            <div className="w-8 h-8 rounded-lg bg-indigo-100 text-[#6366F1] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-accent text-[#6366F1] flex items-center justify-center">
               <Copy className="w-4 h-4" />
             </div>
           </CardContent>
@@ -132,19 +132,19 @@ export const PreviewStep: React.FC<PreviewStepProps> = ({
       )}
 
       {/* Preview Sample Table */}
-      <div className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-xs">
-        <div className="bg-gray-50/80 px-4 py-3 border-b border-gray-200 flex items-center justify-between">
-          <span className="text-xs font-bold text-gray-700 uppercase tracking-wider">
+      <div className="border border-border rounded-xl overflow-hidden bg-card shadow-xs">
+        <div className="bg-muted/80 px-4 py-3 border-b border-border flex items-center justify-between">
+          <span className="text-xs font-bold text-foreground uppercase tracking-wider">
             Representative Preview (Showing Sample of {preview.sampleRows.length} Rows)
           </span>
-          <span className="text-[11px] text-gray-500">
+          <span className="text-[11px] text-muted-foreground">
             Click any row to inspect canonical fields and diagnostics
           </span>
         </div>
 
         <div className="overflow-x-auto max-h-[300px] overflow-y-auto">
           <table className="w-full text-left text-xs border-collapse">
-            <thead className="bg-gray-50/50 sticky top-0 z-10 border-b border-gray-200 text-gray-500 font-bold uppercase tracking-wider text-[10px]">
+            <thead className="bg-muted/50 sticky top-0 z-10 border-b border-border text-muted-foreground font-bold uppercase tracking-wider text-[10px]">
               <tr>
                 <th className="py-2.5 px-3 w-[8%] text-center">Row</th>
                 <th className="py-2.5 px-4 w-[28%]">Name / Identifier</th>
@@ -154,10 +154,10 @@ export const PreviewStep: React.FC<PreviewStepProps> = ({
                 <th className="py-2.5 px-4 w-[14%] text-right">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-border">
               {preview.sampleRows.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-8 text-center text-gray-400 italic">
+                  <td colSpan={6} className="py-8 text-center text-muted-foreground italic">
                     No preview rows available
                   </td>
                 </tr>
@@ -174,16 +174,16 @@ export const PreviewStep: React.FC<PreviewStepProps> = ({
                       <tr
                         onClick={() => toggleRowExpand(row.rowNumber)}
                         className={cn(
-                          'hover:bg-indigo-50/30 transition-colors cursor-pointer',
+                          'hover:bg-accent/30 transition-colors cursor-pointer',
                           row.status === 'ERROR' && 'bg-red-50/20',
                           row.status === 'WARNING' && 'bg-amber-50/20',
-                          row.status === 'DUPLICATE' && 'bg-indigo-50/20'
+                          row.status === 'DUPLICATE' && 'bg-accent/20'
                         )}
                       >
-                        <td className="py-2.5 px-3 text-center font-mono font-bold text-gray-500">
+                        <td className="py-2.5 px-3 text-center font-mono font-bold text-muted-foreground">
                           {row.rowNumber}
                         </td>
-                        <td className="py-2.5 px-4 font-semibold text-gray-900 truncate max-w-[200px]">
+                        <td className="py-2.5 px-4 font-semibold text-foreground truncate max-w-[200px]">
                           {displayName}
                         </td>
                         <td className="py-2.5 px-3">
@@ -198,13 +198,13 @@ export const PreviewStep: React.FC<PreviewStepProps> = ({
                               {c.sex}
                             </Badge>
                           ) : (
-                            <span className="text-gray-400">—</span>
+                            <span className="text-muted-foreground">—</span>
                           )}
                         </td>
-                        <td className="py-2.5 px-4 text-gray-700 truncate max-w-[150px]">
+                        <td className="py-2.5 px-4 text-foreground truncate max-w-[150px]">
                           {c.barangay || c.barangayName || c.barangayCode || '—'}
                         </td>
-                        <td className="py-2.5 px-4 text-gray-700 truncate max-w-[150px]">
+                        <td className="py-2.5 px-4 text-foreground truncate max-w-[150px]">
                           {c.sector || (c.budgetTarget ? `₱${Number(c.budgetTarget).toLocaleString()}` : c.is4Ps ? '4Ps Household' : '—')}
                         </td>
                         <td className="py-2.5 px-4 text-right">
@@ -225,14 +225,14 @@ export const PreviewStep: React.FC<PreviewStepProps> = ({
                               </Badge>
                             )}
                             {row.status === 'DUPLICATE' && (
-                              <Badge variant="outline" className="bg-indigo-50 text-indigo-700 border-indigo-200 text-[10px] font-bold">
+                              <Badge variant="outline" className="bg-accent text-primary border-primary text-[10px] font-bold">
                                 ⎘ Duplicate
                               </Badge>
                             )}
                             {isExpanded ? (
-                              <ChevronUp className="w-3.5 h-3.5 text-gray-400" />
+                              <ChevronUp className="w-3.5 h-3.5 text-muted-foreground" />
                             ) : (
-                              <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+                              <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
                             )}
                           </div>
                         </td>
@@ -240,22 +240,22 @@ export const PreviewStep: React.FC<PreviewStepProps> = ({
 
                       {/* Expanded Row Diagnostics */}
                       {isExpanded && (
-                        <tr className="bg-gray-50/90 border-y border-gray-200">
+                        <tr className="bg-muted/90 border-y border-border">
                           <td colSpan={6} className="p-4 space-y-3">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               {/* Canonical Data Details */}
-                              <div className="bg-white p-3 rounded-lg border border-gray-200 space-y-1.5">
-                                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500">
+                              <div className="bg-card p-3 rounded-lg border border-border space-y-1.5">
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                                   Resolved Canonical Payload
                                 </span>
-                                <pre className="text-[11px] font-mono text-gray-700 bg-gray-50 p-2 rounded max-h-32 overflow-y-auto whitespace-pre-wrap">
+                                <pre className="text-[11px] font-mono text-foreground bg-muted p-2 rounded max-h-32 overflow-y-auto whitespace-pre-wrap">
                                   {JSON.stringify(c, null, 2)}
                                 </pre>
                               </div>
 
                               {/* Validation Diagnostics / Issues */}
-                              <div className="bg-white p-3 rounded-lg border border-gray-200 space-y-1.5">
-                                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500">
+                              <div className="bg-card p-3 rounded-lg border border-border space-y-1.5">
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                                   Row Diagnostics ({row.issues.length} Issues)
                                 </span>
                                 {row.issues.length === 0 ? (
@@ -295,7 +295,7 @@ export const PreviewStep: React.FC<PreviewStepProps> = ({
       {/* Strategies Control Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
         {/* Duplicate Strategy Selector */}
-        <Card className="border-gray-200 shadow-xs bg-white rounded-xl">
+        <Card className="border-border shadow-xs bg-card rounded-xl">
           <CardContent className="p-4 space-y-3">
             <label className="text-xs font-bold text-[#111827] flex items-center gap-1.5">
               <Copy className="w-4 h-4 text-[#6366F1]" />
@@ -325,8 +325,8 @@ export const PreviewStep: React.FC<PreviewStepProps> = ({
                   className={cn(
                     'flex items-start gap-2.5 p-2.5 rounded-lg border text-xs cursor-pointer transition-all',
                     duplicateStrategy === strat.id
-                      ? 'border-[#6366F1] bg-indigo-50/40 ring-2 ring-indigo-100 font-semibold'
-                      : 'border-gray-200 hover:bg-gray-50'
+                      ? 'border-[#6366F1] bg-accent/40 ring-2 ring-primary font-semibold'
+                      : 'border-border hover:bg-muted'
                   )}
                 >
                   <input
@@ -338,8 +338,8 @@ export const PreviewStep: React.FC<PreviewStepProps> = ({
                     className="mt-0.5 text-[#6366F1] focus:ring-[#6366F1]"
                   />
                   <div className="space-y-0.5">
-                    <span className="font-bold text-gray-900">{strat.label}</span>
-                    <p className="text-[11px] text-gray-500 font-normal">{strat.desc}</p>
+                    <span className="font-bold text-foreground">{strat.label}</span>
+                    <p className="text-[11px] text-muted-foreground font-normal">{strat.desc}</p>
                   </div>
                 </label>
               ))}
@@ -348,7 +348,7 @@ export const PreviewStep: React.FC<PreviewStepProps> = ({
         </Card>
 
         {/* Ingestion Mode Selector */}
-        <Card className="border-gray-200 shadow-xs bg-white rounded-xl">
+        <Card className="border-border shadow-xs bg-card rounded-xl">
           <CardContent className="p-4 space-y-3">
             <label className="text-xs font-bold text-[#111827] flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-[#6366F1]" />
@@ -373,8 +373,8 @@ export const PreviewStep: React.FC<PreviewStepProps> = ({
                   className={cn(
                     'flex items-start gap-2.5 p-2.5 rounded-lg border text-xs cursor-pointer transition-all',
                     ingestionMode === mode.id
-                      ? 'border-[#6366F1] bg-indigo-50/40 ring-2 ring-indigo-100 font-semibold'
-                      : 'border-gray-200 hover:bg-gray-50'
+                      ? 'border-[#6366F1] bg-accent/40 ring-2 ring-primary font-semibold'
+                      : 'border-border hover:bg-muted'
                   )}
                 >
                   <input
@@ -386,8 +386,8 @@ export const PreviewStep: React.FC<PreviewStepProps> = ({
                     className="mt-0.5 text-[#6366F1] focus:ring-[#6366F1]"
                   />
                   <div className="space-y-0.5">
-                    <span className="font-bold text-gray-900">{mode.label}</span>
-                    <p className="text-[11px] text-gray-500 font-normal">{mode.desc}</p>
+                    <span className="font-bold text-foreground">{mode.label}</span>
+                    <p className="text-[11px] text-muted-foreground font-normal">{mode.desc}</p>
                   </div>
                 </label>
               ))}
@@ -402,7 +402,7 @@ export const PreviewStep: React.FC<PreviewStepProps> = ({
           type="button"
           variant="outline"
           onClick={onBack}
-          className="rounded-lg text-xs font-semibold border-gray-300"
+          className="rounded-lg text-xs font-semibold border-border"
         >
           <ChevronLeft className="w-4 h-4 mr-1.5" />
           Back to Mapping

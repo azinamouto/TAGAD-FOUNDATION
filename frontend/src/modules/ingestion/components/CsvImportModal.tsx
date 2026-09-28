@@ -264,9 +264,9 @@ export const CsvImportModal: React.FC<CsvImportModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleModalClose()}>
-      <DialogContent className="max-w-4xl w-[95vw] max-h-[90vh] overflow-y-auto rounded-2xl p-6 sm:p-8 border-gray-200 shadow-2xl bg-white">
+      <DialogContent className="max-w-4xl w-[95vw] max-h-[90vh] overflow-y-auto rounded-2xl p-6 sm:p-8 border-border shadow-2xl bg-card">
         {/* Modal Header with Step Indicator */}
-        <DialogHeader className="space-y-4 pb-2 border-b border-gray-100">
+        <DialogHeader className="space-y-4 pb-2 border-b border-border">
           <div className="flex items-center justify-between">
             <div>
               <DialogTitle className="text-xl font-bold text-[#111827]">
@@ -379,7 +379,7 @@ export const CsvImportModal: React.FC<CsvImportModalProps> = ({
               </div>
               <div className="space-y-1 max-w-md mx-auto">
                 <h4 className="text-lg font-bold text-red-900">Ingestion Execution Failed</h4>
-                <p className="text-xs text-gray-600">
+                <p className="text-xs text-muted-foreground">
                   {errorMessage || 'The database transaction could not be completed.'}
                 </p>
               </div>
@@ -390,7 +390,7 @@ export const CsvImportModal: React.FC<CsvImportModalProps> = ({
                   variant="outline"
                   size="sm"
                   onClick={() => setStep('CONFIRM')}
-                  className="rounded-lg text-xs font-semibold border-gray-300"
+                  className="rounded-lg text-xs font-semibold border-border"
                 >
                   Back to Confirmation
                 </Button>

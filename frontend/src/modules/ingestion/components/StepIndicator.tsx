@@ -44,8 +44,8 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({ currentStep }) => 
                     status === 'completed'
                       ? 'bg-emerald-600 text-white'
                       : status === 'current'
-                      ? 'bg-[#6366F1] text-white ring-4 ring-indigo-100'
-                      : 'bg-gray-100 text-gray-400 border border-gray-200'
+                      ? 'bg-[#6366F1] text-white ring-4 ring-primary'
+                      : 'bg-muted text-muted-foreground border border-border'
                   )}
                   aria-current={status === 'current' ? 'step' : undefined}
                 >
@@ -56,7 +56,7 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({ currentStep }) => 
                   )}
                 </div>
                 <div className="hidden sm:flex flex-col text-left">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                     Step 0{step.id}
                   </span>
                   <span
@@ -66,7 +66,7 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({ currentStep }) => 
                         ? 'text-[#111827]'
                         : status === 'completed'
                         ? 'text-emerald-700'
-                        : 'text-gray-400'
+                        : 'text-muted-foreground'
                     )}
                   >
                     {step.label}
@@ -78,7 +78,7 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({ currentStep }) => 
                 <div
                   className={cn(
                     'flex-1 h-[2px] mx-4 transition-colors',
-                    getStepStatus(index) === 'completed' ? 'bg-emerald-500' : 'bg-gray-200'
+                    getStepStatus(index) === 'completed' ? 'bg-emerald-500' : 'bg-background'
                   )}
                   aria-hidden="true"
                 />
