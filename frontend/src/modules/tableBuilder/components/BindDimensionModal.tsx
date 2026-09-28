@@ -233,14 +233,14 @@ export const BindDimensionModal: React.FC<BindDimensionModalProps> = ({
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-accent dark:bg-accent/60 text-primary dark:text-primary flex items-center justify-center">
               <SlidersHorizontal className="w-4 h-4" />
             </div>
             <div>
-              <DialogTitle className="text-base font-bold text-slate-900 dark:text-white">
+              <DialogTitle className="text-base font-bold text-foreground dark:text-foreground">
                 Bind Analytical Dimension — {table.tableCode}
               </DialogTitle>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                 Attach disaggregation dimensions (e.g., Sex, Barangay, Age Bracket) to configure table grain.
               </p>
             </div>
@@ -248,7 +248,7 @@ export const BindDimensionModal: React.FC<BindDimensionModalProps> = ({
         </DialogHeader>
 
         {/* Tab Switcher */}
-        <div className="flex border-b border-slate-200 dark:border-slate-800 pt-1">
+        <div className="flex border-b border-border dark:border-border pt-1">
           <button
             type="button"
             onClick={() => {
@@ -257,8 +257,8 @@ export const BindDimensionModal: React.FC<BindDimensionModalProps> = ({
             }}
             className={`px-4 py-2 text-xs font-semibold border-b-2 transition-colors flex items-center gap-1.5 ${
               activeTab === 'dictionary'
-                ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
-                : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                ? 'border-primary text-primary dark:text-primary'
+                : 'border-transparent text-muted-foreground hover:text-foreground dark:hover:text-foreground'
             }`}
           >
             <BookOpen className="w-3.5 h-3.5" />
@@ -272,8 +272,8 @@ export const BindDimensionModal: React.FC<BindDimensionModalProps> = ({
             }}
             className={`px-4 py-2 text-xs font-semibold border-b-2 transition-colors flex items-center gap-1.5 ${
               activeTab === 'create'
-                ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
-                : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                ? 'border-primary text-primary dark:text-primary'
+                : 'border-transparent text-muted-foreground hover:text-foreground dark:hover:text-foreground'
             }`}
           >
             <PlusCircle className="w-3.5 h-3.5" />
@@ -295,20 +295,20 @@ export const BindDimensionModal: React.FC<BindDimensionModalProps> = ({
             {/* Search & Filter bar */}
             <div className="flex items-center gap-2">
               <div className="relative flex-1">
-                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <Search className="w-3.5 h-3.5 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   placeholder="Search dimensions by code or name..."
                   value={dictSearch}
                   onChange={(e) => setDictSearch(e.target.value)}
-                  className="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20"
+                  className="w-full pl-8 pr-3 py-1.5 text-xs bg-muted dark:bg-muted/60 border border-border dark:border-border rounded-lg text-foreground dark:text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-primary/20"
                 />
               </div>
 
               <select
                 value={dictStatusFilter}
                 onChange={(e) => setDictStatusFilter(e.target.value)}
-                className="px-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-300"
+                className="px-2 py-1.5 text-xs bg-muted dark:bg-muted/60 border border-border dark:border-border rounded-lg text-foreground dark:text-foreground"
               >
                 <option value="ALL">All Statuses</option>
                 <option value={StatisticalVerificationStatus.VERIFIED}>Verified Only</option>
@@ -317,14 +317,14 @@ export const BindDimensionModal: React.FC<BindDimensionModalProps> = ({
             </div>
 
             {/* Dictionary List */}
-            <div className="border border-slate-200 dark:border-slate-800 rounded-lg max-h-52 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900">
+            <div className="border border-border dark:border-border rounded-lg max-h-52 overflow-y-auto divide-y divide-border dark:divide-border bg-card dark:bg-background">
               {loadingDict ? (
-                <div className="p-8 text-center text-xs text-slate-500 flex items-center justify-center gap-2">
-                  <Loader2 className="w-4 h-4 animate-spin text-indigo-600" />
+                <div className="p-8 text-center text-xs text-muted-foreground flex items-center justify-center gap-2">
+                  <Loader2 className="w-4 h-4 animate-spin text-primary" />
                   Loading dimension dictionary...
                 </div>
               ) : filteredDictionary.length === 0 ? (
-                <div className="p-8 text-center text-xs text-slate-500">
+                <div className="p-8 text-center text-xs text-muted-foreground">
                   No dimensions found matching criteria. You can create one inline in the "Create New Dimension" tab.
                 </div>
               ) : (
@@ -340,18 +340,18 @@ export const BindDimensionModal: React.FC<BindDimensionModalProps> = ({
                       onClick={() => !isBound && setSelectedDimId(dim.id)}
                       className={`p-3 text-xs flex items-center justify-between gap-3 transition-colors ${
                         isBound
-                          ? 'bg-slate-50 dark:bg-slate-800/30 opacity-60 cursor-not-allowed'
+                          ? 'bg-muted dark:bg-muted/30 opacity-60 cursor-not-allowed'
                           : isSelected
-                          ? 'bg-indigo-50/80 dark:bg-indigo-950/40 border-l-4 border-indigo-600 cursor-pointer'
-                          : 'hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer'
+                          ? 'bg-accent/80 dark:bg-accent/40 border-l-4 border-primary cursor-pointer'
+                          : 'hover:bg-muted dark:hover:bg-muted/50 cursor-pointer'
                       }`}
                     >
                       <div className="space-y-0.5 min-w-0 flex-1">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="font-mono font-bold text-indigo-700 dark:text-indigo-400">
+                          <span className="font-mono font-bold text-primary dark:text-primary">
                             {dim.dimensionCode}
                           </span>
-                          <span className="font-semibold text-slate-900 dark:text-white">
+                          <span className="font-semibold text-foreground dark:text-foreground">
                             {dim.name}
                           </span>
                           <span
@@ -364,13 +364,13 @@ export const BindDimensionModal: React.FC<BindDimensionModalProps> = ({
                             {dim.verificationStatus}
                           </span>
                           {isBound && (
-                            <span className="text-[10px] px-1.5 py-0.2 rounded bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold">
+                            <span className="text-[10px] px-1.5 py-0.2 rounded bg-background dark:bg-background text-muted-foreground dark:text-foreground font-semibold">
                               ALREADY BOUND
                             </span>
                           )}
                         </div>
                         {dim.description && (
-                          <p className="text-slate-500 dark:text-slate-400 text-[11px] truncate">
+                          <p className="text-muted-foreground dark:text-muted-foreground text-[11px] truncate">
                             {dim.description}
                           </p>
                         )}
@@ -381,8 +381,8 @@ export const BindDimensionModal: React.FC<BindDimensionModalProps> = ({
                           <div
                             className={`w-4 h-4 rounded-full border flex items-center justify-center ${
                               isSelected
-                                ? 'bg-indigo-600 border-indigo-600 text-white'
-                                : 'border-slate-300 dark:border-slate-600'
+                                ? 'bg-primary border-primary text-white'
+                                : 'border-border dark:border-border'
                             }`}
                           >
                             {isSelected && <Check className="w-3 h-3" />}
@@ -396,13 +396,13 @@ export const BindDimensionModal: React.FC<BindDimensionModalProps> = ({
             </div>
 
             {/* Binding Parameters */}
-            <div className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-lg border border-slate-200 dark:border-slate-700/60 space-y-3">
-              <div className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
+            <div className="p-3 bg-muted dark:bg-muted/40 rounded-lg border border-border dark:border-border/60 space-y-3">
+              <div className="text-xs font-bold text-foreground dark:text-foreground uppercase tracking-wider">
                 Binding Properties
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <Label htmlFor="bind-order" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  <Label htmlFor="bind-order" className="text-xs font-semibold text-foreground dark:text-foreground">
                     Display Order Sequence
                   </Label>
                   <Input
@@ -416,27 +416,27 @@ export const BindDimensionModal: React.FC<BindDimensionModalProps> = ({
                 </div>
 
                 <div className="space-y-1">
-                  <Label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  <Label className="text-xs font-semibold text-foreground dark:text-foreground">
                     Required for Disaggregation
                   </Label>
                   <div className="flex items-center gap-3 pt-2">
-                    <label className="inline-flex items-center gap-1.5 text-xs text-slate-700 dark:text-slate-300 cursor-pointer">
+                    <label className="inline-flex items-center gap-1.5 text-xs text-foreground dark:text-foreground cursor-pointer">
                       <input
                         type="radio"
                         name="isRequired"
                         checked={isRequired === true}
                         onChange={() => setIsRequired(true)}
-                        className="text-indigo-600 focus:ring-indigo-500"
+                        className="text-primary focus:ring-primary"
                       />
                       <span>Mandatory (Required)</span>
                     </label>
-                    <label className="inline-flex items-center gap-1.5 text-xs text-slate-700 dark:text-slate-300 cursor-pointer">
+                    <label className="inline-flex items-center gap-1.5 text-xs text-foreground dark:text-foreground cursor-pointer">
                       <input
                         type="radio"
                         name="isRequired"
                         checked={isRequired === false}
                         onChange={() => setIsRequired(false)}
-                        className="text-indigo-600 focus:ring-indigo-500"
+                        className="text-primary focus:ring-primary"
                       />
                       <span>Optional</span>
                     </label>
@@ -445,7 +445,7 @@ export const BindDimensionModal: React.FC<BindDimensionModalProps> = ({
               </div>
 
               <div className="space-y-1">
-                <Label htmlFor="bind-allowed" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                <Label htmlFor="bind-allowed" className="text-xs font-semibold text-foreground dark:text-foreground">
                   Allowed Values / Filter Enum (Optional JSON or comma-separated)
                 </Label>
                 <Input
@@ -471,7 +471,7 @@ export const BindDimensionModal: React.FC<BindDimensionModalProps> = ({
               <Button
                 type="submit"
                 disabled={isSubmitting || !selectedDimId}
-                className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white"
+                className="text-xs bg-primary hover:bg-primary text-white"
               >
                 {isSubmitting ? (
                   <>
@@ -493,7 +493,7 @@ export const BindDimensionModal: React.FC<BindDimensionModalProps> = ({
           <form onSubmit={handleCreateAndBind} className="space-y-4 py-2">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label htmlFor="new-dim-code" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                <Label htmlFor="new-dim-code" className="text-xs font-semibold text-foreground dark:text-foreground">
                   Dimension Code <span className="text-rose-500">*</span>
                 </Label>
                 <Input
@@ -507,7 +507,7 @@ export const BindDimensionModal: React.FC<BindDimensionModalProps> = ({
               </div>
 
               <div className="space-y-1">
-                <Label htmlFor="new-dim-name" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                <Label htmlFor="new-dim-name" className="text-xs font-semibold text-foreground dark:text-foreground">
                   Dimension Name <span className="text-rose-500">*</span>
                 </Label>
                 <Input
@@ -523,7 +523,7 @@ export const BindDimensionModal: React.FC<BindDimensionModalProps> = ({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label htmlFor="new-dim-type" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                <Label htmlFor="new-dim-type" className="text-xs font-semibold text-foreground dark:text-foreground">
                   Data Type
                 </Label>
                 <Input
@@ -536,7 +536,7 @@ export const BindDimensionModal: React.FC<BindDimensionModalProps> = ({
               </div>
 
               <div className="space-y-1">
-                <Label htmlFor="new-dim-vocab" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                <Label htmlFor="new-dim-vocab" className="text-xs font-semibold text-foreground dark:text-foreground">
                   Vocabulary Source
                 </Label>
                 <Input
@@ -550,7 +550,7 @@ export const BindDimensionModal: React.FC<BindDimensionModalProps> = ({
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="new-dim-desc" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <Label htmlFor="new-dim-desc" className="text-xs font-semibold text-foreground dark:text-foreground">
                 Description
               </Label>
               <textarea
@@ -559,12 +559,12 @@ export const BindDimensionModal: React.FC<BindDimensionModalProps> = ({
                 placeholder="Describe standard classification options and analytical purpose..."
                 value={newDimDesc}
                 onChange={(e) => setNewDimDesc(e.target.value)}
-                className="w-full text-xs p-2 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white"
+                className="w-full text-xs p-2 bg-muted dark:bg-muted/60 border border-border dark:border-border rounded-lg text-foreground dark:text-foreground"
               />
             </div>
 
             <div className="space-y-1">
-              <Label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <Label className="text-xs font-semibold text-foreground dark:text-foreground">
                 Verification Status
               </Label>
               <Select
@@ -601,7 +601,7 @@ export const BindDimensionModal: React.FC<BindDimensionModalProps> = ({
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white"
+                className="text-xs bg-primary hover:bg-primary text-white"
               >
                 {isSubmitting ? (
                   <>

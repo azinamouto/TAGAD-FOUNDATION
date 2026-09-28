@@ -125,14 +125,14 @@ export const EditTableMetadataModal: React.FC<EditTableMetadataModalProps> = ({
       <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-accent dark:bg-accent/60 text-primary dark:text-primary flex items-center justify-center">
               <Edit3 className="w-4 h-4" />
             </div>
             <div>
-              <DialogTitle className="text-base font-bold text-slate-900 dark:text-white">
+              <DialogTitle className="text-base font-bold text-foreground dark:text-foreground">
                 Edit Table Metadata — {table.tableCode}
               </DialogTitle>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                 Update statistical attributes, domain categorization, and publication specs.
               </p>
             </div>
@@ -158,20 +158,20 @@ export const EditTableMetadataModal: React.FC<EditTableMetadataModalProps> = ({
 
         <form onSubmit={handleSubmit} className="space-y-4 py-2">
           {/* Read-Only System Identity Display */}
-          <div className="grid grid-cols-2 gap-3 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700/60 text-xs">
+          <div className="grid grid-cols-2 gap-3 p-3 bg-muted dark:bg-muted/50 rounded-lg border border-border dark:border-border/60 text-xs">
             <div>
-              <span className="text-slate-500 dark:text-slate-400 font-medium">Table Code:</span>{' '}
-              <strong className="font-mono text-slate-800 dark:text-slate-200">{table.tableCode}</strong>
+              <span className="text-muted-foreground dark:text-muted-foreground font-medium">Table Code:</span>{' '}
+              <strong className="font-mono text-foreground dark:text-foreground">{table.tableCode}</strong>
             </div>
             <div>
-              <span className="text-slate-500 dark:text-slate-400 font-medium">Table Number:</span>{' '}
-              <strong className="text-slate-800 dark:text-slate-200">#{table.tableNumber}</strong>
+              <span className="text-muted-foreground dark:text-muted-foreground font-medium">Table Number:</span>{' '}
+              <strong className="text-foreground dark:text-foreground">#{table.tableNumber}</strong>
             </div>
           </div>
 
           {/* Title */}
           <div className="space-y-1">
-            <Label htmlFor="edit-title" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+            <Label htmlFor="edit-title" className="text-xs font-semibold text-foreground dark:text-foreground">
               Official Title <span className="text-rose-500">*</span>
             </Label>
             <Input
@@ -185,7 +185,7 @@ export const EditTableMetadataModal: React.FC<EditTableMetadataModalProps> = ({
 
           {/* Domain */}
           <div className="space-y-1">
-            <Label htmlFor="edit-domain" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+            <Label htmlFor="edit-domain" className="text-xs font-semibold text-foreground dark:text-foreground">
               Thematic Domain <span className="text-rose-500">*</span>
             </Label>
             <Input
@@ -200,7 +200,7 @@ export const EditTableMetadataModal: React.FC<EditTableMetadataModalProps> = ({
           {/* Classification & Verification Status */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1">
-              <Label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <Label className="text-xs font-semibold text-foreground dark:text-foreground">
                 Classification
               </Label>
               <Select
@@ -230,7 +230,7 @@ export const EditTableMetadataModal: React.FC<EditTableMetadataModalProps> = ({
             </div>
 
             <div className="space-y-1">
-              <Label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <Label className="text-xs font-semibold text-foreground dark:text-foreground">
                 Verification Status
               </Label>
               <Select
@@ -260,7 +260,7 @@ export const EditTableMetadataModal: React.FC<EditTableMetadataModalProps> = ({
           {/* Expected Unit & Row Grain */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1">
-              <Label htmlFor="edit-unit" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <Label htmlFor="edit-unit" className="text-xs font-semibold text-foreground dark:text-foreground">
                 Expected Unit
               </Label>
               <Input
@@ -272,7 +272,7 @@ export const EditTableMetadataModal: React.FC<EditTableMetadataModalProps> = ({
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="edit-grain" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <Label htmlFor="edit-grain" className="text-xs font-semibold text-foreground dark:text-foreground">
                 Row Grain
               </Label>
               <Input
@@ -286,7 +286,7 @@ export const EditTableMetadataModal: React.FC<EditTableMetadataModalProps> = ({
 
           {/* Measure Structure */}
           <div className="space-y-1">
-            <Label htmlFor="edit-measure" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+            <Label htmlFor="edit-measure" className="text-xs font-semibold text-foreground dark:text-foreground">
               Measure Structure
             </Label>
             <Input
@@ -299,7 +299,7 @@ export const EditTableMetadataModal: React.FC<EditTableMetadataModalProps> = ({
 
           {/* Description */}
           <div className="space-y-1">
-            <Label htmlFor="edit-desc" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+            <Label htmlFor="edit-desc" className="text-xs font-semibold text-foreground dark:text-foreground">
               Description / Statistical Notes
             </Label>
             <textarea
@@ -307,7 +307,7 @@ export const EditTableMetadataModal: React.FC<EditTableMetadataModalProps> = ({
               rows={3}
               value={formData.description || ''}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full text-xs p-2.5 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20"
+              className="w-full text-xs p-2.5 bg-muted dark:bg-muted/60 border border-border dark:border-border rounded-lg text-foreground dark:text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-primary/20"
             />
           </div>
 
@@ -324,7 +324,7 @@ export const EditTableMetadataModal: React.FC<EditTableMetadataModalProps> = ({
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white"
+              className="text-xs bg-primary hover:bg-primary text-white"
             >
               {isSubmitting ? (
                 <>

@@ -181,10 +181,10 @@ export const IndicatorFormModal: React.FC<IndicatorFormModalProps> = ({
               <Activity className="w-4 h-4" />
             </div>
             <div>
-              <DialogTitle className="text-base font-bold text-slate-900 dark:text-white">
+              <DialogTitle className="text-base font-bold text-foreground dark:text-foreground">
                 {isEditing ? `Edit Indicator — ${indicator?.indicatorCode}` : `Add Analytical Indicator to ${tableCode}`}
               </DialogTitle>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                 Define computed gender metrics, formulas, units, and methodological definitions.
               </p>
             </div>
@@ -201,7 +201,7 @@ export const IndicatorFormModal: React.FC<IndicatorFormModalProps> = ({
           {/* Indicator Code & Classification */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1">
-              <Label htmlFor="ind-code" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <Label htmlFor="ind-code" className="text-xs font-semibold text-foreground dark:text-foreground">
                 Indicator Code <span className="text-rose-500">*</span>
               </Label>
               <Input
@@ -214,12 +214,12 @@ export const IndicatorFormModal: React.FC<IndicatorFormModalProps> = ({
                 className="text-xs font-mono uppercase"
               />
               {isEditing && (
-                <p className="text-[10px] text-slate-500">Indicator code is permanent once assigned.</p>
+                <p className="text-[10px] text-muted-foreground">Indicator code is permanent once assigned.</p>
               )}
             </div>
 
             <div className="space-y-1">
-              <Label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <Label className="text-xs font-semibold text-foreground dark:text-foreground">
                 Classification
               </Label>
               <Select
@@ -248,7 +248,7 @@ export const IndicatorFormModal: React.FC<IndicatorFormModalProps> = ({
 
           {/* Name & Title */}
           <div className="space-y-1">
-            <Label htmlFor="ind-name" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+            <Label htmlFor="ind-name" className="text-xs font-semibold text-foreground dark:text-foreground">
               Short Name <span className="text-rose-500">*</span>
             </Label>
             <Input
@@ -262,7 +262,7 @@ export const IndicatorFormModal: React.FC<IndicatorFormModalProps> = ({
           </div>
 
           <div className="space-y-1">
-            <Label htmlFor="ind-title" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+            <Label htmlFor="ind-title" className="text-xs font-semibold text-foreground dark:text-foreground">
               Full Official Title <span className="text-rose-500">*</span>
             </Label>
             <Input
@@ -278,7 +278,7 @@ export const IndicatorFormModal: React.FC<IndicatorFormModalProps> = ({
           {/* Unit & Verification Status */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1">
-              <Label htmlFor="ind-unit" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <Label htmlFor="ind-unit" className="text-xs font-semibold text-foreground dark:text-foreground">
                 Measurement Unit
               </Label>
               <Input
@@ -291,7 +291,7 @@ export const IndicatorFormModal: React.FC<IndicatorFormModalProps> = ({
             </div>
 
             <div className="space-y-1">
-              <Label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <Label className="text-xs font-semibold text-foreground dark:text-foreground">
                 Verification Status
               </Label>
               <Select
@@ -320,7 +320,7 @@ export const IndicatorFormModal: React.FC<IndicatorFormModalProps> = ({
 
           {/* Formula */}
           <div className="space-y-1">
-            <Label htmlFor="ind-formula" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+            <Label htmlFor="ind-formula" className="text-xs font-semibold text-foreground dark:text-foreground">
               Mathematical Formula
             </Label>
             <Input
@@ -335,7 +335,7 @@ export const IndicatorFormModal: React.FC<IndicatorFormModalProps> = ({
           {/* Numerator & Denominator definitions */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1">
-              <Label htmlFor="ind-num" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <Label htmlFor="ind-num" className="text-xs font-semibold text-foreground dark:text-foreground">
                 Numerator Definition
               </Label>
               <textarea
@@ -346,12 +346,12 @@ export const IndicatorFormModal: React.FC<IndicatorFormModalProps> = ({
                 onChange={(e) =>
                   setFormData({ ...formData, numeratorDefinition: e.target.value })
                 }
-                className="w-full text-xs p-2 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white"
+                className="w-full text-xs p-2 bg-muted dark:bg-muted/60 border border-border dark:border-border rounded-lg text-foreground dark:text-foreground"
               />
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="ind-den" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <Label htmlFor="ind-den" className="text-xs font-semibold text-foreground dark:text-foreground">
                 Denominator Definition
               </Label>
               <textarea
@@ -362,14 +362,14 @@ export const IndicatorFormModal: React.FC<IndicatorFormModalProps> = ({
                 onChange={(e) =>
                   setFormData({ ...formData, denominatorDefinition: e.target.value })
                 }
-                className="w-full text-xs p-2 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white"
+                className="w-full text-xs p-2 bg-muted dark:bg-muted/60 border border-border dark:border-border rounded-lg text-foreground dark:text-foreground"
               />
             </div>
           </div>
 
           {/* Description */}
           <div className="space-y-1">
-            <Label htmlFor="ind-desc" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+            <Label htmlFor="ind-desc" className="text-xs font-semibold text-foreground dark:text-foreground">
               Methodological Description
             </Label>
             <textarea
@@ -378,7 +378,7 @@ export const IndicatorFormModal: React.FC<IndicatorFormModalProps> = ({
               placeholder="Provide policy context, analytical interpretation, and target thresholds..."
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full text-xs p-2 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white"
+              className="w-full text-xs p-2 bg-muted dark:bg-muted/60 border border-border dark:border-border rounded-lg text-foreground dark:text-foreground"
             />
           </div>
 
@@ -395,7 +395,7 @@ export const IndicatorFormModal: React.FC<IndicatorFormModalProps> = ({
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white"
+              className="text-xs bg-primary hover:bg-primary text-white"
             >
               {isSubmitting ? (
                 <>

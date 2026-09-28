@@ -121,14 +121,14 @@ export const CreateCustomTableModal: React.FC<CreateCustomTableModalProps> = ({
       <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-accent dark:bg-accent/60 text-primary dark:text-primary flex items-center justify-center">
               <PlusCircle className="w-4 h-4" />
             </div>
             <div>
-              <DialogTitle className="text-base font-bold text-slate-900 dark:text-white">
+              <DialogTitle className="text-base font-bold text-foreground dark:text-foreground">
                 Create Custom Statistical Table
               </DialogTitle>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                 Register a new thematic tabulation. System table numbers 1–69 are strictly reserved for PSA canonical tables.
               </p>
             </div>
@@ -144,7 +144,7 @@ export const CreateCustomTableModal: React.FC<CreateCustomTableModalProps> = ({
         <form onSubmit={handleSubmit} className="space-y-4 py-2">
           {/* Title */}
           <div className="space-y-1">
-            <Label htmlFor="create-title" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+            <Label htmlFor="create-title" className="text-xs font-semibold text-foreground dark:text-foreground">
               Table Title <span className="text-rose-500">*</span>
             </Label>
             <Input
@@ -159,7 +159,7 @@ export const CreateCustomTableModal: React.FC<CreateCustomTableModalProps> = ({
 
           {/* Domain */}
           <div className="space-y-1">
-            <Label htmlFor="create-domain" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+            <Label htmlFor="create-domain" className="text-xs font-semibold text-foreground dark:text-foreground">
               Thematic Domain <span className="text-rose-500">*</span>
             </Label>
             <Select
@@ -199,7 +199,7 @@ export const CreateCustomTableModal: React.FC<CreateCustomTableModalProps> = ({
           {/* Classification & Unit Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1">
-              <Label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <Label className="text-xs font-semibold text-foreground dark:text-foreground">
                 Classification
               </Label>
               <Select
@@ -229,7 +229,7 @@ export const CreateCustomTableModal: React.FC<CreateCustomTableModalProps> = ({
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="create-unit" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <Label htmlFor="create-unit" className="text-xs font-semibold text-foreground dark:text-foreground">
                 Expected Unit
               </Label>
               <Input
@@ -245,7 +245,7 @@ export const CreateCustomTableModal: React.FC<CreateCustomTableModalProps> = ({
           {/* Row Grain & Measure Structure */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1">
-              <Label htmlFor="create-grain" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <Label htmlFor="create-grain" className="text-xs font-semibold text-foreground dark:text-foreground">
                 Row Grain
               </Label>
               <Input
@@ -258,7 +258,7 @@ export const CreateCustomTableModal: React.FC<CreateCustomTableModalProps> = ({
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="create-measure" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <Label htmlFor="create-measure" className="text-xs font-semibold text-foreground dark:text-foreground">
                 Measure Structure
               </Label>
               <Input
@@ -275,7 +275,7 @@ export const CreateCustomTableModal: React.FC<CreateCustomTableModalProps> = ({
 
           {/* Description */}
           <div className="space-y-1">
-            <Label htmlFor="create-desc" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+            <Label htmlFor="create-desc" className="text-xs font-semibold text-foreground dark:text-foreground">
               Description & Statistical Methodology
             </Label>
             <textarea
@@ -284,7 +284,7 @@ export const CreateCustomTableModal: React.FC<CreateCustomTableModalProps> = ({
               placeholder="Describe the tabulation scope, target demographic, and analytical purpose..."
               value={formData.description || ''}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full text-xs p-2.5 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20"
+              className="w-full text-xs p-2.5 bg-muted dark:bg-muted/60 border border-border dark:border-border rounded-lg text-foreground dark:text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-primary/20"
             />
           </div>
 
@@ -301,7 +301,7 @@ export const CreateCustomTableModal: React.FC<CreateCustomTableModalProps> = ({
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white"
+              className="text-xs bg-primary hover:bg-primary text-white"
             >
               {isSubmitting ? (
                 <>
