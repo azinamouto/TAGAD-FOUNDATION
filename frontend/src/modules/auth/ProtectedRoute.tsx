@@ -12,7 +12,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
   allowedRoles,
 }) => {
-  const { isAuthenticated, isLoading, hasRole } = useAuth();
+  const { isAuthenticated, isLoading, hasRole, sessionError } = useAuth();
   const location = useLocation();
 
   if (isLoading) {
@@ -26,6 +26,14 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
         </div>
       </div>
     );
+  }
+
+  if (sessionError && !isAuthenticated) {
+    return <main className="p-8 text-foreground bg-background" role="alert">
+      <p>{sessionError}</p>
+      <button onClick={() => window.location.reload()}>Retry verification</button>
+      <a className="ml-4" href="/login">Sign in</a>
+    </main>;
   }
 
   if (!isAuthenticated) {

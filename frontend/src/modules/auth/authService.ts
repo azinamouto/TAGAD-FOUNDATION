@@ -2,6 +2,10 @@ import axios from 'axios';
 import { apiUrl } from '../../api/apiUrl';
 import { AppRole, UserProfile } from '../../types';
 
+export class SessionError extends Error {
+  constructor(public kind: 'expired' | 'forbidden' | 'unavailable', message: string) { super(message); }
+}
+
 export const authService = {
   /**
    * Log in user via TAGAD canonical backend API
@@ -18,10 +22,11 @@ export const authService = {
       const token = resData.token || resData.accessToken;
       const refreshToken = resData.refreshToken;
 
-      if (!token || !apiUser) {
+      if (typeof token !== 'string' || !apiUser?.id || !['SUPER_ADMIN', 'ADMIN', 'ENCODER', 'VIEWER'].includes(apiUser.role)) {
         throw new Error('Authentication response was invalid');
       }
 
+      this.clearStorage();
       // Store tokens
       localStorage.setItem('tagad_token', token);
       if (refreshToken) {
@@ -70,8 +75,8 @@ export const authService = {
         err.response?.data?.error?.message ||
         err.response?.data?.message ||
         err.message ||
-        'Invalid email or password. Please verify your credentials.';
-      throw new Error(errorMessage);
+        'Authentication failed.';
+      throw new Error(err.response ? errorMessage : err.message === 'Authentication response was invalid' ? err.message : 'The backend is unreachable or unavailable. Please retry.');
     }
   },
 
@@ -81,50 +86,15 @@ export const authService = {
    */
   async logout(): Promise<{ success: boolean; serverConfirmed: boolean; error?: string }> {
     const token = localStorage.getItem('tagad_token');
-    let serverConfirmed = false;
-    let error: string | undefined;
-
     try {
-      if (token) {
-        await axios.post(
-          apiUrl('/auth/logout'),
-          {},
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        serverConfirmed = true;
-      }
-    } catch (err: any) {
-      // Distinguish between network errors and server rejections
-      if (err.response) {
-        // Server responded with error status
-        error = err.response?.data?.error?.message || err.response?.data?.message || 'Server rejected logout';
-        // Don't clear storage if server explicitly rejects - token may still be valid
-        if (err.response.status >= 400 && err.response.status < 500) {
-          return { success: false, serverConfirmed: false, error };
-        }
-      } else if (err.request) {
-        // Network error - server didn't respond
-        error = 'Network error during logout - local session cleared but server not confirmed';
-        // Continue with local cleanup for network errors
-      } else {
-        // Other errors
-        error = err.message || 'Unknown error during logout';
-      }
-    }
-
-    // Only clear storage if we have a reasonable expectation it's safe
-    // (network errors or successful server confirmation)
-    if (serverConfirmed || (error && error.includes('Network'))) {
+      if (!token) return { success: true, serverConfirmed: false };
+      await axios.post(apiUrl('/auth/logout'), {}, { headers: { Authorization: `Bearer ${token}` } });
+      return { success: true, serverConfirmed: true };
+    } catch {
+      return { success: true, serverConfirmed: false, error: 'Local authentication cleared. Server logout could not be confirmed.' };
+    } finally {
       this.clearStorage();
-      return { success: true, serverConfirmed, error };
     }
-
-    // If we get here, something went wrong but we should still clear local storage
-    // to prevent local access, even if server revocation failed
-    this.clearStorage();
-    return { success: false, serverConfirmed: false, error: error || 'Logout completed with warnings' };
   },
 
   /**
@@ -137,45 +107,33 @@ export const authService = {
     }
 
     try {
-      // Validate token structure and expiration
-      const parts = storedToken.split('.');
-      if (parts.length === 3) {
-        const payload = JSON.parse(atob(parts[1]));
-        if (payload.exp && payload.exp * 1000 < Date.now()) {
-          // Token expired, attempt refresh
-          const refreshToken = localStorage.getItem('tagad_refresh_token');
-          if (refreshToken) {
-            try {
-              const refreshRes = await axios.post(apiUrl('/auth/refresh'), { refreshToken });
-              const refData = refreshRes.data?.data || refreshRes.data;
-              if (refData.accessToken) {
-                localStorage.setItem('tagad_token', refData.accessToken);
-                if (refData.refreshToken) {
-                  localStorage.setItem('tagad_refresh_token', refData.refreshToken);
-                }
-              } else {
-                this.clearStorage();
-                return null;
-              }
-            } catch {
-              this.clearStorage();
-              return null;
-            }
-          } else {
-            this.clearStorage();
-            return null;
-          }
-        }
-      }
-
       // Restore user from /api/auth/me
       const currentToken = localStorage.getItem('tagad_token') || storedToken;
-      const response = await axios.get(apiUrl('/auth/me'), {
-        headers: { Authorization: `Bearer ${currentToken}` },
-      });
+      let response;
+      try {
+        response = await axios.get(apiUrl('/auth/me'), { headers: { Authorization: `Bearer ${currentToken}` } });
+      } catch (error: any) {
+        const refreshToken = localStorage.getItem('tagad_refresh_token');
+        if (error.response?.status !== 401 || !refreshToken) throw error;
+        // A rejected access token can never authorize the cached profile.
+        localStorage.removeItem('tagad_user');
+        localStorage.removeItem('tagad_roles');
+        const refreshed = await axios.post(apiUrl('/auth/refresh'), { refreshToken });
+        const data = refreshed.data?.data ?? refreshed.data;
+        if (typeof data?.accessToken !== 'string' || !data.accessToken) {
+          this.clearStorage();
+          throw { response: { status: 401 } };
+        }
+        localStorage.setItem('tagad_token', data.accessToken);
+        if (data.refreshToken) localStorage.setItem('tagad_refresh_token', data.refreshToken);
+        response = await axios.get(apiUrl('/auth/me'), { headers: { Authorization: `Bearer ${data.accessToken}` } });
+      }
 
       const resData = response.data?.data || response.data;
       const apiUser = resData;
+      if (!apiUser?.id || !['SUPER_ADMIN', 'ADMIN', 'ENCODER', 'VIEWER'].includes(apiUser.role)) {
+        throw new SessionError('unavailable', 'Invalid session response');
+      }
 
       const roles: AppRole[] = [];
       if (apiUser.role === 'SUPER_ADMIN') {
@@ -209,22 +167,14 @@ export const authService = {
       localStorage.setItem('tagad_roles', JSON.stringify(roles));
 
       return userProfile;
-    } catch {
-      // Fall back to cached user in localStorage if network unavailable, or clear if invalid
-      const cachedUser = localStorage.getItem('tagad_user');
-      const cachedRoles = localStorage.getItem('tagad_roles');
-      if (cachedUser) {
-        try {
-          const parsed = JSON.parse(cachedUser);
-          parsed.roles = cachedRoles ? JSON.parse(cachedRoles) : parsed.roles;
-          return parsed;
-        } catch {
-          this.clearStorage();
-          return null;
-        }
+    } catch (error: any) {
+      const status = error.response?.status;
+      if (status === 401 || status === 403) {
+        this.clearStorage();
+        throw new SessionError(status === 401 ? 'expired' : 'forbidden',
+          status === 401 ? 'Your session has expired. Sign in again.' : 'Access to this account is forbidden.');
       }
-      this.clearStorage();
-      return null;
+      throw new SessionError('unavailable', 'The backend is unreachable or unavailable. Retry to verify your session.');
     }
   },
 

@@ -64,3 +64,53 @@ test('program form requires title, supported fiscal year and implementing office
   assert.equal(validateProgramInput('Livelihood', year, 'office-1').isValid, true);
   assert.deepEqual(Object.keys(validateProgramInput('a', year + 6, '').errors), ['title', 'fiscalYear', 'officeId']);
 });
+
+for (const status of [401, 403]) {
+  test(`session rejection ${status} cannot restore cached privileges`, async () => {
+    localStorage.setItem('tagad_token', 'rejected');
+    localStorage.setItem('tagad_user', JSON.stringify({ id: 'old', roles: ['ADMIN'] }));
+    localStorage.setItem('tagad_roles', '["ADMIN"]');
+    mock.method(axios, 'get', async () => { throw { response: { status } }; });
+    await assert.rejects(authService.getCurrentUser(), status === 401 ? /expired/ : /forbidden/);
+    assert.equal(localStorage.getItem('tagad_user'), null);
+    assert.equal(localStorage.getItem('tagad_roles'), null);
+  });
+}
+
+test('outage preserves retry credentials but never authenticates cached user', async () => {
+  localStorage.setItem('tagad_token', 'retry-token');
+  localStorage.setItem('tagad_user', '{"roles":["ADMIN"]}');
+  mock.method(axios, 'get', async () => { throw new Error('Network error'); });
+  await assert.rejects(authService.getCurrentUser(), /unreachable/);
+  assert.equal(localStorage.getItem('tagad_token'), 'retry-token');
+});
+
+for (const status of [401, 403, 500]) {
+  test(`logout ${status} clears local state without claiming server confirmation`, async () => {
+    localStorage.setItem('tagad_token', 'token');
+    mock.method(axios, 'post', async () => { throw { response: { status } }; });
+    const result = await authService.logout();
+    assert.equal(result.serverConfirmed, false);
+    assert.equal(localStorage.getItem('tagad_token'), null);
+  });
+}
+
+test('successful logout reports server confirmation', async () => {
+  localStorage.setItem('tagad_token', 'token');
+  mock.method(axios, 'post', async () => ({ data: {} }));
+  assert.equal((await authService.logout()).serverConfirmed, true);
+});
+
+test('access token rejection refreshes and validates the new token with the backend', async () => {
+  localStorage.setItem('tagad_token', 'old');
+  localStorage.setItem('tagad_refresh_token', 'refresh');
+  let calls = 0;
+  mock.method(axios, 'get', async () => {
+    if (++calls === 1) throw { response: { status: 401 } };
+    return { data: { data: { id: 'verified', role: 'VIEWER' } } };
+  });
+  mock.method(axios, 'post', async () => ({ data: { data: { accessToken: 'new' } } }));
+  assert.equal((await authService.getCurrentUser())?.id, 'verified');
+  assert.equal(localStorage.getItem('tagad_token'), 'new');
+  assert.equal(calls, 2);
+});

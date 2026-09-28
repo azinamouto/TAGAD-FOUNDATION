@@ -19,6 +19,8 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       localStorage.removeItem('tagad_token');
       localStorage.removeItem('tagad_user');
+      localStorage.removeItem('tagad_refresh_token');
+      localStorage.removeItem('tagad_roles');
       if (typeof window !== 'undefined') {
         const path = window.location.pathname;
         const isAuthRoute =
