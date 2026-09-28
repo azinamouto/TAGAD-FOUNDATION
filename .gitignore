@@ -13,3 +13,6 @@ coverage/
 *.dump.*
 *.backup
 deployment-evidence.local.md
+
+frontend/test-results/
+frontend/playwright-report/
