@@ -99,7 +99,7 @@ export const DatasetSelector: React.FC<DatasetSelectorProps> = ({
         );
       case 'WITHDRAWN':
         return (
-          <Badge variant="outline" className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-700 text-[10px] font-semibold">
+          <Badge variant="outline" className="bg-muted dark:bg-muted text-muted-foreground dark:text-muted-foreground border-border dark:border-border text-[10px] font-semibold">
             WITHDRAWN
           </Badge>
         );
@@ -113,20 +113,20 @@ export const DatasetSelector: React.FC<DatasetSelectorProps> = ({
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-sm">
+    <div className="bg-card dark:bg-background border border-border dark:border-border rounded-xl p-4 shadow-sm">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">
+          <div className="p-2.5 rounded-lg bg-accent dark:bg-accent/50 text-primary dark:text-primary border border-primary dark:border-primary">
             <Database className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground dark:text-muted-foreground">
                 Target Statistical Dataset
               </span>
               {selectedDataset && getStatusBadge(selectedDataset.publicationStatus)}
             </div>
-            <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+            <h3 className="text-sm font-semibold text-foreground dark:text-foreground flex items-center gap-2">
               {selectedDataset ? selectedDataset.name : 'No dataset selected'}
             </h3>
           </div>
@@ -134,8 +134,8 @@ export const DatasetSelector: React.FC<DatasetSelectorProps> = ({
 
         <div className="flex items-center gap-2">
           {loading ? (
-            <div className="flex items-center text-xs text-slate-500 gap-1.5 px-3 py-1.5">
-              <Loader2 className="w-3.5 h-3.5 animate-spin text-indigo-500" />
+            <div className="flex items-center text-xs text-muted-foreground gap-1.5 px-3 py-1.5">
+              <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
               Loading datasets...
             </div>
           ) : (
@@ -144,18 +144,18 @@ export const DatasetSelector: React.FC<DatasetSelectorProps> = ({
               onValueChange={handleDatasetChange}
               disabled={disabled || datasets.length === 0}
             >
-              <SelectTrigger className="w-[260px] h-9 text-xs font-medium bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+              <SelectTrigger className="w-[260px] h-9 text-xs font-medium bg-muted dark:bg-muted border-border dark:border-border">
                 <SelectValue placeholder="Select working dataset..." />
               </SelectTrigger>
               <SelectContent className="max-h-72">
                 {datasets.map((d) => (
                   <SelectItem key={d.id} value={d.id} className="text-xs py-2">
                     <div className="flex flex-col gap-0.5">
-                      <div className="flex items-center gap-1.5 font-semibold text-slate-800 dark:text-slate-200">
+                      <div className="flex items-center gap-1.5 font-semibold text-foreground dark:text-foreground">
                         <span>{d.name}</span>
-                        <span className="text-[10px] text-slate-500 font-normal font-mono">({d.datasetCode})</span>
+                        <span className="text-[10px] text-muted-foreground font-normal font-mono">({d.datasetCode})</span>
                       </div>
-                      <div className="flex items-center gap-2 text-[10px] text-slate-500">
+                      <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
                         <span>{d.publicationStatus}</span>
                         {d.reportingYear && <span>• {d.reportingYear}</span>}
                         {d.sourceAgency && <span>• {d.sourceAgency}</span>}
@@ -174,7 +174,7 @@ export const DatasetSelector: React.FC<DatasetSelectorProps> = ({
               size="sm"
               onClick={() => setIsCreateModalOpen(true)}
               disabled={disabled}
-              className="h-9 text-xs border-dashed border-indigo-300 dark:border-indigo-700 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/50"
+              className="h-9 text-xs border-dashed border-primary dark:border-primary text-primary dark:text-primary hover:bg-accent dark:hover:bg-accent/50"
             >
               <Plus className="w-3.5 h-3.5 mr-1" />
               New Dataset
@@ -184,22 +184,22 @@ export const DatasetSelector: React.FC<DatasetSelectorProps> = ({
       </div>
 
       {selectedDataset && (
-        <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center gap-4 text-xs text-slate-600 dark:text-slate-400">
-          <div className="flex items-center gap-1 font-mono text-[11px] text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">
+        <div className="mt-3 pt-3 border-t border-border dark:border-border flex flex-wrap items-center gap-4 text-xs text-muted-foreground dark:text-muted-foreground">
+          <div className="flex items-center gap-1 font-mono text-[11px] text-foreground dark:text-foreground bg-muted dark:bg-muted px-2 py-0.5 rounded">
             <span>Code:</span>
             <span className="font-semibold">{selectedDataset.datasetCode}</span>
           </div>
 
           {selectedDataset.sourceAgency && (
             <div className="flex items-center gap-1.5">
-              <Building2 className="w-3.5 h-3.5 text-slate-400" />
+              <Building2 className="w-3.5 h-3.5 text-muted-foreground" />
               <span>Agency: {selectedDataset.sourceAgency}</span>
             </div>
           )}
 
           {selectedDataset.reportingYear && (
             <div className="flex items-center gap-1.5">
-              <Calendar className="w-3.5 h-3.5 text-slate-400" />
+              <Calendar className="w-3.5 h-3.5 text-muted-foreground" />
               <span>Year: {selectedDataset.reportingYear}</span>
             </div>
           )}

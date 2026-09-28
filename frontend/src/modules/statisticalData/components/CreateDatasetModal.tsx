@@ -79,15 +79,15 @@ export const CreateDatasetModal: React.FC<CreateDatasetModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100">
+      <DialogContent className="max-w-lg bg-card dark:bg-background border border-border dark:border-border text-foreground dark:text-foreground">
         <DialogHeader>
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">
+            <div className="p-2 rounded-lg bg-accent dark:bg-accent/50 text-primary dark:text-primary border border-primary dark:border-primary">
               <Database className="w-5 h-5" />
             </div>
             <div>
               <DialogTitle className="text-lg font-bold">Create New Statistical Dataset</DialogTitle>
-              <DialogDescription className="text-xs text-slate-500">
+              <DialogDescription className="text-xs text-muted-foreground">
                 Create a new DRAFT dataset container for statistical observation encoding.
               </DialogDescription>
             </div>
@@ -173,7 +173,7 @@ export const CreateDatasetModal: React.FC<CreateDatasetModalProps> = ({
             />
           </div>
 
-          <DialogFooter className="pt-3 border-t border-slate-100 dark:border-slate-800">
+          <DialogFooter className="pt-3 border-t border-border dark:border-border">
             <Button
               type="button"
               variant="outline"
@@ -186,7 +186,7 @@ export const CreateDatasetModal: React.FC<CreateDatasetModalProps> = ({
             <Button
               type="submit"
               disabled={loading}
-              className="h-9 text-xs bg-indigo-600 hover:bg-indigo-700 text-white"
+              className="h-9 text-xs bg-primary hover:bg-primary text-white"
             >
               {loading && <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />}
               Create DRAFT Dataset
