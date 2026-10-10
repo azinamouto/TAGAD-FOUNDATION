@@ -10,7 +10,7 @@ import { logger } from '../lib/logger';
  * Defaults to 10 attempts per 15-minute window per IP.
  */
 export const loginRateLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: 15 * 60 * 1000, // 15 minute
   max: () => {
     const envVal = process.env.RATE_LIMIT_LOGIN_MAX;
     return envVal ? parseInt(envVal, 10) : 10;
