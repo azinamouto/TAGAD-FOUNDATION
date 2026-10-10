@@ -1,0 +1,236 @@
+1. Core frontend missing tasks
+A. Dashboard and analytics
+Implement advanced dashboard analytics and interactive drill-down.
+Add detailed KPI visualizations and data breakdowns.
+Add interactive statistical dashboards.
+Implement performance trend analysis and comparative analytics.
+B. Data management and workflows
+Implement bulk data import and export interfaces.
+Add bulk beneficiary import interface.
+Add advanced search and filtering across all modules.
+Improve statistical data-entry validation feedback.
+Add drag-and-drop functionality to the Table Builder.
+Add custom report builder and template management interfaces.
+Implement GAD plan approval workflow interfaces.
+Add plan comparison and versioning interfaces.
+C. Statistical data visualization
+Implement advanced statistical visualizations.
+Add geographic mapping of statistical data.
+Implement time-series analysis and interactive charts.
+Add advanced table relationship visualization.
+Add data quality scoring displays.
+Improve statistical catalog search and filtering.
+D. Public portal enhancements
+Implement advanced budget visualizations.
+Add interactive program maps.
+Add comparative analytics across years.
+Improve public program filtering.
+Add detailed accomplishment breakdowns.
+Implement public GAD plan comparison features.
+Optimize the public portal for mobile devices.
+E. Citizen engagement
+Build an admin feedback review interface.
+Implement a public FAQ interface.
+Add notifications for published updates.
+Create a citizen dashboard for submitted feedback.
+2. UI/UX and frontend quality improvements
+Optimize mobile responsiveness across all pages.
+Improve accessibility to meet WCAG 2.1 AA requirements.
+Implement real-time data updates and notification interfaces.
+Add offline support and data synchronization interfaces.
+Improve loading, empty, error, and validation states across modules.
+3. Frontend feature completion by module
+
+Module
+
+	
+
+Missing frontend tasks
+
+
+
+
+Dashboard
+
+	
+
+Advanced analytics and drill-down
+
+
+
+
+Program Monitoring
+
+	
+
+Advanced filtering and analytics
+
+
+
+
+GAD Plan
+
+	
+
+Approval workflow, comparison, versioning
+
+
+
+
+Accomplishments
+
+	
+
+Variance analysis and detailed breakdowns
+
+
+
+
+Data Encoding
+
+	
+
+Bulk operations and validation feedback
+
+
+
+
+Reports
+
+	
+
+Custom report builder and templates
+
+
+
+
+User Management
+
+	
+
+Advanced permission interfaces
+
+
+
+
+Statistical Catalog
+
+	
+
+Advanced search and relationship visualization
+
+
+
+
+Statistical Data Entry
+
+	
+
+Validation feedback and advanced visualizations
+
+
+
+
+Table Builder
+
+	
+
+Drag-and-drop interface
+
+
+
+
+Public Demographics
+
+	
+
+Advanced charts and geographic visualization
+
+
+
+
+Public Programs
+
+	
+
+Filtering and interactive maps
+
+
+
+
+Public Accomplishments
+
+	
+
+Detailed breakdowns and trend analysis
+
+
+
+
+Public GAD Plans
+
+	
+
+Comparison features
+
+
+
+
+Public Feedback
+
+	
+
+Admin review and citizen feedback dashboard
+
+4. Recommended frontend implementation order
+Priority 1
+
+Core usability and workflows
+
+Fix frontend API base URL configuration.
+Complete data-entry validation feedback.
+Implement bulk import/export interfaces.
+Complete GAD plan approval workflow UI.
+Improve advanced search and filtering.
+
+Priority 2
+
+Analytics and reporting
+
+Advanced dashboard analytics.
+Statistical visualization and interactive charts.
+Custom report builder and template management.
+Plan comparison and accomplishment analysis.
+
+Priority 3
+
+Public portal and engagement
+
+Interactive program maps and geographic visualizations.
+Public portal mobile optimization.
+Citizen feedback dashboard and admin review.
+Public update notifications and FAQ interface.
+
+Priority 4
+
+Quality and optimization
+
+WCAG 2.1 AA accessibility improvements.
+Offline support and synchronization.
+Real-time UI updates.
+Responsive design and frontend performance optimization.
+5. Frontend acceptance criteria
+
+The frontend can be considered ready for its next completion review when:
+
+All required pages and workflows are implemented.
+All forms have appropriate validation and error feedback.
+Bulk operations provide progress, success, and failure feedback.
+Dashboards and charts display data accurately from connected APIs.
+Search, filtering, and pagination work consistently.
+Public and admin interfaces are responsive across screen sizes.
+Accessibility checks are completed.
+Frontend tests cover critical workflows and user interactions.
+Production frontend build and deployment configuration are verified.
+
+Scope note: This roadmap lists frontend work identified or implied by the audit. It does not claim that these tasks remain unimplemented in the current repository; each item should be verified against the latest code before being assigned.
