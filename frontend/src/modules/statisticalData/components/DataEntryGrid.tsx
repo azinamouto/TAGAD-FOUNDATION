@@ -40,6 +40,8 @@ import {
   Download,
   Upload,
   Info,
+  Search,
+  BarChart3,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '../../auth/AuthContext';
@@ -66,6 +68,9 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
   const [pasteText, setPasteText] = useState('');
   const [pasteError, setPasteError] = useState<string | null>(null);
   const [isCsvImportOpen, setIsCsvImportOpen] = useState(false);
+  const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
+  const [filterText, setFilterText] = useState('');
+  const [filteredRows, setFilteredRows] = useState<GridRowData[]>([]);
 
   // Active cell coordinate for keyboard navigation
   const [focusedCell, setFocusedCell] = useState<{ rowIndex: number; colKey: string } | null>(null);
@@ -136,6 +141,35 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
   useEffect(() => {
     loadObservations();
   }, [loadObservations]);
+
+  // Apply filter when filterText or rows change
+  useEffect(() => {
+    if (!filterText.trim()) {
+      setFilteredRows(rows);
+      return;
+    }
+
+    const term = filterText.toLowerCase();
+    const filtered = rows.filter((row) => {
+      // Search across all fields
+      const searchableText = [
+        row.period,
+        barangays.find((b) => b.id === row.barangayId)?.name,
+        indicators.find((i) => i.id === row.indicatorId)?.name,
+        String(row.numericValue),
+        row.observationStatus,
+        row.notes,
+        ...Object.values(row.dimensions),
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+
+      return searchableText.includes(term);
+    });
+
+    setFilteredRows(filtered);
+  }, [filterText, rows, barangays, indicators]);
 
   // Handle cell value change
   const handleCellChange = (
@@ -642,18 +676,101 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
 
   // Count dirty rows
   const dirtyCount = rows.filter((r) => r.rowState === 'DIRTY' || r.rowState === 'NEW').length;
+  const displayRows = filterText.trim() ? filteredRows : rows;
+
+  // Calculate live statistics for numeric values
+  const calculateStatistics = () => {
+    const numericValues = rows
+      .map((r) => parseFloat(String(r.numericValue)))
+      .filter((v) => !isNaN(v) && v !== null);
+
+    if (numericValues.length === 0) {
+      return { count: 0, sum: 0, avg: 0, min: 0, max: 0 };
+    }
+
+    const sum = numericValues.reduce((a, b) => a + b, 0);
+    const avg = sum / numericValues.length;
+    const min = Math.min(...numericValues);
+    const max = Math.max(...numericValues);
+
+    return {
+      count: numericValues.length,
+      sum,
+      avg,
+      min,
+      max,
+    };
+  };
+
+  const stats = calculateStatistics();
+
+  // Handle column sorting
+  const handleSort = (key: string) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+
+    const sortedRows = [...rows].sort((a, b) => {
+      let valA: any;
+      let valB: any;
+
+      switch (key) {
+        case 'period':
+          valA = a.period;
+          valB = b.period;
+          break;
+        case 'barangayId':
+          valA = barangays.find((bg) => bg.id === a.barangayId)?.name || '';
+          valB = barangays.find((bg) => bg.id === b.barangayId)?.name || '';
+          break;
+        case 'indicatorId':
+          valA = indicators.find((ind) => ind.id === a.indicatorId)?.name || '';
+          valB = indicators.find((ind) => ind.id === b.indicatorId)?.name || '';
+          break;
+        case 'numericValue':
+          valA = parseFloat(String(a.numericValue)) || 0;
+          valB = parseFloat(String(b.numericValue)) || 0;
+          break;
+        case 'observationStatus':
+          valA = a.observationStatus || '';
+          valB = b.observationStatus || '';
+          break;
+        default:
+          if (key.startsWith('dim_')) {
+            const dimCode = key.replace('dim_', '');
+            valA = a.dimensions[dimCode] || '';
+            valB = b.dimensions[dimCode] || '';
+          } else {
+            return 0;
+          }
+      }
+
+      if (valA < valB) return direction === 'asc' ? -1 : 1;
+      if (valA > valB) return direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    setRows(sortedRows);
+  };
+
+  const getSortIcon = (key: string) => {
+    if (!sortConfig || sortConfig.key !== key) return null;
+    return sortConfig.direction === 'asc' ? '↑' : '↓';
+  };
 
   return (
     <div className="space-y-4">
       {/* 1. Grid Control Toolbar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-3 rounded-xl shadow-sm">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-card dark:bg-background border border-border dark:border-border p-3 rounded-xl shadow-sm">
+        <div className="flex items-center gap-2 flex-wrap">
           <Button
             type="button"
             size="sm"
             onClick={handleAddRow}
             disabled={isReadOnly}
-            className="h-8 text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-medium"
+            className="h-8 text-xs bg-primary hover:bg-primary text-white font-medium"
           >
             <Plus className="w-3.5 h-3.5 mr-1" />
             Add Row
@@ -665,9 +782,9 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
             size="sm"
             onClick={() => setPasteModalOpen(true)}
             disabled={isReadOnly}
-            className="h-8 text-xs text-slate-700 dark:text-slate-300"
+            className="h-8 text-xs text-foreground dark:text-foreground"
           >
-            <Clipboard className="w-3.5 h-3.5 mr-1 text-slate-500" />
+            <Clipboard className="w-3.5 h-3.5 mr-1 text-muted-foreground" />
             Paste from Excel
           </Button>
 
@@ -677,10 +794,10 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
             size="sm"
             onClick={() => setIsCsvImportOpen(true)}
             disabled={isReadOnly}
-            className="h-8 text-xs text-slate-700 dark:text-slate-300"
+            className="h-8 text-xs text-foreground dark:text-foreground"
             id="btn-import-statistical-csv"
           >
-            <Upload className="w-3.5 h-3.5 mr-1 text-slate-500" />
+            <Upload className="w-3.5 h-3.5 mr-1 text-muted-foreground" />
             Import CSV
           </Button>
 
@@ -690,11 +807,27 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
             size="sm"
             onClick={loadObservations}
             disabled={loading}
-            className="h-8 text-xs text-slate-600 dark:text-slate-400"
+            className="h-8 text-xs text-muted-foreground dark:text-muted-foreground"
           >
             <RotateCcw className={`w-3.5 h-3.5 mr-1 ${loading ? 'animate-spin' : ''}`} />
             Refresh
           </Button>
+
+          <div className="flex items-center gap-2 border-l border-border dark:border-border pl-2">
+            <Search className="w-3.5 h-3.5 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Filter all columns..."
+              value={filterText}
+              onChange={(e) => setFilterText(e.target.value)}
+              className="h-8 w-48 text-xs bg-transparent border-none focus:ring-0 px-0"
+            />
+            {filterText && (
+              <span className="text-[10px] text-muted-foreground bg-muted dark:bg-muted px-1.5 py-0.5 rounded">
+                {filteredRows.length} of {rows.length}
+              </span>
+            )}
+          </div>
 
           {dirtyCount > 0 && (
             <Badge variant="outline" className="bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800 text-xs font-semibold px-2 py-0.5">
@@ -728,26 +861,72 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
         </div>
       </div>
 
-      {/* 2. Interactive Spreadsheet Grid */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm">
+      {/* 2. Live Statistics Summary Bar */}
+      {rows.length > 0 && (
+        <div className="bg-gradient-to-r from-emerald-50/50 to-blue-50/50 dark:from-emerald-950/20 dark:to-blue-950/20 border border-emerald-200 dark:border-emerald-800 rounded-xl p-4 shadow-sm">
+          <div className="flex items-center gap-2 mb-3">
+            <BarChart3 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+            <span className="text-xs font-bold text-emerald-700 dark:text-emerald-300 uppercase tracking-wider">
+              Live Summary Statistics
+            </span>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            <div className="bg-white dark:bg-background border border-border dark:border-border rounded-lg p-3">
+              <div className="text-[10px] text-muted-foreground font-medium uppercase">Total Rows</div>
+              <div className="text-lg font-bold text-foreground">{rows.length}</div>
+            </div>
+            <div className="bg-white dark:bg-background border border-border dark:border-border rounded-lg p-3">
+              <div className="text-[10px] text-muted-foreground font-medium uppercase">Data Points</div>
+              <div className="text-lg font-bold text-primary">{stats.count}</div>
+            </div>
+            <div className="bg-white dark:bg-background border border-border dark:border-border rounded-lg p-3">
+              <div className="text-[10px] text-muted-foreground font-medium uppercase">Sum</div>
+              <div className="text-lg font-bold text-emerald-600 dark:text-emerald-400 font-mono">
+                {stats.sum.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+              </div>
+            </div>
+            <div className="bg-white dark:bg-background border border-border dark:border-border rounded-lg p-3">
+              <div className="text-[10px] text-muted-foreground font-medium uppercase">Average</div>
+              <div className="text-lg font-bold text-blue-600 dark:text-blue-400 font-mono">
+                {stats.avg.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+              </div>
+            </div>
+            <div className="bg-white dark:bg-background border border-border dark:border-border rounded-lg p-3">
+              <div className="text-[10px] text-muted-foreground font-medium uppercase">Min</div>
+              <div className="text-lg font-bold text-amber-600 dark:text-amber-400 font-mono">
+                {stats.min.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+              </div>
+            </div>
+            <div className="bg-white dark:bg-background border border-border dark:border-border rounded-lg p-3">
+              <div className="text-[10px] text-muted-foreground font-medium uppercase">Max</div>
+              <div className="text-lg font-bold text-rose-600 dark:text-rose-400 font-mono">
+                {stats.max.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 3. Interactive Spreadsheet Grid */}
+      <div className="bg-card dark:bg-background border border-border dark:border-border rounded-xl overflow-hidden shadow-sm">
         {loading && rows.length === 0 ? (
-          <div className="py-20 flex flex-col items-center justify-center text-slate-400">
-            <Loader2 className="w-8 h-8 animate-spin text-indigo-500 mb-3" />
+          <div className="py-20 flex flex-col items-center justify-center text-muted-foreground">
+            <Loader2 className="w-8 h-8 animate-spin text-primary mb-3" />
             <p className="text-sm font-medium">Loading statistical observations...</p>
           </div>
         ) : rows.length === 0 ? (
           /* Honest Empty State for Tables with 0 Observations */
           <div className="py-16 px-6 text-center">
-            <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 flex items-center justify-center mx-auto mb-3">
+            <div className="w-12 h-12 rounded-xl bg-muted dark:bg-muted text-muted-foreground dark:text-muted-foreground flex items-center justify-center mx-auto mb-3">
               <TableIcon className="w-6 h-6" />
             </div>
-            <Badge variant="outline" className="mb-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-700 text-xs font-semibold">
+            <Badge variant="outline" className="mb-2 bg-muted dark:bg-muted text-muted-foreground dark:text-muted-foreground border-border dark:border-border text-xs font-semibold">
               EMPTY STATE
             </Badge>
-            <h4 className="text-base font-bold text-slate-800 dark:text-slate-200">
+            <h4 className="text-base font-bold text-foreground dark:text-foreground">
               No observations have been entered for this table yet.
             </h4>
-            <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto mt-1 mb-5">
+            <p className="text-xs text-muted-foreground dark:text-muted-foreground max-w-md mx-auto mt-1 mb-5">
               The statistical schema and dimension bindings are active and ready. Start adding statistical records using the button below or paste directly from Excel/CSV.
             </p>
             {!isReadOnly && (
@@ -755,7 +934,7 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
                 <Button
                   onClick={handleAddRow}
                   size="sm"
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs"
+                  className="bg-primary hover:bg-primary text-white text-xs"
                 >
                   <Plus className="w-3.5 h-3.5 mr-1.5" />
                   Start Data Entry
@@ -775,49 +954,71 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
         ) : (
           <div className="overflow-x-auto max-h-[600px]">
             <table className="w-full text-left text-xs border-collapse">
-              <thead className="bg-slate-50 dark:bg-slate-800/80 sticky top-0 z-10 border-b border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 select-none">
+              <thead className="bg-muted dark:bg-muted/80 sticky top-0 z-10 border-b border-border dark:border-border text-foreground dark:text-foreground select-none">
                 <tr>
-                  <th className="py-2.5 px-3 font-bold w-12 text-center text-[11px] border-r border-slate-200 dark:border-slate-700">
+                  <th className="py-2.5 px-3 font-bold w-12 text-center text-[11px] border-r border-border dark:border-border">
                     #
                   </th>
-                  <th className="py-2.5 px-3 font-bold w-24 border-r border-slate-200 dark:border-slate-700">
+                  <th className="py-2.5 px-3 font-bold w-24 border-r border-border dark:border-border">
                     State
                   </th>
-                  <th className="py-2.5 px-3 font-bold min-w-[100px] border-r border-slate-200 dark:border-slate-700">
-                    Period <span className="text-rose-500">*</span>
+                  <th
+                    className="py-2.5 px-3 font-bold min-w-[100px] border-r border-border dark:border-border cursor-pointer hover:bg-muted/50 transition-colors select-none"
+                    onClick={() => handleSort('period')}
+                  >
+                    Period <span className="text-rose-500">*</span> {getSortIcon('period')}
                   </th>
-                  <th className="py-2.5 px-3 font-bold min-w-[140px] border-r border-slate-200 dark:border-slate-700">
-                    Barangay
+                  <th
+                    className="py-2.5 px-3 font-bold min-w-[140px] border-r border-border dark:border-border cursor-pointer hover:bg-muted/50 transition-colors select-none"
+                    onClick={() => handleSort('barangayId')}
+                  >
+                    Barangay {getSortIcon('barangayId')}
                   </th>
 
                   {indicators.length > 0 && (
-                    <th className="py-2.5 px-3 font-bold min-w-[160px] border-r border-slate-200 dark:border-slate-700">
-                      Indicator <span className="text-rose-500">*</span>
+                    <th
+                      className="py-2.5 px-3 font-bold min-w-[160px] border-r border-border dark:border-border cursor-pointer hover:bg-muted/50 transition-colors select-none"
+                      onClick={() => handleSort('indicatorId')}
+                    >
+                      Indicator <span className="text-rose-500">*</span> {getSortIcon('indicatorId')}
                     </th>
                   )}
 
                   {/* Dynamic bound dimension headers */}
-                  {dimensionBindings.map((binding) => (
-                    <th
-                      key={binding.id}
-                      className="py-2.5 px-3 font-bold min-w-[130px] border-r border-slate-200 dark:border-slate-700 bg-indigo-50/50 dark:bg-indigo-950/20"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span>{binding.dimension?.name || binding.dimension?.dimensionCode}</span>
-                        {binding.isRequired && <span className="text-rose-500 font-bold ml-1">*</span>}
-                      </div>
-                    </th>
-                  ))}
+                  {dimensionBindings.map((binding) => {
+                    const code = binding.dimension?.dimensionCode || '';
+                    return (
+                      <th
+                        key={binding.id}
+                        className="py-2.5 px-3 font-bold min-w-[130px] border-r border-border dark:border-border bg-accent/50 dark:bg-accent/20 cursor-pointer hover:bg-muted/50 transition-colors select-none"
+                        onClick={() => handleSort(`dim_${code}`)}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span>{binding.dimension?.name || binding.dimension?.dimensionCode}</span>
+                          <div className="flex items-center gap-1">
+                            {binding.isRequired && <span className="text-rose-500 font-bold">*</span>}
+                            {getSortIcon(`dim_${code}`)}
+                          </div>
+                        </div>
+                      </th>
+                    );
+                  })}
 
-                  <th className="py-2.5 px-3 font-bold min-w-[120px] text-right border-r border-slate-200 dark:border-slate-700 bg-amber-50/50 dark:bg-amber-950/20">
-                    Value <span className="text-rose-500">*</span>
+                  <th
+                    className="py-2.5 px-3 font-bold min-w-[120px] text-right border-r border-border dark:border-border bg-amber-50/50 dark:bg-amber-950/20 cursor-pointer hover:bg-muted/50 transition-colors select-none"
+                    onClick={() => handleSort('numericValue')}
+                  >
+                    Value <span className="text-rose-500">*</span> {getSortIcon('numericValue')}
                   </th>
 
-                  <th className="py-2.5 px-3 font-bold min-w-[110px] border-r border-slate-200 dark:border-slate-700">
-                    Status Tag
+                  <th
+                    className="py-2.5 px-3 font-bold min-w-[110px] border-r border-border dark:border-border cursor-pointer hover:bg-muted/50 transition-colors select-none"
+                    onClick={() => handleSort('observationStatus')}
+                  >
+                    Status Tag {getSortIcon('observationStatus')}
                   </th>
 
-                  <th className="py-2.5 px-3 font-bold min-w-[140px] border-r border-slate-200 dark:border-slate-700">
+                  <th className="py-2.5 px-3 font-bold min-w-[140px] border-r border-border dark:border-border">
                     Notes
                   </th>
 
@@ -827,16 +1028,26 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
                 </tr>
               </thead>
 
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-sans">
-                {rows.map((row, index) => {
+              <tbody className="divide-y divide-border dark:divide-border font-sans">
+                {displayRows.map((row, index) => {
                   const isDirty = row.rowState === 'DIRTY' || row.rowState === 'NEW';
                   const isSaving = row.rowState === 'SAVING';
                   const isError = row.rowState === 'ERROR';
 
+                  // Calculate conditional formatting for numeric value
+                  const numericVal = parseFloat(String(row.numericValue));
+                  const valueBackgroundColor = !isNaN(numericVal) && numericVal > 0
+                    ? numericVal > stats.avg
+                      ? 'bg-emerald-50/30 dark:bg-emerald-950/20'
+                      : numericVal < stats.avg
+                      ? 'bg-rose-50/30 dark:bg-rose-950/20'
+                      : 'bg-amber-50/30 dark:bg-amber-950/20'
+                    : '';
+
                   return (
                     <tr
                       key={row.clientRowId}
-                      className={`hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors ${
+                      className={`hover:bg-muted/80 dark:hover:bg-muted/50 transition-colors ${
                         isError
                           ? 'bg-rose-50/40 dark:bg-rose-950/20'
                           : isDirty
@@ -845,12 +1056,12 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
                       }`}
                     >
                       {/* Row Index */}
-                      <td className="py-1.5 px-2 text-center text-[11px] font-mono text-slate-400 border-r border-slate-100 dark:border-slate-800">
-                        {index + 1}
+                      <td className="py-1.5 px-2 text-center text-[11px] font-mono text-muted-foreground border-r border-border dark:border-border">
+                        {rows.indexOf(row) + 1}
                       </td>
 
                       {/* Row State Badge */}
-                      <td className="py-1.5 px-2.5 border-r border-slate-100 dark:border-slate-800">
+                      <td className="py-1.5 px-2.5 border-r border-border dark:border-border">
                         {row.rowState === 'SAVED' && (
                           <span className="inline-flex items-center text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">
                             <CheckCircle2 className="w-3 h-3 mr-1 shrink-0" />
@@ -858,7 +1069,7 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
                           </span>
                         )}
                         {row.rowState === 'NEW' && (
-                          <span className="inline-flex items-center text-[10px] text-indigo-600 dark:text-indigo-400 font-semibold bg-indigo-50 dark:bg-indigo-950/50 px-1.5 py-0.5 rounded">
+                          <span className="inline-flex items-center text-[10px] text-primary dark:text-primary font-semibold bg-accent dark:bg-accent/50 px-1.5 py-0.5 rounded">
                             NEW
                           </span>
                         )}
@@ -885,7 +1096,7 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
                       </td>
 
                       {/* Period Cell */}
-                      <td className="py-1.5 px-2 border-r border-slate-100 dark:border-slate-800">
+                      <td className="py-1.5 px-2 border-r border-border dark:border-border">
                         <Input
                           ref={(el) => {
                             cellRefs.current[`${index}-period`] = el;
@@ -902,12 +1113,12 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
                       </td>
 
                       {/* Barangay Cell */}
-                      <td className="py-1.5 px-2 border-r border-slate-100 dark:border-slate-800">
+                      <td className="py-1.5 px-2 border-r border-border dark:border-border">
                         <select
                           value={row.barangayId || ''}
                           onChange={(e) => handleCellChange(row.clientRowId, 'barangayId', e.target.value || null)}
                           disabled={isReadOnly || isSaving}
-                          className="w-full h-8 text-xs bg-transparent border border-slate-200 dark:border-slate-700 rounded-md px-2 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                          className="w-full h-8 text-xs bg-transparent border border-border dark:border-border rounded-md px-2 focus:outline-none focus:ring-1 focus:ring-primary"
                         >
                           <option value="">(Municipal Total)</option>
                           {barangays.map((b) => (
@@ -920,13 +1131,13 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
 
                       {/* Indicator Cell (if configured) */}
                       {indicators.length > 0 && (
-                        <td className="py-1.5 px-2 border-r border-slate-100 dark:border-slate-800">
+                        <td className="py-1.5 px-2 border-r border-border dark:border-border">
                           <select
                             value={row.indicatorId || ''}
                             onChange={(e) => handleCellChange(row.clientRowId, 'indicatorId', e.target.value || null)}
                             disabled={isReadOnly || isSaving}
-                            className={`w-full h-8 text-xs bg-transparent border rounded-md px-2 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
-                              row.fieldErrors?.indicatorId ? 'border-rose-500' : 'border-slate-200 dark:border-slate-700'
+                            className={`w-full h-8 text-xs bg-transparent border rounded-md px-2 focus:outline-none focus:ring-1 focus:ring-primary ${
+                              row.fieldErrors?.indicatorId ? 'border-rose-500' : 'border-border dark:border-border'
                             }`}
                           >
                             <option value="">Select Indicator...</option>
@@ -949,15 +1160,15 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
                         return (
                           <td
                             key={binding.id}
-                            className="py-1.5 px-2 border-r border-slate-100 dark:border-slate-800 bg-indigo-50/20 dark:bg-indigo-950/10"
+                            className="py-1.5 px-2 border-r border-border dark:border-border bg-accent/20 dark:bg-accent/10"
                           >
                             {allowedVals.length > 0 ? (
                               <select
                                 value={currentVal}
                                 onChange={(e) => handleDimensionChange(row.clientRowId, code, e.target.value)}
                                 disabled={isReadOnly || isSaving}
-                                className={`w-full h-8 text-xs bg-transparent border rounded-md px-2 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
-                                  hasError ? 'border-rose-500' : 'border-slate-200 dark:border-slate-700'
+                                className={`w-full h-8 text-xs bg-transparent border rounded-md px-2 focus:outline-none focus:ring-1 focus:ring-primary ${
+                                  hasError ? 'border-rose-500' : 'border-border dark:border-border'
                                 }`}
                               >
                                 <option value="">Select...</option>
@@ -984,7 +1195,7 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
                       })}
 
                       {/* Numeric Value Cell */}
-                      <td className="py-1.5 px-2 border-r border-slate-100 dark:border-slate-800 bg-amber-50/20 dark:bg-amber-950/10">
+                      <td className={`py-1.5 px-2 border-r border-border dark:border-border bg-amber-50/20 dark:bg-amber-950/10 ${valueBackgroundColor}`}>
                         <Input
                           ref={(el) => {
                             cellRefs.current[`${index}-numericValue`] = el;
@@ -1003,12 +1214,12 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
                       </td>
 
                       {/* Observation Status Tag */}
-                      <td className="py-1.5 px-2 border-r border-slate-100 dark:border-slate-800">
+                      <td className="py-1.5 px-2 border-r border-border dark:border-border">
                         <select
                           value={row.observationStatus || ''}
                           onChange={(e) => handleCellChange(row.clientRowId, 'observationStatus', e.target.value || null)}
                           disabled={isReadOnly || isSaving}
-                          className="w-full h-8 text-xs bg-transparent border border-slate-200 dark:border-slate-700 rounded-md px-2 focus:outline-none"
+                          className="w-full h-8 text-xs bg-transparent border border-border dark:border-border rounded-md px-2 focus:outline-none"
                         >
                           <option value="">Normal</option>
                           <option value="ESTIMATED">Estimated</option>
@@ -1018,13 +1229,13 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
                       </td>
 
                       {/* Notes Cell */}
-                      <td className="py-1.5 px-2 border-r border-slate-100 dark:border-slate-800">
+                      <td className="py-1.5 px-2 border-r border-border dark:border-border">
                         <Input
                           value={row.notes || ''}
                           onChange={(e) => handleCellChange(row.clientRowId, 'notes', e.target.value)}
                           disabled={isReadOnly || isSaving}
                           placeholder="Optional notes"
-                          className="h-8 text-xs bg-transparent text-slate-600 dark:text-slate-400"
+                          className="h-8 text-xs bg-transparent text-muted-foreground dark:text-muted-foreground"
                         />
                       </td>
 
@@ -1038,7 +1249,7 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
                               size="sm"
                               onClick={() => handleSaveRow(row.clientRowId)}
                               disabled={isSaving || (!isDirty && !isError)}
-                              className="h-7 w-7 p-0 text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400"
+                              className="h-7 w-7 p-0 text-muted-foreground dark:text-muted-foreground hover:text-emerald-600 dark:hover:text-emerald-400"
                               title="Save this row"
                             >
                               {isSaving ? (
@@ -1056,7 +1267,7 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
                               size="sm"
                               onClick={() => handleDeleteRow(row.clientRowId)}
                               disabled={isSaving}
-                              className="h-7 w-7 p-0 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400"
+                              className="h-7 w-7 p-0 text-muted-foreground hover:text-rose-600 dark:hover:text-rose-400"
                               title="Delete row"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
@@ -1075,18 +1286,18 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
 
       {/* 3. Clipboard TSV Paste Modal */}
       {pasteModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl max-w-2xl w-full p-5 shadow-2xl space-y-4">
+        <div className="fixed inset-0 z-50 bg-background/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-card dark:bg-background border border-border dark:border-border rounded-xl max-w-2xl w-full p-5 shadow-2xl space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">
+                <div className="p-2 rounded-lg bg-accent dark:bg-accent/50 text-primary dark:text-primary border border-primary dark:border-primary">
                   <Clipboard className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">
+                  <h3 className="text-base font-bold text-foreground dark:text-foreground">
                     Paste Tabular Data from Excel / Spreadsheet
                   </h3>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-muted-foreground">
                     Copy cells from Excel or Google Sheets (Tab-Separated Values) and paste below.
                   </p>
                 </div>
@@ -1101,9 +1312,9 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
             )}
 
             <div className="space-y-1.5">
-              <div className="flex items-center justify-between text-xs text-slate-500">
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
                 <span>Expected Column Order:</span>
-                <span className="font-mono text-[11px] text-indigo-600 dark:text-indigo-400">
+                <span className="font-mono text-[11px] text-primary dark:text-primary">
                   Period → Barangay → Indicator → {dimensionBindings.map((b) => b.dimension?.dimensionCode).join(' → ')} → Value → Notes
                 </span>
               </div>
@@ -1115,11 +1326,11 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
                 }}
                 rows={8}
                 placeholder={`2024\tPoblacion\t${indicators[0]?.indicatorCode || 'TOTAL'}\t${dimensionBindings.map((b) => b.allowedValues?.[0] || 'Male').join('\t')}\t1250\tSurvey Notes`}
-                className="w-full p-3 font-mono text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-slate-800 dark:text-slate-200"
+                className="w-full p-3 font-mono text-xs bg-muted dark:bg-muted border border-border dark:border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-foreground dark:text-foreground"
               />
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-border dark:border-border">
               <Button
                 type="button"
                 variant="outline"
@@ -1138,7 +1349,7 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
                 size="sm"
                 onClick={handleParsePaste}
                 disabled={!pasteText.trim()}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold"
+                className="bg-primary hover:bg-primary text-white text-xs font-semibold"
               >
                 Import Cells to Grid
               </Button>

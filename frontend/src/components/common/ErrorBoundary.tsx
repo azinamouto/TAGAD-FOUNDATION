@@ -40,19 +40,19 @@ export class ErrorBoundary extends React.Component<Props, State> {
       }
 
       return (
-        <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
-          <div className="max-w-md w-full bg-slate-800 border border-slate-700 rounded-2xl p-6 text-center space-y-5 shadow-2xl">
+        <div className="min-h-screen bg-background flex items-center justify-center p-4">
+          <div className="max-w-md w-full bg-muted border border-border rounded-2xl p-6 text-center space-y-5 shadow-2xl">
             <div className="inline-flex p-3 bg-amber-500/10 text-amber-400 rounded-xl border border-amber-500/20">
               <AlertTriangle className="w-8 h-8" />
             </div>
 
             <div className="space-y-2">
               <h2 className="text-xl font-bold text-white">Application Exception</h2>
-              <p className="text-sm text-slate-400 leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 An unexpected interface error occurred. The application state has been safely isolated.
               </p>
               {this.state.error && (
-                <div className="p-3 bg-slate-950/80 rounded-lg text-left text-xs font-mono text-rose-400 overflow-x-auto max-h-32 border border-slate-800">
+                <div className="p-3 bg-background/80 rounded-lg text-left text-xs font-mono text-rose-400 overflow-x-auto max-h-32 border border-border">
                   {this.state.error.message}
                 </div>
               )}
@@ -60,7 +60,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
 
             <button
               onClick={this.handleReset}
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm rounded-lg transition-colors shadow-lg shadow-indigo-600/25 w-full"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary text-white font-medium text-sm rounded-lg transition-colors shadow-lg shadow-indigo-600/25 w-full"
             >
               <RefreshCw className="w-4 h-4" />
               Reload Workspace

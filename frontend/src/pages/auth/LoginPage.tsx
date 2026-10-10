@@ -39,23 +39,23 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col justify-center py-16 px-4 sm:px-6">
+    <div className="min-h-screen bg-muted dark:bg-background flex flex-col justify-center py-16 px-4 sm:px-6">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm space-y-8">
         {/* Header */}
         <div className="space-y-2 text-center">
-          <Link to="/" className="inline-block text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+          <Link to="/" className="inline-block text-lg font-semibold tracking-tight text-foreground dark:text-foreground">
             TAGAD
           </Link>
-          <h1 className="text-xl font-semibold text-slate-900 dark:text-white tracking-tight">
+          <h1 className="text-xl font-semibold text-foreground dark:text-foreground tracking-tight">
             Personnel Sign In
           </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-xs text-muted-foreground dark:text-muted-foreground">
             Municipality of Talibon • Gender and Development Portal
           </p>
         </div>
 
         {/* Form Container */}
-        <div className="bg-white dark:bg-slate-900 p-6 sm:p-8 border border-slate-200 dark:border-slate-800 space-y-6">
+        <div className="bg-card dark:bg-background p-6 sm:p-8 border border-border dark:border-border space-y-6">
           {errorMessage && (
             <div className="p-3 bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800 text-xs text-rose-800 dark:text-rose-300">
               {errorMessage}
@@ -64,7 +64,7 @@ export const LoginPage: React.FC = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1">
-              <label htmlFor="email" className="text-xs font-medium text-slate-700 dark:text-slate-300">
+              <label htmlFor="email" className="text-xs font-medium text-foreground dark:text-foreground">
                 Email Address
               </label>
               <input
@@ -75,8 +75,8 @@ export const LoginPage: React.FC = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 autoComplete="email"
                 required
-                className={`w-full px-3 py-2 text-xs bg-white dark:bg-slate-900 border rounded text-slate-900 dark:text-white focus:outline-none focus:border-slate-500 ${
-                  errors.email ? 'border-rose-500' : 'border-slate-300 dark:border-slate-700'
+                className={`w-full px-3 py-2 text-xs bg-card dark:bg-background border rounded text-foreground dark:text-foreground focus:outline-none focus:border-border ${
+                  errors.email ? 'border-rose-500' : 'border-border dark:border-border'
                 }`}
               />
               {errors.email && (
@@ -85,7 +85,7 @@ export const LoginPage: React.FC = () => {
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="password" className="text-xs font-medium text-slate-700 dark:text-slate-300">
+              <label htmlFor="password" className="text-xs font-medium text-foreground dark:text-foreground">
                 Password
               </label>
               <input
@@ -96,8 +96,8 @@ export const LoginPage: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="current-password"
                 required
-                className={`w-full px-3 py-2 text-xs bg-white dark:bg-slate-900 border rounded text-slate-900 dark:text-white focus:outline-none focus:border-slate-500 ${
-                  errors.password ? 'border-rose-500' : 'border-slate-300 dark:border-slate-700'
+                className={`w-full px-3 py-2 text-xs bg-card dark:bg-background border rounded text-foreground dark:text-foreground focus:outline-none focus:border-border ${
+                  errors.password ? 'border-rose-500' : 'border-border dark:border-border'
                 }`}
               />
               {errors.password && (
@@ -108,23 +108,23 @@ export const LoginPage: React.FC = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-2 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 text-white text-xs font-medium rounded transition-colors disabled:opacity-50"
+              className="w-full py-2 bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-medium rounded transition-colors disabled:opacity-50"
             >
               {isSubmitting ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
 
           {/* Development Credentials */}
-          <div className="pt-4 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 space-y-1">
-            <div className="font-medium text-slate-700 dark:text-slate-300">Development Credentials:</div>
-            <div>Email: <span className="font-mono text-slate-900 dark:text-slate-200">admin@talibon.gov.ph</span></div>
+          <div className="pt-4 border-t border-border dark:border-border text-[11px] text-muted-foreground dark:text-muted-foreground space-y-1">
+            <div className="font-medium text-foreground dark:text-foreground">Development Credentials:</div>
+            <div>Email: <span className="font-mono text-foreground dark:text-foreground">admin@talibon.gov.ph</span></div>
           </div>
         </div>
 
         <div className="text-center">
           <Link
             to="/"
-            className="text-xs text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"
+            className="text-xs text-muted-foreground hover:text-foreground dark:hover:text-white transition-colors"
           >
             ← Return to public portal
           </Link>

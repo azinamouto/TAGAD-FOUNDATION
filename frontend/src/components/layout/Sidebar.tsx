@@ -35,16 +35,16 @@ export const Sidebar: React.FC = () => {
   ];
 
   return (
-    <aside className="w-60 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col h-[calc(100vh-4rem)] sticky top-16 shrink-0">
+    <aside className="w-60 border-r border-border dark:border-border bg-card dark:bg-background flex flex-col h-[calc(100vh-4rem)] sticky top-16 shrink-0">
       {/* User Scope / Organization Header */}
-      <div className="p-4 border-b border-slate-100 dark:border-slate-800 space-y-1">
-        <div className="text-xs font-semibold text-slate-900 dark:text-white truncate">
+      <div className="p-4 border-b border-border dark:border-border space-y-1">
+        <div className="text-xs font-semibold text-foreground dark:text-foreground truncate">
           {user?.full_name || 'System User'}
         </div>
-        <div className="text-[11px] text-slate-500 truncate">
+        <div className="text-[11px] text-muted-foreground truncate">
           {user?.office?.name || user?.office_id || 'Municipality of Talibon'}
         </div>
-        <div className="text-[11px] text-slate-400 font-medium">
+        <div className="text-[11px] text-muted-foreground font-medium">
           {roles.map((r) => formatRole(r)).join(', ')}
         </div>
       </div>
@@ -52,7 +52,7 @@ export const Sidebar: React.FC = () => {
       {/* Main Navigation */}
       <div className="flex-1 overflow-y-auto p-3 space-y-6">
         <div>
-          <div className="px-2 mb-2 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+          <div className="px-2 mb-2 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
             Workspace
           </div>
           <nav className="space-y-0.5">
@@ -65,12 +65,12 @@ export const Sidebar: React.FC = () => {
                   className={({ isActive }) =>
                     `flex items-center gap-2.5 px-2.5 py-1.5 text-xs font-medium rounded transition-colors ${
                       isActive
-                        ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold'
-                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                        ? 'bg-muted dark:bg-muted text-foreground dark:text-foreground font-semibold'
+                        : 'text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-white hover:bg-muted dark:hover:bg-muted/50'
                     }`
                   }
                 >
-                  <Icon className="w-4 h-4 shrink-0 text-slate-400" />
+                  <Icon className="w-4 h-4 shrink-0 text-muted-foreground" />
                   <span className="truncate">{item.name}</span>
                 </NavLink>
               );
@@ -81,7 +81,7 @@ export const Sidebar: React.FC = () => {
         {/* Administration Section */}
         {isAdmin && (
           <div>
-            <div className="px-2 mb-2 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+            <div className="px-2 mb-2 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
               Administration
             </div>
             <nav className="space-y-0.5">
@@ -94,12 +94,12 @@ export const Sidebar: React.FC = () => {
                     className={({ isActive }) =>
                       `flex items-center gap-2.5 px-2.5 py-1.5 text-xs font-medium rounded transition-colors ${
                         isActive
-                          ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold'
-                          : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                          ? 'bg-muted dark:bg-muted text-foreground dark:text-foreground font-semibold'
+                          : 'text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-white hover:bg-muted dark:hover:bg-muted/50'
                       }`
                     }
                   >
-                    <Icon className="w-4 h-4 shrink-0 text-slate-400" />
+                    <Icon className="w-4 h-4 shrink-0 text-muted-foreground" />
                     <span className="truncate">{item.name}</span>
                   </NavLink>
                 );

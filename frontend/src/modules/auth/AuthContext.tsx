@@ -1,8 +1,10 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
 import { AppRole, AuthState, LoginCredentials, UserProfile } from '../../types';
+import { toast } from 'sonner';
 import { authService } from './authService';
 
 interface AuthContextType extends AuthState {
+  sessionError: string | null;
   login: (credentials: LoginCredentials) => Promise<void>;
   logout: () => Promise<void>;
   hasRole: (role: AppRole | AppRole[]) => boolean;
@@ -13,6 +15,8 @@ interface AuthContextType extends AuthState {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const operation = useRef(0);
+  const [sessionError, setSessionError] = useState<string | null>(null);
   const [state, setState] = useState<AuthState>({
     user: null,
     roles: [],
@@ -22,9 +26,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   });
 
   useEffect(() => {
+    const currentOperation = ++operation.current;
     const initAuth = async () => {
       try {
         const user = await authService.getCurrentUser();
+        if (currentOperation !== operation.current) return;
         const token = localStorage.getItem('tagad_token');
         if (user && token) {
           setState({
@@ -43,7 +49,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             isAuthenticated: false,
           });
         }
-      } catch {
+      } catch (error) {
+        if (currentOperation !== operation.current) return;
+        setSessionError(error instanceof Error ? error.message : "Session verification failed");
         setState({
           user: null,
           roles: [],
@@ -55,11 +63,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
 
     initAuth();
+    return () => { operation.current++; };
   }, []);
 
   const login = async ({ email, password }: LoginCredentials) => {
+    operation.current++;
     setState((prev) => ({ ...prev, isLoading: true }));
     try {
+      setSessionError(null);
       const result = await authService.login(email, password);
       localStorage.setItem('tagad_token', result.token);
       localStorage.setItem('tagad_user', JSON.stringify(result.user));
@@ -79,8 +90,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const logout = async () => {
+    operation.current++;
     setState((prev) => ({ ...prev, isLoading: true }));
-    await authService.logout();
+    const result = await authService.logout();
+    if (result.serverConfirmed) toast.success('Logout confirmed by server.');
+    else toast.warning('Local authentication cleared. Server logout was not confirmed.');
     setState({
       user: null,
       roles: [],
@@ -107,6 +121,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     <AuthContext.Provider
       value={{
         ...state,
+        sessionError,
         login,
         logout,
         hasRole,

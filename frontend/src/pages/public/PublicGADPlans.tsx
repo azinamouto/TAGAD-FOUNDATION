@@ -88,31 +88,31 @@ export const PublicGADPlans: React.FC = () => {
     <div className="max-w-6xl mx-auto px-4 sm:px-8 py-12 space-y-12">
       {/* Header Section */}
       <section className="space-y-4">
-        <div className="text-xs font-semibold tracking-wider uppercase text-slate-500 dark:text-slate-400">
+        <div className="text-xs font-semibold tracking-wider uppercase text-muted-foreground dark:text-muted-foreground">
           Annual GAD Plan & Budget (GPB) • Municipality of Talibon
         </div>
-        <h1 className="text-3xl font-semibold text-slate-900 dark:text-white tracking-tight">
+        <h1 className="text-3xl font-semibold text-foreground dark:text-foreground tracking-tight">
           Approved GAD Plans & Budgets
         </h1>
-        <p className="text-sm text-slate-600 dark:text-slate-400 max-w-3xl leading-relaxed">
+        <p className="text-sm text-muted-foreground dark:text-muted-foreground max-w-3xl leading-relaxed">
           Official Gender and Development Plan and Budget matrices reviewed and approved by the Talibon GFPS and Municipal Council in accordance with national guidelines.
         </p>
       </section>
 
-      <hr className="border-slate-200 dark:border-slate-800" />
+      <hr className="border-border dark:border-border" />
 
       {/* Filter and Search Bar */}
       <section className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex flex-wrap items-center gap-4 text-xs">
           <div className="flex items-center gap-2">
-            <label htmlFor="plans-year" className="font-medium text-slate-600 dark:text-slate-400">
+            <label htmlFor="plans-year" className="font-medium text-muted-foreground dark:text-muted-foreground">
               Year:
             </label>
             <select
               id="plans-year"
               value={selectedYear}
               onChange={(e) => setSelectedYear(parseInt(e.target.value, 10))}
-              className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2.5 py-1 text-slate-900 dark:text-slate-100"
+              className="bg-card dark:bg-background border border-border dark:border-border rounded px-2.5 py-1 text-foreground dark:text-foreground"
             >
               <option value={2026}>2026</option>
               <option value={2025}>2025</option>
@@ -121,14 +121,14 @@ export const PublicGADPlans: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2">
-            <label htmlFor="plans-office" className="font-medium text-slate-600 dark:text-slate-400">
+            <label htmlFor="plans-office" className="font-medium text-muted-foreground dark:text-muted-foreground">
               Office:
             </label>
             <select
               id="plans-office"
               value={selectedOfficeId}
               onChange={(e) => setSelectedOfficeId(e.target.value)}
-              className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2.5 py-1 text-slate-900 dark:text-slate-100"
+              className="bg-card dark:bg-background border border-border dark:border-border rounded px-2.5 py-1 text-foreground dark:text-foreground"
             >
               <option value="">All Municipal Offices</option>
               {offices.map((off) => (
@@ -141,13 +141,13 @@ export const PublicGADPlans: React.FC = () => {
         </div>
 
         <div className="relative w-full md:w-64">
-          <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input
             type="text"
             placeholder="Search activities, issues..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-8 pr-3 py-1 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-slate-500"
+            className="w-full pl-8 pr-3 py-1 text-xs bg-card dark:bg-background border border-border dark:border-border rounded text-foreground dark:text-foreground placeholder-slate-400 focus:outline-none focus:border-border"
           />
         </div>
       </section>
@@ -155,23 +155,23 @@ export const PublicGADPlans: React.FC = () => {
       {/* Aggregate Metric Banner */}
       {!loading && !error && filteredPlans.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 pt-2">
-          <div className="space-y-1 border-l-2 border-slate-900 dark:border-white pl-4">
-            <div className="text-xs text-slate-500 font-medium">Department Plans</div>
-            <div className="text-2xl font-semibold text-slate-900 dark:text-white tabular-nums">
+          <div className="space-y-1 border-l-2 border-border dark:border-white pl-4">
+            <div className="text-xs text-muted-foreground font-medium">Department Plans</div>
+            <div className="text-2xl font-semibold text-foreground dark:text-foreground tabular-nums">
               {filteredPlans.length} GPB Plans
             </div>
           </div>
 
-          <div className="space-y-1 border-l-2 border-slate-300 dark:border-slate-700 pl-4">
-            <div className="text-xs text-slate-500 font-medium">Total GAD Budget</div>
-            <div className="text-2xl font-semibold text-slate-900 dark:text-white tabular-nums">
+          <div className="space-y-1 border-l-2 border-border dark:border-border pl-4">
+            <div className="text-xs text-muted-foreground font-medium">Total GAD Budget</div>
+            <div className="text-2xl font-semibold text-foreground dark:text-foreground tabular-nums">
               {formatCurrency(totalGADBudget)}
             </div>
           </div>
 
-          <div className="space-y-1 border-l-2 border-slate-300 dark:border-slate-700 pl-4">
-            <div className="text-xs text-slate-500 font-medium">Line Activities</div>
-            <div className="text-2xl font-semibold text-slate-900 dark:text-white tabular-nums">
+          <div className="space-y-1 border-l-2 border-border dark:border-border pl-4">
+            <div className="text-xs text-muted-foreground font-medium">Line Activities</div>
+            <div className="text-2xl font-semibold text-foreground dark:text-foreground tabular-nums">
               {totalItemsCount} Actions
             </div>
           </div>
@@ -190,11 +190,11 @@ export const PublicGADPlans: React.FC = () => {
           <h3 className="text-sm font-semibold text-rose-700 dark:text-rose-400">
             Connection Error
           </h3>
-          <p className="text-xs text-slate-600 dark:text-slate-400">{error}</p>
+          <p className="text-xs text-muted-foreground dark:text-muted-foreground">{error}</p>
           <button
             type="button"
             onClick={loadPlans}
-            className="text-xs font-medium text-slate-900 dark:text-white underline"
+            className="text-xs font-medium text-foreground dark:text-foreground underline"
           >
             Retry
           </button>
@@ -209,23 +209,23 @@ export const PublicGADPlans: React.FC = () => {
             return (
               <div
                 key={plan.id}
-                className="border-t border-slate-200 dark:border-slate-800 pt-6 space-y-4"
+                className="border-t border-border dark:border-border pt-6 space-y-4"
               >
                 {/* Plan Header */}
                 <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
                   <div>
-                    <div className="text-xs text-slate-500">
+                    <div className="text-xs text-muted-foreground">
                       FY {plan.fiscalYear} • Approved Plan
                     </div>
-                    <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
+                    <h2 className="text-lg font-semibold text-foreground dark:text-foreground">
                       {plan.officeName} ({plan.office})
                     </h2>
                   </div>
 
                   <div className="flex items-center gap-4 text-xs">
                     <div>
-                      <span className="text-slate-500 mr-1.5">Budget:</span>
-                      <span className="font-semibold text-slate-900 dark:text-white tabular-nums">
+                      <span className="text-muted-foreground mr-1.5">Budget:</span>
+                      <span className="font-semibold text-foreground dark:text-foreground tabular-nums">
                         {formatCurrency(plan.gadBudget)}
                       </span>
                     </div>
@@ -233,7 +233,7 @@ export const PublicGADPlans: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => toggleExpand(plan.id)}
-                      className="inline-flex items-center gap-1 text-slate-500 hover:text-slate-900 dark:hover:text-white"
+                      className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground dark:hover:text-white"
                     >
                       <span>{isExpanded ? 'Hide' : 'Show'} ({plan.items.length})</span>
                       {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
@@ -246,7 +246,7 @@ export const PublicGADPlans: React.FC = () => {
                   <div className="overflow-x-auto">
                     <table className="w-full text-left text-xs border-collapse">
                       <thead>
-                        <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400">
+                        <tr className="border-b border-border dark:border-border text-muted-foreground dark:text-muted-foreground">
                           <th className="py-2.5 px-3 font-semibold">Activity</th>
                           <th className="py-2.5 px-3 font-semibold">Gender Issue / Mandate</th>
                           <th className="py-2.5 px-3 font-semibold">Target Group</th>
@@ -254,24 +254,24 @@ export const PublicGADPlans: React.FC = () => {
                           <th className="py-2.5 px-3 font-semibold text-right">Budget</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                      <tbody className="divide-y divide-border dark:divide-border">
                         {plan.items.map((item, idx) => (
-                          <tr key={item.id || idx} className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
-                            <td className="py-2 px-3 font-medium text-slate-900 dark:text-white align-top">
+                          <tr key={item.id || idx} className="hover:bg-muted dark:hover:bg-muted/40">
+                            <td className="py-2 px-3 font-medium text-foreground dark:text-foreground align-top">
                               {item.activity}
                             </td>
-                            <td className="py-2 px-3 text-slate-600 dark:text-slate-400 align-top max-w-xs">
+                            <td className="py-2 px-3 text-muted-foreground dark:text-muted-foreground align-top max-w-xs">
                               {item.genderIssue}
                             </td>
-                            <td className="py-2 px-3 text-slate-600 dark:text-slate-400 align-top">
+                            <td className="py-2 px-3 text-muted-foreground dark:text-muted-foreground align-top">
                               {item.targetGroup}
                             </td>
-                            <td className="py-2 px-3 text-slate-600 dark:text-slate-400 align-top max-w-xs">
+                            <td className="py-2 px-3 text-muted-foreground dark:text-muted-foreground align-top max-w-xs">
                               {item.performanceIndicator}
                             </td>
-                            <td className="py-2 px-3 text-right font-medium text-slate-900 dark:text-white tabular-nums align-top whitespace-nowrap">
+                            <td className="py-2 px-3 text-right font-medium text-foreground dark:text-foreground tabular-nums align-top whitespace-nowrap">
                               {formatCurrency(item.budget)}
-                              <span className="block text-[10px] text-slate-400 font-normal">
+                              <span className="block text-[10px] text-muted-foreground font-normal">
                                 {item.fundSource}
                               </span>
                             </td>
@@ -279,7 +279,7 @@ export const PublicGADPlans: React.FC = () => {
                         ))}
                         {plan.items.length === 0 && (
                           <tr>
-                            <td colSpan={5} className="py-4 text-center text-slate-400">
+                            <td colSpan={5} className="py-4 text-center text-muted-foreground">
                               No line items registered for this plan.
                             </td>
                           </tr>
@@ -293,7 +293,7 @@ export const PublicGADPlans: React.FC = () => {
           })}
 
           {filteredPlans.length === 0 && (
-            <div className="py-12 text-center text-xs text-slate-400">
+            <div className="py-12 text-center text-xs text-muted-foreground">
               No approved GAD plans found for the selected filters.
             </div>
           )}

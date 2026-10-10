@@ -85,7 +85,7 @@ export const MappingStep: React.FC<MappingStepProps> = ({
         </div>
 
         {/* Readiness Badge */}
-        <div className="flex items-center gap-2 bg-indigo-50 border border-indigo-200 px-3 py-1.5 rounded-xl">
+        <div className="flex items-center gap-2 bg-accent border border-primary px-3 py-1.5 rounded-xl">
           <Sparkles className="w-4 h-4 text-[#6366F1]" />
           <span className="text-xs font-semibold text-[#4F46E5]">
             Readiness Score: <strong className="font-bold">{discovery.summary.readinessScore}%</strong>
@@ -96,7 +96,7 @@ export const MappingStep: React.FC<MappingStepProps> = ({
       {/* Configuration Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Dataset Type Selector */}
-        <Card className="border-gray-200 shadow-xs bg-white rounded-xl">
+        <Card className="border-border shadow-xs bg-card rounded-xl">
           <CardContent className="p-4 space-y-2">
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold text-[#111827] flex items-center gap-1.5">
@@ -114,15 +114,15 @@ export const MappingStep: React.FC<MappingStepProps> = ({
               value={datasetType}
               onValueChange={(val) => onDatasetTypeChange(val as IngestionDatasetType)}
             >
-              <SelectTrigger className="w-full text-xs font-semibold rounded-lg border-gray-300">
+              <SelectTrigger className="w-full text-xs font-semibold rounded-lg border-border">
                 <SelectValue placeholder="Select Dataset Type" />
               </SelectTrigger>
               <SelectContent className="rounded-xl">
                 {availableDatasetTypes.map((type) => (
                   <SelectItem key={type} value={type} className="text-xs">
                     <div className="flex flex-col text-left py-0.5">
-                      <span className="font-semibold text-gray-900">{DATASET_TYPE_LABELS[type].label}</span>
-                      <span className="text-[10px] text-gray-500">{DATASET_TYPE_LABELS[type].description}</span>
+                      <span className="font-semibold text-foreground">{DATASET_TYPE_LABELS[type].label}</span>
+                      <span className="text-[10px] text-muted-foreground">{DATASET_TYPE_LABELS[type].description}</span>
                     </div>
                   </SelectItem>
                 ))}
@@ -132,7 +132,7 @@ export const MappingStep: React.FC<MappingStepProps> = ({
         </Card>
 
         {/* Office Scope Configuration */}
-        <Card className="border-gray-200 shadow-xs bg-white rounded-xl">
+        <Card className="border-border shadow-xs bg-card rounded-xl">
           <CardContent className="p-4 space-y-2">
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold text-[#111827] flex items-center gap-1.5">
@@ -144,16 +144,16 @@ export const MappingStep: React.FC<MappingStepProps> = ({
                   <Lock className="w-3 h-3" /> Account Enforced
                 </Badge>
               ) : (
-                <Badge variant="outline" className="bg-indigo-50 text-[#6366F1] border-indigo-200 text-[10px] font-bold">
+                <Badge variant="outline" className="bg-accent text-[#6366F1] border-primary text-[10px] font-bold">
                   Cross-Office Authorized
                 </Badge>
               )}
             </div>
 
             {isEncoder ? (
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-xs text-gray-700 space-y-1">
-                <p className="font-bold text-gray-900">{userOfficeName || 'Assigned LGU Department'}</p>
-                <p className="text-[10px] text-gray-500 leading-normal">
+              <div className="bg-muted border border-border rounded-lg p-2.5 text-xs text-foreground space-y-1">
+                <p className="font-bold text-foreground">{userOfficeName || 'Assigned LGU Department'}</p>
+                <p className="text-[10px] text-muted-foreground leading-normal">
                   Records will be stamped with your authenticated office. CSV office columns cannot override authorization.
                 </p>
               </div>
@@ -162,11 +162,11 @@ export const MappingStep: React.FC<MappingStepProps> = ({
                 value={targetOfficeId || 'AUTO'}
                 onValueChange={(val) => onTargetOfficeChange(val === 'AUTO' ? null : val)}
               >
-                <SelectTrigger className="w-full text-xs font-semibold rounded-lg border-gray-300">
+                <SelectTrigger className="w-full text-xs font-semibold rounded-lg border-border">
                   <SelectValue placeholder="Auto-detect from CSV column" />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl">
-                  <SelectItem value="AUTO" className="text-xs font-semibold text-gray-700">
+                  <SelectItem value="AUTO" className="text-xs font-semibold text-foreground">
                     Auto-resolve from CSV Office column
                   </SelectItem>
                   {offices.map((off) => (
@@ -196,19 +196,19 @@ export const MappingStep: React.FC<MappingStepProps> = ({
       )}
 
       {/* Mapping Matrix Table */}
-      <div className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-xs">
-        <div className="bg-gray-50/80 px-4 py-3 border-b border-gray-200 flex items-center justify-between">
-          <span className="text-xs font-bold text-gray-700 uppercase tracking-wider">
+      <div className="border border-border rounded-xl overflow-hidden bg-card shadow-xs">
+        <div className="bg-muted/80 px-4 py-3 border-b border-border flex items-center justify-between">
+          <span className="text-xs font-bold text-foreground uppercase tracking-wider">
             CSV Column Mapping Matrix ({discovery.rawHeaders.length} Columns)
           </span>
-          <span className="text-[11px] text-gray-500">
+          <span className="text-[11px] text-muted-foreground">
             Total records: {discovery.totalRows.toLocaleString()} rows
           </span>
         </div>
 
-        <div className="overflow-x-auto max-h-[380px] overflow-y-auto divide-y divide-gray-100">
+        <div className="overflow-x-auto max-h-[380px] overflow-y-auto divide-y divide-border">
           <table className="w-full text-left text-xs border-collapse">
-            <thead className="bg-gray-50/50 sticky top-0 z-10 border-b border-gray-200 text-gray-500 font-bold uppercase tracking-wider text-[10px]">
+            <thead className="bg-muted/50 sticky top-0 z-10 border-b border-border text-muted-foreground font-bold uppercase tracking-wider text-[10px]">
               <tr>
                 <th className="py-2.5 px-4 w-[25%]">CSV Source Column</th>
                 <th className="py-2.5 px-4 w-[20%]">Detected Type / Sample</th>
@@ -216,7 +216,7 @@ export const MappingStep: React.FC<MappingStepProps> = ({
                 <th className="py-2.5 px-4 w-[20%] text-right">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-border">
               {discovery.rawHeaders.map((header) => {
                 const profile = discovery.columns[header];
                 const currentTarget = mappings[header] || '__IGNORE__';
@@ -228,13 +228,13 @@ export const MappingStep: React.FC<MappingStepProps> = ({
                 const sampleValuesPreview = (profile?.sampleValues || []).slice(0, 3).join(', ');
 
                 return (
-                  <tr key={header} className="hover:bg-indigo-50/20 transition-colors">
+                  <tr key={header} className="hover:bg-accent/20 transition-colors">
                     {/* Source Column */}
                     <td className="py-3 px-4">
                       <div className="space-y-0.5">
-                        <span className="font-bold text-gray-900 font-mono text-xs">{header}</span>
+                        <span className="font-bold text-foreground font-mono text-xs">{header}</span>
                         {profile?.uniqueValuesCount !== undefined && (
-                          <p className="text-[10px] text-gray-400">
+                          <p className="text-[10px] text-muted-foreground">
                             {profile.nonEmptyValues}/{discovery.totalRows} non-empty ({profile.uniqueValuesCount} unique)
                           </p>
                         )}
@@ -246,12 +246,12 @@ export const MappingStep: React.FC<MappingStepProps> = ({
                       <div className="space-y-1">
                         <Badge
                           variant="secondary"
-                          className="text-[10px] font-mono uppercase bg-gray-100 text-gray-700 font-semibold"
+                          className="text-[10px] font-mono uppercase bg-muted text-foreground font-semibold"
                         >
                           {profile?.detectedType || 'string'}
                         </Badge>
                         {sampleValuesPreview && (
-                          <p className="text-[10px] text-gray-500 truncate max-w-[180px]" title={sampleValuesPreview}>
+                          <p className="text-[10px] text-muted-foreground truncate max-w-[180px]" title={sampleValuesPreview}>
                             Sample: {sampleValuesPreview}
                           </p>
                         )}
@@ -264,18 +264,18 @@ export const MappingStep: React.FC<MappingStepProps> = ({
                         value={currentTarget}
                         onValueChange={(val) => onMappingChange(header, val)}
                       >
-                        <SelectTrigger className="w-full text-xs font-semibold rounded-lg border-gray-300 h-8">
+                        <SelectTrigger className="w-full text-xs font-semibold rounded-lg border-border h-8">
                           <SelectValue placeholder="Select Destination Field" />
                         </SelectTrigger>
                         <SelectContent className="max-h-[260px] rounded-xl">
-                          <SelectItem value="__IGNORE__" className="text-xs text-gray-400 italic">
+                          <SelectItem value="__IGNORE__" className="text-xs text-muted-foreground italic">
                             🚫 Ignore / Do Not Import
                           </SelectItem>
                           <SelectItem value={`metadata.${header}`} className="text-xs text-purple-700 font-medium">
                             🏷️ Save as Custom Attribute ({header})
                           </SelectItem>
-                          <div className="h-[1px] bg-gray-100 my-1" />
-                          <div className="px-2 py-1 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                          <div className="h-[1px] bg-muted my-1" />
+                          <div className="px-2 py-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
                             Canonical Fields ({datasetType})
                           </div>
                           {canonicalOptions.map((opt) => (
@@ -292,7 +292,7 @@ export const MappingStep: React.FC<MappingStepProps> = ({
                     {/* Status Badge */}
                     <td className="py-3 px-4 text-right">
                       {isIgnored ? (
-                        <Badge variant="outline" className="bg-gray-50 text-gray-400 border-gray-200 text-[10px]">
+                        <Badge variant="outline" className="bg-muted text-muted-foreground border-border text-[10px]">
                           Ignored
                         </Badge>
                       ) : isCustomAttr ? (
@@ -300,7 +300,7 @@ export const MappingStep: React.FC<MappingStepProps> = ({
                           Custom Attr
                         </Badge>
                       ) : isRequiredField ? (
-                        <Badge variant="outline" className="bg-indigo-50 text-[#4F46E5] border-indigo-200 text-[10px] font-bold flex items-center gap-1 ml-auto">
+                        <Badge variant="outline" className="bg-accent text-[#4F46E5] border-primary text-[10px] font-bold flex items-center gap-1 ml-auto">
                           <CheckCircle2 className="w-3 h-3 text-[#6366F1]" /> Required Mapped
                         </Badge>
                       ) : (
@@ -324,7 +324,7 @@ export const MappingStep: React.FC<MappingStepProps> = ({
           variant="outline"
           onClick={onBack}
           disabled={isPreviewing}
-          className="rounded-lg text-xs font-semibold border-gray-300"
+          className="rounded-lg text-xs font-semibold border-border"
         >
           <ChevronLeft className="w-4 h-4 mr-1.5" />
           Back to Upload

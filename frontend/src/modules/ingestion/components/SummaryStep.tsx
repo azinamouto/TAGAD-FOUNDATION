@@ -80,10 +80,10 @@ export const SummaryStep: React.FC<SummaryStepProps> = ({
       </div>
 
       {/* Batch Metadata Card */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 bg-muted border border-border rounded-xl text-xs">
         <div className="flex items-center gap-2">
-          <span className="text-gray-500 font-semibold">Batch ID:</span>
-          <code className="font-mono bg-white px-2 py-0.5 rounded border border-gray-200 text-gray-800 font-bold">
+          <span className="text-muted-foreground font-semibold">Batch ID:</span>
+          <code className="font-mono bg-card px-2 py-0.5 rounded border border-border text-foreground font-bold">
             {summary.batchId || 'N/A'}
           </code>
         </div>
@@ -95,9 +95,9 @@ export const SummaryStep: React.FC<SummaryStepProps> = ({
             {copiedBatchId ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
             {copiedBatchId ? 'Copied' : 'Copy ID'}
           </button>
-          <span className="text-gray-300">|</span>
-          <span className="text-gray-500 flex items-center gap-1 text-[11px]">
-            <Clock className="w-3.5 h-3.5 text-gray-400" />
+          <span className="text-foreground">|</span>
+          <span className="text-muted-foreground flex items-center gap-1 text-[11px]">
+            <Clock className="w-3.5 h-3.5 text-muted-foreground" />
             {summary.processingTimeMs} ms
           </span>
         </div>
@@ -105,9 +105,9 @@ export const SummaryStep: React.FC<SummaryStepProps> = ({
 
       {/* Metrics Summary Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">
-        <div className="p-3 bg-gray-50 border border-gray-200 rounded-xl">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500 block">Total Rows</span>
-          <span className="text-lg font-bold text-gray-900">{summary.totalRows.toLocaleString()}</span>
+        <div className="p-3 bg-muted border border-border rounded-xl">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">Total Rows</span>
+          <span className="text-lg font-bold text-foreground">{summary.totalRows.toLocaleString()}</span>
         </div>
         <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
           <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 block">Inserted</span>
@@ -117,9 +117,9 @@ export const SummaryStep: React.FC<SummaryStepProps> = ({
           <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700 block">Updated</span>
           <span className="text-lg font-bold text-blue-800">{summary.updatedCount.toLocaleString()}</span>
         </div>
-        <div className="p-3 bg-indigo-50 border border-indigo-200 rounded-xl">
+        <div className="p-3 bg-accent border border-primary rounded-xl">
           <span className="text-[10px] font-bold uppercase tracking-wider text-[#4F46E5] block">Skipped</span>
-          <span className="text-lg font-bold text-indigo-800">{summary.skippedCount.toLocaleString()}</span>
+          <span className="text-lg font-bold text-primary">{summary.skippedCount.toLocaleString()}</span>
         </div>
         <div className="p-3 bg-red-50 border border-red-200 rounded-xl col-span-2 sm:col-span-1">
           <span className="text-[10px] font-bold uppercase tracking-wider text-red-700 block">Errors</span>
@@ -145,7 +145,7 @@ export const SummaryStep: React.FC<SummaryStepProps> = ({
               variant="outline"
               size="sm"
               onClick={handleDownloadErrorReport}
-              className="bg-white border-red-300 text-red-700 hover:bg-red-50 rounded-lg text-xs font-bold gap-1.5 shrink-0"
+              className="bg-card border-red-300 text-red-700 hover:bg-red-50 rounded-lg text-xs font-bold gap-1.5 shrink-0"
             >
               <Download className="w-3.5 h-3.5" />
               Download Error Report
@@ -160,7 +160,7 @@ export const SummaryStep: React.FC<SummaryStepProps> = ({
           type="button"
           variant="outline"
           onClick={onReset}
-          className="w-full sm:w-auto rounded-lg text-xs font-semibold border-gray-300 gap-1.5"
+          className="w-full sm:w-auto rounded-lg text-xs font-semibold border-border gap-1.5"
         >
           <RotateCcw className="w-3.5 h-3.5" />
           Import Another Dataset

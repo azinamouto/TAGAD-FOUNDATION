@@ -24,7 +24,7 @@ import {
   MunicipalSealWatermark,
 } from '../../components/illustrations';
 
-const SECTOR_COLORS = ['#334155', '#475569', '#64748b', '#0284c7', '#059669', '#d97706', '#dc2626'];
+const SECTOR_COLORS = ['var(--chart-1)', 'var(--chart-3)', 'var(--muted-foreground)', 'var(--chart-5)', 'var(--chart-success)', 'var(--chart-warning)', 'var(--destructive)'];
 
 export const LandingPage: React.FC = () => {
   const currentYear = new Date().getFullYear();
@@ -69,8 +69,8 @@ export const LandingPage: React.FC = () => {
 
   const sexDistribution = summary
     ? [
-        { name: 'Female', value: summary.totalFemale, color: '#e11d48' },
-        { name: 'Male', value: summary.totalMale, color: '#2563eb' },
+        { name: 'Female', value: summary.totalFemale, color: 'var(--chart-female)' },
+        { name: 'Male', value: summary.totalMale, color: 'var(--chart-male)' },
       ]
     : [];
 
@@ -85,17 +85,17 @@ export const LandingPage: React.FC = () => {
       {/* Existing page content layout & structure (100% preserved) */}
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-8 py-12 space-y-16">
         {/* Header & Mandate Introduction */}
-      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-50/80 via-amber-50/20 to-white dark:from-slate-900/60 dark:via-slate-900 dark:to-slate-900 border border-slate-200/70 dark:border-slate-800 p-6 sm:p-10 lg:p-12 transition-all">
+      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-50/80 via-amber-50/20 to-white dark:from-slate-900/60 dark:via-slate-900 dark:to-slate-900 border border-border/70 dark:border-border p-6 sm:p-10 lg:p-12 transition-all">
         {/* Subtle layered ambient topographic wave */}
         <TopographicWave className="bottom-0 left-0 right-0 h-24" />
 
         <div className="relative z-10 max-w-2xl space-y-6">
 
           <div className="space-y-4">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-slate-900 dark:text-white leading-tight">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-foreground dark:text-foreground leading-tight">
               Gender and Development Transparency Portal
             </h1>
-            <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
+            <p className="text-base sm:text-lg text-muted-foreground dark:text-foreground leading-relaxed">
               Public records and monitoring of the statutory 5% GAD budget allocation, sex-disaggregated outcomes, and community services across Talibon&apos;s 25 mainland and island barangays.
             </p>
           </div>
@@ -103,19 +103,19 @@ export const LandingPage: React.FC = () => {
           <div className="flex flex-wrap items-center gap-4 pt-2 text-xs">
             <Link
               to="/demographics"
-              className="px-4 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 font-medium rounded transition-colors shadow-sm"
+              className="px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground font-medium rounded transition-colors shadow-sm"
             >
               View Demographics
             </Link>
             <Link
               to="/public-programs"
-              className="px-4 py-2 border border-slate-300 dark:border-slate-700 hover:border-slate-400 text-slate-800 dark:text-slate-200 font-medium rounded transition-colors bg-white/60 dark:bg-slate-800/40"
+              className="px-4 py-2 border border-border dark:border-border hover:border-border text-foreground dark:text-foreground font-medium rounded transition-colors bg-card/60 dark:bg-muted/40"
             >
               Browse Programs
             </Link>
             <Link
               to="/public-accomplishments"
-              className="px-4 py-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white font-medium transition-colors"
+              className="px-4 py-2 text-muted-foreground hover:text-foreground dark:text-muted-foreground dark:hover:text-white font-medium transition-colors"
             >
               Accomplishments &rarr;
             </Link>
@@ -128,29 +128,29 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      <hr className="border-slate-200 dark:border-slate-800" />
+      <hr className="border-border dark:border-border" />
 
       {/* Year Selection & Controls */}
       <section className="space-y-10 relative">
         <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-4 relative z-10">
           <div className="max-w-md">
-            <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
+            <h2 className="text-xl font-semibold text-foreground dark:text-foreground">
               Annual Performance Summary
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+            <p className="text-xs text-muted-foreground dark:text-muted-foreground mt-1">
               Aggregated results and expenditures for the fiscal period
             </p>
           </div>
 
           <div className="flex items-center gap-3">
-            <label htmlFor="year-select" className="text-xs text-slate-600 dark:text-slate-400 font-medium">
+            <label htmlFor="year-select" className="text-xs text-muted-foreground dark:text-muted-foreground font-medium">
               Fiscal Year
             </label>
             <select
               id="year-select"
               value={selectedYear}
               onChange={(e) => setSelectedYear(parseInt(e.target.value, 10))}
-              className="text-xs font-medium bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-3 py-1.5 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-slate-500 shadow-sm"
+              className="text-xs font-medium bg-card dark:bg-background border border-border dark:border-border rounded px-3 py-1.5 text-foreground dark:text-foreground focus:outline-none focus:border-border shadow-sm"
             >
               <option value={2026}>2026</option>
               <option value={2025}>2025</option>
@@ -177,11 +177,11 @@ export const LandingPage: React.FC = () => {
             <h3 className="text-sm font-semibold text-rose-700 dark:text-rose-400">
               Data Retrieval Error
             </h3>
-            <p className="text-xs text-slate-600 dark:text-slate-400">{error}</p>
+            <p className="text-xs text-muted-foreground dark:text-muted-foreground">{error}</p>
             <button
               type="button"
               onClick={() => fetchDashboardData(selectedYear)}
-              className="text-xs font-medium text-slate-900 dark:text-white underline hover:no-underline"
+              className="text-xs font-medium text-foreground dark:text-foreground underline hover:no-underline"
             >
               Retry
             </button>
@@ -192,50 +192,50 @@ export const LandingPage: React.FC = () => {
         {!loading && !error && summary && (
           <div className="space-y-12 relative z-10">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pt-2">
-              <div className="space-y-2 border-l-2 border-slate-900 dark:border-white pl-4">
-                <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+              <div className="space-y-2 border-l-2 border-border dark:border-white pl-4">
+                <div className="text-xs text-muted-foreground dark:text-muted-foreground font-medium">
                   Total Constituents Reached
                 </div>
-                <div className="text-3xl font-semibold text-slate-900 dark:text-white tabular-nums">
+                <div className="text-3xl font-semibold text-foreground dark:text-foreground tabular-nums">
                   {summary.totalBeneficiaries.toLocaleString()}
                 </div>
-                <div className="text-xs text-slate-500 dark:text-slate-400">
+                <div className="text-xs text-muted-foreground dark:text-muted-foreground">
                   {summary.totalFemale.toLocaleString()} female ({summary.femalePercentage.toFixed(1)}%) • {summary.totalMale.toLocaleString()} male
                 </div>
               </div>
 
-              <div className="space-y-2 border-l-2 border-slate-300 dark:border-slate-700 pl-4">
-                <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+              <div className="space-y-2 border-l-2 border-border dark:border-border pl-4">
+                <div className="text-xs text-muted-foreground dark:text-muted-foreground font-medium">
                   Target GAD Budget
                 </div>
-                <div className="text-3xl font-semibold text-slate-900 dark:text-white tabular-nums">
+                <div className="text-3xl font-semibold text-foreground dark:text-foreground tabular-nums">
                   {formatCurrency(summary.totalBudgetAllocated)}
                 </div>
-                <div className="text-xs text-slate-500 dark:text-slate-400">
+                <div className="text-xs text-muted-foreground dark:text-muted-foreground">
                   Statutory 5% annual allocation
                 </div>
               </div>
 
-              <div className="space-y-2 border-l-2 border-slate-300 dark:border-slate-700 pl-4">
-                <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+              <div className="space-y-2 border-l-2 border-border dark:border-border pl-4">
+                <div className="text-xs text-muted-foreground dark:text-muted-foreground font-medium">
                   Actual Expenditure
                 </div>
-                <div className="text-3xl font-semibold text-slate-900 dark:text-white tabular-nums">
+                <div className="text-3xl font-semibold text-foreground dark:text-foreground tabular-nums">
                   {formatCurrency(summary.totalBudgetUsed)}
                 </div>
-                <div className="text-xs text-slate-500 dark:text-slate-400">
+                <div className="text-xs text-muted-foreground dark:text-muted-foreground">
                   {summary.budgetUtilizationRate}% utilization rate
                 </div>
               </div>
 
-              <div className="space-y-2 border-l-2 border-slate-300 dark:border-slate-700 pl-4">
-                <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+              <div className="space-y-2 border-l-2 border-border dark:border-border pl-4">
+                <div className="text-xs text-muted-foreground dark:text-muted-foreground font-medium">
                   Active Programs
                 </div>
-                <div className="text-3xl font-semibold text-slate-900 dark:text-white tabular-nums">
+                <div className="text-3xl font-semibold text-foreground dark:text-foreground tabular-nums">
                   {summary.totalPrograms}
                 </div>
-                <div className="text-xs text-slate-500 dark:text-slate-400">
+                <div className="text-xs text-muted-foreground dark:text-muted-foreground">
                   Across municipal departments
                 </div>
               </div>
@@ -244,13 +244,13 @@ export const LandingPage: React.FC = () => {
             {/* Visual Analytics */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pt-6">
               {/* Sex-Disaggregated Chart with Corner Composition */}
-              <div className="relative space-y-4 p-5 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white/70 dark:bg-slate-900/60 shadow-[0_1px_3px_rgba(0,0,0,0.02)] overflow-hidden">
+              <div className="relative space-y-4 p-5 rounded-xl border border-border/80 dark:border-border bg-card/70 dark:bg-background/60 shadow-[0_1px_3px_rgba(0,0,0,0.02)] overflow-hidden">
                 <CardCornerFlourish />
                 <div>
-                  <h3 className="text-sm font-semibold text-slate-900 dark:text-white">
+                  <h3 className="text-sm font-semibold text-foreground dark:text-foreground">
                     Sex-Disaggregated Distribution
                   </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                  <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                     Proportion of female and male participants
                   </p>
                 </div>
@@ -282,20 +282,20 @@ export const LandingPage: React.FC = () => {
                       </PieChart>
                     </ResponsiveContainer>
                   ) : (
-                    <div className="text-xs text-slate-400 text-center">No participant data recorded for {selectedYear}</div>
+                    <div className="text-xs text-muted-foreground text-center">No participant data recorded for {selectedYear}</div>
                   )}
                 </div>
 
-                <div className="flex items-center justify-around pt-2 text-xs border-t border-slate-100 dark:border-slate-800">
+                <div className="flex items-center justify-around pt-2 text-xs border-t border-border dark:border-border">
                   <div className="text-center">
-                    <span className="text-slate-500 dark:text-slate-400 block">Female</span>
-                    <span className="font-semibold text-slate-900 dark:text-white">
+                    <span className="text-muted-foreground dark:text-muted-foreground block">Female</span>
+                    <span className="font-semibold text-foreground dark:text-foreground">
                       {summary.totalFemale.toLocaleString()} ({summary.femalePercentage.toFixed(1)}%)
                     </span>
                   </div>
                   <div className="text-center">
-                    <span className="text-slate-500 dark:text-slate-400 block">Male</span>
-                    <span className="font-semibold text-slate-900 dark:text-white">
+                    <span className="text-muted-foreground dark:text-muted-foreground block">Male</span>
+                    <span className="font-semibold text-foreground dark:text-foreground">
                       {summary.totalMale.toLocaleString()} ({(100 - summary.femalePercentage).toFixed(1)}%)
                     </span>
                   </div>
@@ -303,20 +303,20 @@ export const LandingPage: React.FC = () => {
               </div>
 
               {/* Barangay Reach Chart with Corner Composition */}
-              <div className="lg:col-span-2 relative space-y-4 p-5 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white/70 dark:bg-slate-900/60 shadow-[0_1px_3px_rgba(0,0,0,0.02)] overflow-hidden">
+              <div className="lg:col-span-2 relative space-y-4 p-5 rounded-xl border border-border/80 dark:border-border bg-card/70 dark:bg-background/60 shadow-[0_1px_3px_rgba(0,0,0,0.02)] overflow-hidden">
                 <CardCornerFlourish />
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-sm font-semibold text-slate-900 dark:text-white">
+                    <h3 className="text-sm font-semibold text-foreground dark:text-foreground">
                       Barangay Reach (Top 8)
                     </h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                    <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                       Constituents served across municipal barangays
                     </p>
                   </div>
                   <Link
                     to="/demographics"
-                    className="text-xs font-medium text-slate-900 dark:text-white hover:underline"
+                    className="text-xs font-medium text-foreground dark:text-foreground hover:underline"
                   >
                     View all 25 &rarr;
                   </Link>
@@ -328,27 +328,27 @@ export const LandingPage: React.FC = () => {
                       <BarChart data={topBarangays} margin={{ top: 10, right: 10, left: -20, bottom: 20 }}>
                         <XAxis
                           dataKey="barangay"
-                          tick={{ fontSize: 11, fill: '#64748b' }}
+                          tick={{ fontSize: 11, fill: 'var(--muted-foreground)' }}
                           interval={0}
                           angle={-20}
                           textAnchor="end"
                         />
-                        <YAxis tick={{ fontSize: 11, fill: '#64748b' }} />
+                        <YAxis tick={{ fontSize: 11, fill: 'var(--muted-foreground)' }} />
                         <Tooltip
                           contentStyle={{
-                            backgroundColor: '#0f172a',
-                            borderColor: '#334155',
+                            backgroundColor: 'var(--popover)',
+                            borderColor: 'var(--chart-1)',
                             borderRadius: '4px',
-                            color: '#f8fafc',
+                            color: 'var(--popover-foreground)',
                             fontSize: '12px',
                           }}
                         />
-                        <Bar dataKey="female" name="Female" fill="#e11d48" stackId="a" />
-                        <Bar dataKey="male" name="Male" fill="#2563eb" stackId="a" />
+                        <Bar dataKey="female" name="Female" fill="var(--chart-female)" stackId="a" />
+                        <Bar dataKey="male" name="Male" fill="var(--chart-male)" stackId="a" />
                       </BarChart>
                     </ResponsiveContainer>
                   ) : (
-                    <div className="h-full flex items-center justify-center text-xs text-slate-400">
+                    <div className="h-full flex items-center justify-center text-xs text-muted-foreground">
                       No barangay data available for {selectedYear}
                     </div>
                   )}
@@ -359,10 +359,10 @@ export const LandingPage: React.FC = () => {
             {/* Sector Breakdown */}
             <div className="space-y-4 pt-6">
               <div>
-                <h3 className="text-sm font-semibold text-slate-900 dark:text-white">
+                <h3 className="text-sm font-semibold text-foreground dark:text-foreground">
                   Sectoral Classification
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                   Target priority and vulnerable groups reached by GAD initiatives
                 </p>
               </div>
@@ -372,18 +372,18 @@ export const LandingPage: React.FC = () => {
                   bySector.map((sec, idx) => (
                     <div
                       key={sec.sector}
-                      className="border-t border-slate-200 dark:border-slate-800 pt-3 space-y-1"
+                      className="border-t border-border dark:border-border pt-3 space-y-1"
                     >
-                      <div className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                      <div className="text-xs text-muted-foreground dark:text-muted-foreground truncate">
                         {sec.sector}
                       </div>
-                      <div className="text-xl font-semibold text-slate-900 dark:text-white tabular-nums">
+                      <div className="text-xl font-semibold text-foreground dark:text-foreground tabular-nums">
                         {sec.count.toLocaleString()}
                       </div>
                     </div>
                   ))
                 ) : (
-                  <div className="col-span-full py-4 text-xs text-slate-400">
+                  <div className="col-span-full py-4 text-xs text-muted-foreground">
                     No sectoral records found.
                   </div>
                 )}
@@ -393,10 +393,10 @@ export const LandingPage: React.FC = () => {
         )}
       </section>
 
-      <hr className="border-slate-200 dark:border-slate-800" />
+      <hr className="border-border dark:border-border" />
 
       {/* Institutional Framework with Edge-Peeking from the Left */}
-      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-amber-50/30 via-white to-slate-50/50 dark:from-slate-900/40 dark:via-slate-900 dark:to-slate-900 border border-slate-200/80 dark:border-slate-800 p-6 sm:p-8 lg:p-10">
+      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-amber-50/30 via-white to-slate-50/50 dark:from-slate-900/40 dark:via-slate-900 dark:to-slate-900 border border-border/80 dark:border-border p-6 sm:p-8 lg:p-10">
         <div className="flex flex-col lg:flex-row items-start lg:items-center gap-8 relative z-10">
           {/* EDGE PEEKING: Community members representing 25 barangays entering from the left */}
           <div className="hidden lg:block w-72 shrink-0 -ml-6 -my-4 pointer-events-none">
@@ -405,17 +405,17 @@ export const LandingPage: React.FC = () => {
 
           <div className="flex-1 space-y-6">
             <div>
-              <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
+              <h2 className="text-xl font-semibold text-foreground dark:text-foreground">
                 Statutory Framework
               </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              <p className="text-xs text-muted-foreground dark:text-muted-foreground mt-1">
                 Governing mandates for municipal gender-responsive governance across Talibon&apos;s 25 mainland and island barangays
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              <div className="space-y-2 bg-white/70 dark:bg-slate-800/40 p-4 rounded-lg border border-slate-200/60 dark:border-slate-800 shadow-sm">
-                <h3 className="font-semibold text-slate-900 dark:text-white text-sm flex items-center gap-2">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-muted-foreground dark:text-muted-foreground leading-relaxed">
+              <div className="space-y-2 bg-card/70 dark:bg-muted/40 p-4 rounded-lg border border-border/60 dark:border-border shadow-sm">
+                <h3 className="font-semibold text-foreground dark:text-foreground text-sm flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
                   Statutory 5% Allocation
                 </h3>
@@ -424,8 +424,8 @@ export const LandingPage: React.FC = () => {
                 </p>
               </div>
 
-              <div className="space-y-2 bg-white/70 dark:bg-slate-800/40 p-4 rounded-lg border border-slate-200/60 dark:border-slate-800 shadow-sm">
-                <h3 className="font-semibold text-slate-900 dark:text-white text-sm flex items-center gap-2">
+              <div className="space-y-2 bg-card/70 dark:bg-muted/40 p-4 rounded-lg border border-border/60 dark:border-border shadow-sm">
+                <h3 className="font-semibold text-foreground dark:text-foreground text-sm flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
                   Sex-Disaggregated Reporting
                 </h3>
@@ -434,8 +434,8 @@ export const LandingPage: React.FC = () => {
                 </p>
               </div>
 
-              <div className="space-y-2 bg-white/70 dark:bg-slate-800/40 p-4 rounded-lg border border-slate-200/60 dark:border-slate-800 shadow-sm">
-                <h3 className="font-semibold text-slate-900 dark:text-white text-sm flex items-center gap-2">
+              <div className="space-y-2 bg-card/70 dark:bg-muted/40 p-4 rounded-lg border border-border/60 dark:border-border shadow-sm">
+                <h3 className="font-semibold text-foreground dark:text-foreground text-sm flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-teal-600" />
                   All 25 Barangays Covered
                 </h3>
