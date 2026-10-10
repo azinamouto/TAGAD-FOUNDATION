@@ -40,6 +40,8 @@ import {
   Download,
   Upload,
   Info,
+  Search,
+  BarChart3,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '../../auth/AuthContext';
@@ -66,6 +68,9 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
   const [pasteText, setPasteText] = useState('');
   const [pasteError, setPasteError] = useState<string | null>(null);
   const [isCsvImportOpen, setIsCsvImportOpen] = useState(false);
+  const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
+  const [filterText, setFilterText] = useState('');
+  const [filteredRows, setFilteredRows] = useState<GridRowData[]>([]);
 
   // Active cell coordinate for keyboard navigation
   const [focusedCell, setFocusedCell] = useState<{ rowIndex: number; colKey: string } | null>(null);
@@ -136,6 +141,35 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
   useEffect(() => {
     loadObservations();
   }, [loadObservations]);
+
+  // Apply filter when filterText or rows change
+  useEffect(() => {
+    if (!filterText.trim()) {
+      setFilteredRows(rows);
+      return;
+    }
+
+    const term = filterText.toLowerCase();
+    const filtered = rows.filter((row) => {
+      // Search across all fields
+      const searchableText = [
+        row.period,
+        barangays.find((b) => b.id === row.barangayId)?.name,
+        indicators.find((i) => i.id === row.indicatorId)?.name,
+        String(row.numericValue),
+        row.observationStatus,
+        row.notes,
+        ...Object.values(row.dimensions),
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+
+      return searchableText.includes(term);
+    });
+
+    setFilteredRows(filtered);
+  }, [filterText, rows, barangays, indicators]);
 
   // Handle cell value change
   const handleCellChange = (
@@ -642,12 +676,95 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
 
   // Count dirty rows
   const dirtyCount = rows.filter((r) => r.rowState === 'DIRTY' || r.rowState === 'NEW').length;
+  const displayRows = filterText.trim() ? filteredRows : rows;
+
+  // Calculate live statistics for numeric values
+  const calculateStatistics = () => {
+    const numericValues = rows
+      .map((r) => parseFloat(String(r.numericValue)))
+      .filter((v) => !isNaN(v) && v !== null);
+
+    if (numericValues.length === 0) {
+      return { count: 0, sum: 0, avg: 0, min: 0, max: 0 };
+    }
+
+    const sum = numericValues.reduce((a, b) => a + b, 0);
+    const avg = sum / numericValues.length;
+    const min = Math.min(...numericValues);
+    const max = Math.max(...numericValues);
+
+    return {
+      count: numericValues.length,
+      sum,
+      avg,
+      min,
+      max,
+    };
+  };
+
+  const stats = calculateStatistics();
+
+  // Handle column sorting
+  const handleSort = (key: string) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+
+    const sortedRows = [...rows].sort((a, b) => {
+      let valA: any;
+      let valB: any;
+
+      switch (key) {
+        case 'period':
+          valA = a.period;
+          valB = b.period;
+          break;
+        case 'barangayId':
+          valA = barangays.find((bg) => bg.id === a.barangayId)?.name || '';
+          valB = barangays.find((bg) => bg.id === b.barangayId)?.name || '';
+          break;
+        case 'indicatorId':
+          valA = indicators.find((ind) => ind.id === a.indicatorId)?.name || '';
+          valB = indicators.find((ind) => ind.id === b.indicatorId)?.name || '';
+          break;
+        case 'numericValue':
+          valA = parseFloat(String(a.numericValue)) || 0;
+          valB = parseFloat(String(b.numericValue)) || 0;
+          break;
+        case 'observationStatus':
+          valA = a.observationStatus || '';
+          valB = b.observationStatus || '';
+          break;
+        default:
+          if (key.startsWith('dim_')) {
+            const dimCode = key.replace('dim_', '');
+            valA = a.dimensions[dimCode] || '';
+            valB = b.dimensions[dimCode] || '';
+          } else {
+            return 0;
+          }
+      }
+
+      if (valA < valB) return direction === 'asc' ? -1 : 1;
+      if (valA > valB) return direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    setRows(sortedRows);
+  };
+
+  const getSortIcon = (key: string) => {
+    if (!sortConfig || sortConfig.key !== key) return null;
+    return sortConfig.direction === 'asc' ? '↑' : '↓';
+  };
 
   return (
     <div className="space-y-4">
       {/* 1. Grid Control Toolbar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-card dark:bg-background border border-border dark:border-border p-3 rounded-xl shadow-sm">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <Button
             type="button"
             size="sm"
@@ -696,6 +813,22 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
             Refresh
           </Button>
 
+          <div className="flex items-center gap-2 border-l border-border dark:border-border pl-2">
+            <Search className="w-3.5 h-3.5 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Filter all columns..."
+              value={filterText}
+              onChange={(e) => setFilterText(e.target.value)}
+              className="h-8 w-48 text-xs bg-transparent border-none focus:ring-0 px-0"
+            />
+            {filterText && (
+              <span className="text-[10px] text-muted-foreground bg-muted dark:bg-muted px-1.5 py-0.5 rounded">
+                {filteredRows.length} of {rows.length}
+              </span>
+            )}
+          </div>
+
           {dirtyCount > 0 && (
             <Badge variant="outline" className="bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800 text-xs font-semibold px-2 py-0.5">
               {dirtyCount} unsaved {dirtyCount === 1 ? 'row' : 'rows'}
@@ -728,7 +861,53 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
         </div>
       </div>
 
-      {/* 2. Interactive Spreadsheet Grid */}
+      {/* 2. Live Statistics Summary Bar */}
+      {rows.length > 0 && (
+        <div className="bg-gradient-to-r from-emerald-50/50 to-blue-50/50 dark:from-emerald-950/20 dark:to-blue-950/20 border border-emerald-200 dark:border-emerald-800 rounded-xl p-4 shadow-sm">
+          <div className="flex items-center gap-2 mb-3">
+            <BarChart3 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+            <span className="text-xs font-bold text-emerald-700 dark:text-emerald-300 uppercase tracking-wider">
+              Live Summary Statistics
+            </span>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            <div className="bg-white dark:bg-background border border-border dark:border-border rounded-lg p-3">
+              <div className="text-[10px] text-muted-foreground font-medium uppercase">Total Rows</div>
+              <div className="text-lg font-bold text-foreground">{rows.length}</div>
+            </div>
+            <div className="bg-white dark:bg-background border border-border dark:border-border rounded-lg p-3">
+              <div className="text-[10px] text-muted-foreground font-medium uppercase">Data Points</div>
+              <div className="text-lg font-bold text-primary">{stats.count}</div>
+            </div>
+            <div className="bg-white dark:bg-background border border-border dark:border-border rounded-lg p-3">
+              <div className="text-[10px] text-muted-foreground font-medium uppercase">Sum</div>
+              <div className="text-lg font-bold text-emerald-600 dark:text-emerald-400 font-mono">
+                {stats.sum.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+              </div>
+            </div>
+            <div className="bg-white dark:bg-background border border-border dark:border-border rounded-lg p-3">
+              <div className="text-[10px] text-muted-foreground font-medium uppercase">Average</div>
+              <div className="text-lg font-bold text-blue-600 dark:text-blue-400 font-mono">
+                {stats.avg.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+              </div>
+            </div>
+            <div className="bg-white dark:bg-background border border-border dark:border-border rounded-lg p-3">
+              <div className="text-[10px] text-muted-foreground font-medium uppercase">Min</div>
+              <div className="text-lg font-bold text-amber-600 dark:text-amber-400 font-mono">
+                {stats.min.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+              </div>
+            </div>
+            <div className="bg-white dark:bg-background border border-border dark:border-border rounded-lg p-3">
+              <div className="text-[10px] text-muted-foreground font-medium uppercase">Max</div>
+              <div className="text-lg font-bold text-rose-600 dark:text-rose-400 font-mono">
+                {stats.max.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 3. Interactive Spreadsheet Grid */}
       <div className="bg-card dark:bg-background border border-border dark:border-border rounded-xl overflow-hidden shadow-sm">
         {loading && rows.length === 0 ? (
           <div className="py-20 flex flex-col items-center justify-center text-muted-foreground">
@@ -783,38 +962,60 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
                   <th className="py-2.5 px-3 font-bold w-24 border-r border-border dark:border-border">
                     State
                   </th>
-                  <th className="py-2.5 px-3 font-bold min-w-[100px] border-r border-border dark:border-border">
-                    Period <span className="text-rose-500">*</span>
+                  <th
+                    className="py-2.5 px-3 font-bold min-w-[100px] border-r border-border dark:border-border cursor-pointer hover:bg-muted/50 transition-colors select-none"
+                    onClick={() => handleSort('period')}
+                  >
+                    Period <span className="text-rose-500">*</span> {getSortIcon('period')}
                   </th>
-                  <th className="py-2.5 px-3 font-bold min-w-[140px] border-r border-border dark:border-border">
-                    Barangay
+                  <th
+                    className="py-2.5 px-3 font-bold min-w-[140px] border-r border-border dark:border-border cursor-pointer hover:bg-muted/50 transition-colors select-none"
+                    onClick={() => handleSort('barangayId')}
+                  >
+                    Barangay {getSortIcon('barangayId')}
                   </th>
 
                   {indicators.length > 0 && (
-                    <th className="py-2.5 px-3 font-bold min-w-[160px] border-r border-border dark:border-border">
-                      Indicator <span className="text-rose-500">*</span>
+                    <th
+                      className="py-2.5 px-3 font-bold min-w-[160px] border-r border-border dark:border-border cursor-pointer hover:bg-muted/50 transition-colors select-none"
+                      onClick={() => handleSort('indicatorId')}
+                    >
+                      Indicator <span className="text-rose-500">*</span> {getSortIcon('indicatorId')}
                     </th>
                   )}
 
                   {/* Dynamic bound dimension headers */}
-                  {dimensionBindings.map((binding) => (
-                    <th
-                      key={binding.id}
-                      className="py-2.5 px-3 font-bold min-w-[130px] border-r border-border dark:border-border bg-accent/50 dark:bg-accent/20"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span>{binding.dimension?.name || binding.dimension?.dimensionCode}</span>
-                        {binding.isRequired && <span className="text-rose-500 font-bold ml-1">*</span>}
-                      </div>
-                    </th>
-                  ))}
+                  {dimensionBindings.map((binding) => {
+                    const code = binding.dimension?.dimensionCode || '';
+                    return (
+                      <th
+                        key={binding.id}
+                        className="py-2.5 px-3 font-bold min-w-[130px] border-r border-border dark:border-border bg-accent/50 dark:bg-accent/20 cursor-pointer hover:bg-muted/50 transition-colors select-none"
+                        onClick={() => handleSort(`dim_${code}`)}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span>{binding.dimension?.name || binding.dimension?.dimensionCode}</span>
+                          <div className="flex items-center gap-1">
+                            {binding.isRequired && <span className="text-rose-500 font-bold">*</span>}
+                            {getSortIcon(`dim_${code}`)}
+                          </div>
+                        </div>
+                      </th>
+                    );
+                  })}
 
-                  <th className="py-2.5 px-3 font-bold min-w-[120px] text-right border-r border-border dark:border-border bg-amber-50/50 dark:bg-amber-950/20">
-                    Value <span className="text-rose-500">*</span>
+                  <th
+                    className="py-2.5 px-3 font-bold min-w-[120px] text-right border-r border-border dark:border-border bg-amber-50/50 dark:bg-amber-950/20 cursor-pointer hover:bg-muted/50 transition-colors select-none"
+                    onClick={() => handleSort('numericValue')}
+                  >
+                    Value <span className="text-rose-500">*</span> {getSortIcon('numericValue')}
                   </th>
 
-                  <th className="py-2.5 px-3 font-bold min-w-[110px] border-r border-border dark:border-border">
-                    Status Tag
+                  <th
+                    className="py-2.5 px-3 font-bold min-w-[110px] border-r border-border dark:border-border cursor-pointer hover:bg-muted/50 transition-colors select-none"
+                    onClick={() => handleSort('observationStatus')}
+                  >
+                    Status Tag {getSortIcon('observationStatus')}
                   </th>
 
                   <th className="py-2.5 px-3 font-bold min-w-[140px] border-r border-border dark:border-border">
@@ -828,10 +1029,20 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
               </thead>
 
               <tbody className="divide-y divide-border dark:divide-border font-sans">
-                {rows.map((row, index) => {
+                {displayRows.map((row, index) => {
                   const isDirty = row.rowState === 'DIRTY' || row.rowState === 'NEW';
                   const isSaving = row.rowState === 'SAVING';
                   const isError = row.rowState === 'ERROR';
+
+                  // Calculate conditional formatting for numeric value
+                  const numericVal = parseFloat(String(row.numericValue));
+                  const valueBackgroundColor = !isNaN(numericVal) && numericVal > 0
+                    ? numericVal > stats.avg
+                      ? 'bg-emerald-50/30 dark:bg-emerald-950/20'
+                      : numericVal < stats.avg
+                      ? 'bg-rose-50/30 dark:bg-rose-950/20'
+                      : 'bg-amber-50/30 dark:bg-amber-950/20'
+                    : '';
 
                   return (
                     <tr
@@ -846,7 +1057,7 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
                     >
                       {/* Row Index */}
                       <td className="py-1.5 px-2 text-center text-[11px] font-mono text-muted-foreground border-r border-border dark:border-border">
-                        {index + 1}
+                        {rows.indexOf(row) + 1}
                       </td>
 
                       {/* Row State Badge */}
@@ -984,7 +1195,7 @@ export const DataEntryGrid: React.FC<DataEntryGridProps> = ({
                       })}
 
                       {/* Numeric Value Cell */}
-                      <td className="py-1.5 px-2 border-r border-border dark:border-border bg-amber-50/20 dark:bg-amber-950/10">
+                      <td className={`py-1.5 px-2 border-r border-border dark:border-border bg-amber-50/20 dark:bg-amber-950/10 ${valueBackgroundColor}`}>
                         <Input
                           ref={(el) => {
                             cellRefs.current[`${index}-numericValue`] = el;
