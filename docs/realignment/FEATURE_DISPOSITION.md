@@ -1,0 +1,31 @@
+# Feature disposition
+
+Disposition is a planning recommendation, not permission to change or remove functionality. Evidence IDs resolve in [VERIFICATION_BASELINE.md](VERIFICATION_BASELINE.md). RETAIN means the component is sufficiently aligned for reuse, not that its entire proposal module or production deployment is verified.
+
+| Existing capability | Disposition | Reason / proposal coverage | Dependency and retention conditions |
+| --- | --- | --- | --- |
+| React/TypeScript, Express services, Prisma/PostgreSQL, Supabase storage | RETAIN | Appropriate existing foundation for I/IV/V; E01/E02/E11/E14 | Keep API boundary; establish migration baseline before schema change. No stack replacement justified. |
+| Password hashing, JWT/revocation, rate limiting, redacted logs | RETAIN | Reusable V.1/V.6 primitives; E03/E11 | WP03/05/13 must qualify actual database persistence, role policy and deployment. |
+| Transactional audit helper | RETAIN | Accountability foundation, E11; targeted rollback tests pass | Extend coverage to sensitive reads/exports; do not claim immutability from table existence. |
+| Office/barangay stable identities and existing historical records | RETAIN | V.1/V.2 references, E02/E15 | Reconcile official codes and aliases; preserve UUIDs, sources and history. |
+| Statistical observations, provenance, dimensions and dataset lifecycle | RETAIN | Reusable V.2/V.4/V.5 storage/governance primitives, E07 | Curate GAD dictionaries; fix ownership, missingness and grain validation without discarding data. Existing publication roles are technical behavior, not LGU policy. |
+| MOV storage/access service | RETAIN | Supports monitoring evidence, E11 | Classify attachment contents and confirm deployed private bucket; retention and authorized downloads remain D05. |
+| Automated tests and CI | RETAIN | Regression foundation, VII; E14 | Add missing behavioral coverage; replace drift concealment with replay/diff evidence in later WP03. |
+| Technical roles/account assignment | REFACTOR | Four roles cannot express six V.1 personas or barangay scope, E02/E03 | Add capabilities/scopes; preserve account IDs and explicitly map existing privileges; no automatic elevation. |
+| Beneficiary form, registry and legacy CRUD aliases | REFACTOR | V.2 fields incomplete; differing validation, E05 | Share validators; separate person from service event; retain old endpoints until callers and stored data are reconciled. |
+| Program/plan/accomplishment pages and summary counters | REFACTOR | Directly relevant V.3 and V.5, E06; participant and aggregate grains overlap | Preserve GPB/GAR history; reconcile targets, attendance, unique people and expenditure before changing totals. |
+| Two CSV ingestion flows and data-entry grid | REFACTOR | Useful V.2; currently technical and catalog-oriented, E07 | Keep engines; expose approved GAD templates with shared validation, source, privacy classification and retry semantics. |
+| Dashboard and public demographics | REFACTOR | V.4 coverage incomplete; inconsistent time/scope and fallback behavior, E04/E08 | Central scoped aggregate query, age/trend/gap definitions and data-status semantics. |
+| Report controllers and report screen | REFACTOR | V.5 core requirement; limited templates, actor omissions, invented defaults, E09 | Preserve export contracts until replacement validated; remove unsupported content and template claims. |
+| Navigation, duplicate routes and parallel controllers | REFACTOR | Six-module IA obscured by duplicated public/admin/legacy paths, E01/E16 | Build caller map and compatibility tests first; consolidate incrementally, never delete based on filename alone. |
+| Geography fields and GeoJSON API | REFACTOR | Reusable foundation for S01, E10 | Add verified source validation/versioning and privacy-safe metric joins; no fabricated shapes or coordinates. |
+| Comprehensive CBMS catalog completion, survey/household expansion | DEFER | Full CBMS is outside this project scope; E07/E15 | Keep existing tables/register/data and household references; enable only GAD-approved source subset. No deletion of household or statistical history. |
+| General-purpose table-builder expansion | DEFER | Curated GAD forms take priority over a universal authoring tool | Retain existing builder for approved configuration/compatibility; no new generic features in WP01–14. |
+| Citizen feedback/public portal enhancements | DEFER | Not explicit in supplied proposal; E01/E12 | Existing functionality remains. Preserve feedback confidentiality and records; publication of new GAD data is separately reviewed. |
+| Public statistical release and public map | REVIEW | Proposal emphasizes authorized users, not unrestricted publication | D05/07/09 decide audience, release gates and suppression; internal map first is a proposed scope choice. |
+| WCPD/VAWC and health-sensitive detail | REVIEW | Required category coverage, but collection grain/confidentiality unspecified | D05 must decide aggregate-only versus minimal restricted detail. This does not defer required safe service statistics or authorize case-management expansion. |
+| HGDG scoring, budget percentages and GAD approval chain | REVIEW | Existing E06 logic supports rationale/GPB; legal and delegation rules not supplied | D06/09 validate applicability/template/rules; preserve historical calculations and record rule versions. No invented officials or approval authority. |
+| Household linkage and cross-office person matching | REVIEW | Can aid uniqueness but introduces privacy and migration risk | D04/05 approve purpose and matching policy. Never fuzzy-merge people or infer service attendance from household membership. |
+| Old SQLite artifact, compatibility types and historical architecture docs | REVIEW | E16 may be obsolete but operational dependencies unknown | Inventory callers, owners and retention before any retirement. This audit does not inspect or migrate `dev.db`. |
+
+Permanent deletion is not recommended. Later retirement needs an endpoint/import consumer inventory, foreign-key and stored-data analysis, agreed retention/legal-hold rules, reconciled backups and restore test, a compatibility window and explicit owner decision. DEFER is a scope boundary, not an instruction to disable a live module.
