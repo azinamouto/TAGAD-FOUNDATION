@@ -54,14 +54,19 @@ export const updateUserSchema = z.object({
 });
 
 // Beneficiary schemas
-export const createBeneficiarySchema = z.object({
+const beneficiaryFields = z.object({
   firstName: z.string().min(1, { message: 'First name is required' }),
   lastName: z.string().min(1, { message: 'Last name is required' }),
   middleName: z.string().optional().nullable(),
   sex: z.enum(['MALE', 'FEMALE'], { message: 'Sex must be either MALE or FEMALE' }),
-  age: z.coerce.number().int().min(0).max(150, { message: 'Age must be between 0 and 150' }),
+  age: z.union([z.number(), z.string().trim().min(1)]).transform(Number).pipe(
+    z.number().int().min(0).max(150, { message: 'Age must be between 0 and 150' })
+  ),
   sector: z.string().min(1, { message: 'Sector is required' }),
-  barangayId: z.string().min(1, { message: 'Barangay is required' }),
+  barangayId: z.string().min(1, { message: 'Barangay is required' }).optional(),
+  barangay: z.string().min(1).optional(),
+  office: z.string().optional(),
+  program: z.string().optional(),
   officeId: z.string().optional().nullable(),
   contactNumber: z.string().optional().nullable(),
   addressStreet: z.string().optional().nullable(),
@@ -69,7 +74,12 @@ export const createBeneficiarySchema = z.object({
   birthdate: z.string().optional().nullable(),
 });
 
-export const updateBeneficiarySchema = createBeneficiarySchema.partial();
+// Both aliases retain the existing name-based client contract as well as IDs.
+export const createBeneficiarySchema = beneficiaryFields.refine(
+  data => Boolean(data.barangayId || data.barangay),
+  { message: 'Barangay is required', path: ['barangayId'] }
+);
+export const updateBeneficiarySchema = beneficiaryFields.partial();
 
 // Program schemas
 export const createProgramSchema = z.object({

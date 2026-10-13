@@ -5,9 +5,11 @@ import express from 'express';
 import http from 'http';
 import { AddressInfo } from 'net';
 import dashboardRoutes from '../server/routes/dashboard';
+import { setDatabaseConnected } from '../server/lib/prisma';
 import { signAccessToken } from '../server/lib/jwt';
 
-test('dashboard routes require authentication and return stats for authenticated users', async () => {
+test('dashboard routes require authentication and report unavailable without a data source', async () => {
+  setDatabaseConnected(false);
   const app = express();
   app.use('/api/dashboard', dashboardRoutes);
   const server = http.createServer(app);
@@ -28,9 +30,10 @@ test('dashboard routes require authentication and return stats for authenticated
     const authenticated = await fetch(baseUrl, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    assert.equal(authenticated.status, 200);
+    assert.equal(authenticated.status, 503);
     const stats = await authenticated.json();
-    assert.ok(stats.summary);
+    assert.equal(stats.error.code, 'DATA_UNAVAILABLE');
+    assert.equal(stats.summary, undefined);
   } finally {
     await new Promise<void>((resolve, reject) => server.close((error) => (error ? reject(error) : resolve())));
   }

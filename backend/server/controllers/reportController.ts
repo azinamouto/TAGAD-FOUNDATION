@@ -1,28 +1,26 @@
+import { requireReadScope } from '../lib/readScope';
+import { sendError } from '../lib/response';
 import { AuthenticatedRequest } from '../middleware/authMiddleware';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import ExcelJS from 'exceljs';
 import PDFDocument from 'pdfkit';
 import { GADPlanService } from '../services/GADPlanService';
 import { AccomplishmentService } from '../services/AccomplishmentService';
 import { BeneficiaryService } from '../services/BeneficiaryService';
 
-export const getGPBExcel = async (req: Request, res: Response) => {
+export const getGPBExcel = async (req: AuthenticatedRequest, res: Response) => {
   const { year, office } = req.query;
 
   try {
+    requireReadScope(req.user);
     const planResult = await GADPlanService.getGADPlans({
       year: year ? parseInt(year as string, 10) : undefined,
       office: office as string,
-    });
+    }, req.user, { strict: true });
     const plans = planResult.plans || [];
 
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('GPB');
-
-    worksheet.mergeCells('A1:K1');
-    worksheet.getCell('A1').value = `GENDER AND DEVELOPMENT PLAN AND BUDGET — Municipality of Talibon — ${year || 'All Years'}`;
-    worksheet.getCell('A1').font = { bold: true, size: 16 };
-    worksheet.getCell('A1').alignment = { horizontal: 'center' };
 
     worksheet.columns = [
       { header: 'No.', key: 'no', width: 5 },
@@ -38,22 +36,27 @@ export const getGPBExcel = async (req: Request, res: Response) => {
       { header: 'Status', key: 'status', width: 12 },
     ];
 
+    worksheet.insertRow(1, [`GENDER AND DEVELOPMENT PLAN AND BUDGET - Municipality of Talibon - ${year || 'All Years'}`]);
+    worksheet.mergeCells('A1:K1');
+    worksheet.getCell('A1').font = { bold: true, size: 16 };
+    worksheet.getCell('A1').alignment = { horizontal: 'center' };
+
     let rowIdx = 1;
     plans.forEach((plan: any) => {
       const items = plan.items || [];
       if (items.length === 0) {
         worksheet.addRow({
           no: rowIdx++,
-          issue: 'General GAD Program',
-          result: 'Gender-responsive community service',
-          activity: plan.officeName || 'Municipal GAD Initiative',
-          indicator: 'Fully Implemented',
-          target: 'Vulnerable Sectors',
-          timeline: 'Q1-Q4',
-          office: plan.office || 'LGU Talibon',
-          budget: Number(plan.totalBudget || 0),
-          source: '5% GAD Fund',
-          status: plan.status || 'APPROVED',
+          issue: null,
+          result: null,
+          activity: 'No activity items recorded',
+          indicator: null,
+          target: null,
+          timeline: null,
+          office: plan.office?.name || plan.officeName || (typeof plan.office === 'string' ? plan.office : null),
+          budget: plan.totalBudget == null ? null : Number(plan.totalBudget),
+          source: null,
+          status: plan.status || null,
         });
       } else {
         items.forEach((item: any) => {
@@ -65,7 +68,7 @@ export const getGPBExcel = async (req: Request, res: Response) => {
             indicator: item.performanceIndicator,
             target: item.targetGroup,
             timeline: item.timeline,
-            office: item.responsibleOffice || plan.office,
+            office: item.responsibleOffice || plan.office?.name || plan.officeName || (typeof plan.office === 'string' ? plan.office : null),
             budget: Number(item.budget),
             source: item.fundSource,
             status: plan.status,
@@ -80,27 +83,22 @@ export const getGPBExcel = async (req: Request, res: Response) => {
     await workbook.xlsx.write(res);
     res.end();
   } catch (error) {
-    console.error('getGPBExcel error:', error);
-    res.status(500).json({ message: 'Server error generating GPB Excel' });
+    return sendError(res, error as Error);
   }
 };
 
-export const getGARExcel = async (req: Request, res: Response) => {
+export const getGARExcel = async (req: AuthenticatedRequest, res: Response) => {
   const { year, office } = req.query;
 
   try {
+    requireReadScope(req.user);
     const accomplishments = await AccomplishmentService.getAccomplishments({
       year: year ? parseInt(year as string, 10) : undefined,
       officeId: office as string,
-    });
+    }, req.user, { strict: true });
 
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('GAR');
-
-    worksheet.mergeCells('A1:L1');
-    worksheet.getCell('A1').value = `GAD ACCOMPLISHMENT REPORT — Municipality of Talibon — ${year || 'All Years'}`;
-    worksheet.getCell('A1').font = { bold: true, size: 16 };
-    worksheet.getCell('A1').alignment = { horizontal: 'center' };
 
     worksheet.columns = [
       { header: 'No.', key: 'no', width: 5 },
@@ -115,17 +113,18 @@ export const getGARExcel = async (req: Request, res: Response) => {
       { header: 'Variance / Remarks', key: 'remarks', width: 25 },
     ];
 
-    accomplishments.forEach((acc: any, index: number) => {
-      const activityTitle = acc.gadPlanItem?.activity || acc.program?.title || acc.gadPlan?.activity || 'GAD Undertaking';
-      const officeName = acc.gadPlanItem?.gadPlan?.office?.name || acc.program?.office?.name || acc.gadPlan?.office || 'LGU Talibon';
-      const approvedBudget = acc.gadPlanItem?.budget
-        ? Number(acc.gadPlanItem.budget)
-        : acc.program?.budgetTarget
-        ? Number(acc.program.budgetTarget)
-        : Number(acc.gadPlan?.budget || 0);
+    worksheet.insertRow(1, [`GAD ACCOMPLISHMENT REPORT - Municipality of Talibon - ${year || 'All Years'}`]);
+    worksheet.mergeCells('A1:J1');
+    worksheet.getCell('A1').font = { bold: true, size: 16 };
+    worksheet.getCell('A1').alignment = { horizontal: 'center' };
 
-      const male = acc.actualMale || acc.actualBeneficiaryMale || 0;
-      const female = acc.actualFemale || acc.actualBeneficiaryFemale || 0;
+    accomplishments.forEach((acc: any, index: number) => {
+      const activityTitle = acc.gadPlanItem?.activity || acc.program?.title || acc.gadPlan?.activity || null;
+      const officeName = acc.gadPlanItem?.gadPlan?.office?.name || acc.program?.office?.name || acc.gadPlan?.office || null;
+      const sourceBudget = acc.gadPlanItem?.budget ?? acc.program?.budgetTarget ?? acc.gadPlan?.budget;
+      const approvedBudget = sourceBudget == null ? null : Number(sourceBudget);
+      const male = acc.actualMale ?? acc.actualBeneficiaryMale ?? null;
+      const female = acc.actualFemale ?? acc.actualBeneficiaryFemale ?? null;
 
       worksheet.addRow({
         no: index + 1,
@@ -133,10 +132,10 @@ export const getGARExcel = async (req: Request, res: Response) => {
         office: officeName,
         actualOutput: acc.actualOutput,
         approvedBudget,
-        actualBudget: Number(acc.actualBudgetUsed || 0),
+        actualBudget: acc.actualBudgetUsed == null ? null : Number(acc.actualBudgetUsed),
         male,
         female,
-        total: male + female,
+        total: male == null || female == null ? null : male + female,
         remarks: acc.remarks || acc.varianceExplanation || '',
       });
     });
@@ -147,8 +146,7 @@ export const getGARExcel = async (req: Request, res: Response) => {
     await workbook.xlsx.write(res);
     res.end();
   } catch (error) {
-    console.error('getGARExcel error:', error);
-    res.status(500).json({ message: 'Server error generating GAR Excel' });
+    return sendError(res, error as Error);
   }
 };
 
@@ -217,7 +215,7 @@ export const getBeneficiariesPDF = async (req: AuthenticatedRequest, res: Respon
     doc.moveDown();
 
     beneficiaries.forEach((b: any, i: number) => {
-      const brgy = typeof b.barangay === 'object' ? b.barangay.name : b.barangay || 'Poblacion';
+      const brgy = typeof b.barangay === 'object' ? b.barangay.name : b.barangay || 'Not recorded';
       doc.fontSize(9).text(
         `${i + 1}. ${b.lastName}, ${b.firstName} | Sex: ${b.sex} | Age: ${b.age} | Brgy: ${brgy} | Sector: ${b.sector}`
       );

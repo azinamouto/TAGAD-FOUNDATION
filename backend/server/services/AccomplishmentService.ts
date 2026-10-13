@@ -1,3 +1,5 @@
+import { AppError } from '../lib/errors';
+import { requireReadScope } from '../lib/readScope';
 import prisma, { isDatabaseConnected } from '../lib/prisma';
 import { Role } from '@prisma/client';
 import { NotFoundError, OfficeScopeError } from '../lib/errors';
@@ -15,9 +17,12 @@ export class AccomplishmentService {
       programId?: string;
       officeId?: string;
     },
-    actorUser?: { id: string; role: Role; officeId: string | null }
+    actorUser?: { id: string; role: Role; officeId: string | null },
+    options: { strict?: boolean } = {}
   ) {
+    if (options.strict) requireReadScope(actorUser);
     if (!isDatabaseConnected()) {
+      if (options.strict) throw new AppError('Report source unavailable', 503, 'DATA_UNAVAILABLE');
       let filtered = [...MEMORY_ACCOMPLISHMENTS];
       if (params.year) filtered = filtered.filter((a) => a.fiscalYear === Number(params.year));
       if (params.quarter) filtered = filtered.filter((a) => a.quarter === Number(params.quarter));
@@ -87,6 +92,7 @@ export class AccomplishmentService {
           : null,
       }));
     } catch {
+      if (options.strict) throw new AppError('Report source unavailable', 503, 'DATA_UNAVAILABLE');
       let filtered = [...MEMORY_ACCOMPLISHMENTS];
       if (params.year) filtered = filtered.filter((a) => a.fiscalYear === Number(params.year));
       if (params.quarter) filtered = filtered.filter((a) => a.quarter === Number(params.quarter));

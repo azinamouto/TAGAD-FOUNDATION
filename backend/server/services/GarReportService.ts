@@ -1,6 +1,7 @@
 import prisma, { isDatabaseConnected } from '../lib/prisma';
 import { FALLBACK_GAD_PLANS, FALLBACK_ACCOMPLISHMENTS } from '../lib/fallbackStore';
-import { ValidationError } from '../lib/errors';
+import { requireReadScope, ReadActor } from '../lib/readScope';
+import { AppError, ValidationError } from '../lib/errors';
 
 export interface GarVarianceItem {
   id: string;
@@ -61,9 +62,10 @@ export class GarReportService {
     quarter?: number | string;
     officeId?: string;
     status?: string;
-  }): Promise<GarVarianceReport> {
+  }, actorUser?: ReadActor, options: { strict?: boolean } = {}): Promise<GarVarianceReport> {
+    const officeScope = options.strict ? requireReadScope(actorUser) : null;
     const fiscalYear = Number(params.year) || new Date().getFullYear();
-    const officeFilter = params.officeId;
+    const officeFilter = officeScope || params.officeId;
     const statusFilter = params.status;
 
     let targetQuarter: number | undefined = undefined;
@@ -76,6 +78,7 @@ export class GarReportService {
     }
 
     if (!isDatabaseConnected()) {
+      if (options.strict) throw new AppError('Report source unavailable', 503, 'DATA_UNAVAILABLE');
       return this.getFallbackGarVariance(fiscalYear, targetQuarter, officeFilter, statusFilter);
     }
 
@@ -163,7 +166,7 @@ export class GarReportService {
             actualTotal,
             outputSummary: accs.length > 0 ? accs[0].outputSummary : null,
             remarks: remarks || null,
-            varianceExplanation: varianceExplanations || (budgetVariance > 0 ? 'Savings / Ongoing implementation' : null),
+            varianceExplanation: varianceExplanations || null,
             accomplishmentCount: accs.length,
           });
         }
@@ -199,6 +202,7 @@ export class GarReportService {
         items: reportItems,
       };
     } catch (error: any) {
+      if (options.strict) throw new AppError('Report source unavailable', 503, 'DATA_UNAVAILABLE');
       if (error instanceof ValidationError || error.name === 'ValidationError') {
         throw error;
       }
