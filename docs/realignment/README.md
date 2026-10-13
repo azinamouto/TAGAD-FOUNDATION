@@ -1,6 +1,10 @@
 # Talibon GAD-SDD realignment audit
 
-Audit date: 2026-10-13 (Asia/Shanghai). Repository baseline: `71623901de5a02f8eb10340b87ab9c5bc048b9ee`. Scope: documentation only; no implementation package has started.
+Audit date: 2026-10-13 (Asia/Shanghai). Original audit baseline: `71623901de5a02f8eb10340b87ab9c5bc048b9ee`. WP01 starts from merged PR #40 at `2ccf527b283fc063abd61aeeedc3c383dd230668`. Scope: documentation only; WP01 documentation is now authorized. WP02–WP14 remain unstarted.
+
+## WP01 candidate delivery
+
+The user subsequently authorized WP01 and supplied the original proposal for verbatim archival. Read the [delivery report](wp01/DELIVERY_REPORT.md), [versioned requirements baseline](wp01/REQUIREMENTS_BASELINE.md), [data dictionary](wp01/DATA_DICTIONARY.md), [source register and cross-check findings](wp01/SOURCE_REGISTER.md), and [acceptance scenarios](wp01/ACCEPTANCE_SCENARIOS.md). The [original proposal](../requirements/TALIBON_GAD_SDD_PROPOSAL.md) is now present with its SHA-256 recorded in the source register. D01's archive subtask is complete; D01–D13 institutional decisions and stakeholder walkthroughs remain open. The historical audit narrative below is retained with this status update; source absence and pre-WP01 authorization statements describe that earlier stage.
 
 The target is the **Talibon Gender and Development Database and Sex-Disaggregated Data System (GAD-SDD)**. Preserve the React, TypeScript, Express, Prisma, PostgreSQL and Supabase foundation. Reuse the existing GAD and statistical services, but reorganize them around the six proposal modules rather than expanding into a comprehensive CBMS platform.
 
@@ -48,4 +52,4 @@ Implementation order: requirements/data dictionary → immediate boundary/data-i
 
 ## Completion boundary
 
-These eight documents deliver the requested audit and implementation plan against the supplied proposal. Source authenticity, deployed state and LGU decisions remain explicitly unverified. No code, migration, dependency, environment file or existing functionality was modified; no live database or hosting action was performed. The user accepted this as the initial planning baseline and authorized documentation publication on a dedicated branch with a draft PR targeting `main`. That acceptance does not resolve D01–D13 or authorize WP01. WP01 remains limited to requirements clarification and the data dictionary, with supporting documentation and stakeholder decisions. **Await explicit authorization before beginning WP01; do not merge automatically.**
+These eight documents delivered the original audit and implementation plan. The user accepted that initial planning baseline through PR #40, then separately authorized WP01 documentation. No code, migration, dependency, environment file or existing functionality is changed by WP01; no live database or hosting action is authorized. The recovered original is archived without edits, but institutional approval, deployed state and D01–D13 decisions remain unverified. WP01 remains limited to requirements clarification and the data dictionary with supporting documentation. **Publish the WP01 candidate in draft only; do not merge automatically or begin WP02–WP14. Await approval after this delivery.**
