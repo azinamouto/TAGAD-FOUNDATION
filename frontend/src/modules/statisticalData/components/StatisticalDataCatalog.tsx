@@ -141,7 +141,7 @@ export const StatisticalDataCatalog: React.FC<StatisticalDataCatalogProps> = ({
               Statistical Data Entry Workspace
             </Badge>
             <Badge variant="outline" className="text-[11px] text-muted-foreground font-mono">
-              PSA & CBMS 69 Tables
+              Retained Statistical Tables
             </Badge>
           </div>
           <h1 className="text-2xl font-black text-foreground dark:text-foreground tracking-tight">

@@ -166,11 +166,11 @@ export const StatisticalCatalog: React.FC = () => {
               <Database className="w-4 h-4" />
             </div>
             <h1 className="text-xl sm:text-2xl font-bold text-foreground dark:text-foreground tracking-tight">
-              PSA CBMS Statistical Table Catalog
+              Historical Statistical Catalog
             </h1>
           </div>
           <p className="text-xs sm:text-sm text-muted-foreground dark:text-muted-foreground mt-1 max-w-3xl">
-            Official 69-table tabulation registry for the Community-Based Monitoring System (CBMS). Explore thematic layout contracts, dimensional grain, and indicator definitions across all 9 canonical domains.
+            Retained statistical definitions and source metadata. This catalog is not an approved GAD indicator list; source selection remains under review.
           </p>
         </div>
 
@@ -379,7 +379,7 @@ export const StatisticalCatalog: React.FC = () => {
         <div className="p-12 text-center space-y-3 bg-card dark:bg-background rounded-xl border border-border dark:border-border">
           <RefreshCw className="w-6 h-6 animate-spin text-primary mx-auto" />
           <p className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
-            Loading PSA CBMS 69-table catalog...
+            Loading retained statistical catalog...
           </p>
         </div>
       ) : error ? (

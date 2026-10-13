@@ -11,7 +11,6 @@ export const PublicLayout: React.FC = () => {
   const navLinks = [
     { label: 'Overview', to: '/' },
     { label: 'Demographics', to: '/demographics' },
-    { label: 'Statistical Catalog', to: '/statistical-catalog' },
     { label: 'Programs', to: '/public-programs' },
     { label: 'Accomplishments', to: '/public-accomplishments' },
     { label: 'Approved Plans', to: '/public-plans' },

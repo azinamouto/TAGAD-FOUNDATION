@@ -24,8 +24,8 @@ const Reports: React.FC = () => {
         url = apiUrl(`/reports/gar-excel?year=${year}`);
         filename = `GAR_Report_${year}.xlsx`;
       } else if (type === 'beneficiaries') {
-        url = apiUrl(`/reports/beneficiaries-pdf?year=${year}`);
-        filename = `Beneficiary_List_${year}.pdf`;
+        url = apiUrl('/reports/beneficiaries-pdf');
+        filename = 'Beneficiary_Registry.pdf';
       }
 
       const response = await fetch(url, {
@@ -57,7 +57,7 @@ const Reports: React.FC = () => {
     {
       id: 'gpb',
       title: 'GAD Plan and Budget (GPB)',
-      description: 'Comprehensive annual plan showing proposed GAD activities and budget allocations.',
+      description: 'Working export of stored plans and budget items for the selected year.',
       format: 'EXCEL',
       icon: TableIcon,
       action: () => downloadReport('gpb', 'excel')
@@ -65,7 +65,7 @@ const Reports: React.FC = () => {
     {
       id: 'gar',
       title: 'GAD Accomplishment Report (GAR)',
-      description: 'Official report of achievements, actual beneficiaries, and budget utilization.',
+      description: 'Working export of reported accomplishments and expenditure for the selected year.',
       format: 'EXCEL',
       icon: TableIcon,
       action: () => downloadReport('gar', 'excel')
@@ -73,7 +73,7 @@ const Reports: React.FC = () => {
     {
       id: 'beneficiaries',
       title: 'Beneficiary Registry',
-      description: 'Complete list of individuals who availed of LGU programs and services.',
+      description: 'Up to 100 accessible registry records across all years. Registration does not establish service participation.',
       format: 'PDF',
       icon: FileText,
       action: () => downloadReport('beneficiaries', 'pdf')
@@ -84,11 +84,11 @@ const Reports: React.FC = () => {
     <div className="space-y-8 animate-in fade-in duration-500 max-w-[1600px] mx-auto">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Reports Central</h1>
-          <p className="text-sm font-medium text-muted-foreground">Generate and download official GAD documents</p>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Reports and Exports</h1>
+          <p className="text-sm font-medium text-muted-foreground">Download working exports; official template acceptance is pending.</p>
         </div>
         <div className="flex items-center gap-2 bg-card px-3 py-1.5 rounded-lg border border-border shadow-sm">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Report Year</span>
+          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">GPB / GAR Year</span>
           <select 
             className="bg-transparent border-none focus:ring-0 text-sm font-bold text-primary cursor-pointer outline-none"
             value={year}
@@ -142,7 +142,7 @@ const Reports: React.FC = () => {
         <div className="text-center md:text-left relative">
           <h3 className="text-xl font-bold text-foreground">Need specific data insights?</h3>
           <p className="text-primary text-sm font-medium max-w-xl mt-2 leading-relaxed">
-            These documents follow official municipal templates. For custom datasets or filtered visualisations, visit the Data Encoding or Monitoring modules to export tailored views.
+            Review source records and completeness before using these exports for planning. GPB and GAR templates require confirmation by the designated report owners. The registry PDF is limited to 100 records and does not use the year filter.
           </p>
         </div>
       </div>
