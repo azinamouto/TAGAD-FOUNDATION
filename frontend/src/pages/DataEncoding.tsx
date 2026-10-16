@@ -142,7 +142,7 @@ const DataEncoding: React.FC = () => {
     try {
       const payload = {
         ...formData,
-        age: parseInt(formData.age) || 0
+        age: formData.age
       };
       if (editingId) {
         await api.put(`/beneficiaries/${editingId}`, payload);

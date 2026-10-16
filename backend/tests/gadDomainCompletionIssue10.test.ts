@@ -514,15 +514,16 @@ describe('TAGAD Issue #10 Hardening — GAD Domain Completion Qualification Suit
       );
     });
 
-    test('HTTP GET /api/reports/gar-variance returns report with 200 OK', async () => {
+    test('HTTP GET /api/reports/gar-variance returns 503 when only fallback data is available', async () => {
       const res = await fetch(`${baseUrl}/api/reports/gar-variance?year=2026&quarter=1`, {
         headers: { Authorization: `Bearer ${adminToken}` },
       });
 
-      assert.strictEqual(res.status, 200);
+      assert.strictEqual(res.status, 503);
       const json = await res.json();
-      assert.strictEqual(json.success, true);
-      assert.ok(json.data.summary);
+      assert.strictEqual(json.success, false);
+      assert.strictEqual(json.error.code, 'DATA_UNAVAILABLE');
+      assert.strictEqual(json.data, undefined);
     });
 
     test('HTTP GET /api/reports/gar-variance returns 400 Bad Request on invalid quarter', async () => {

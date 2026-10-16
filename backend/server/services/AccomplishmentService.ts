@@ -1,3 +1,5 @@
+import { AppError } from '../lib/errors';
+import { requireReadScope } from '../lib/readScope';
 import prisma, { isDatabaseConnected } from '../lib/prisma';
 import { Role } from '@prisma/client';
 import { NotFoundError, OfficeScopeError } from '../lib/errors';
@@ -15,9 +17,12 @@ export class AccomplishmentService {
       programId?: string;
       officeId?: string;
     },
-    actorUser?: { id: string; role: Role; officeId: string | null }
+    actorUser?: { id: string; role: Role; officeId: string | null },
+    options: { strict?: boolean } = {}
   ) {
+    if (options.strict) requireReadScope(actorUser);
     if (!isDatabaseConnected()) {
+      if (options.strict) throw new AppError('Report source unavailable', 503, 'DATA_UNAVAILABLE');
       let filtered = [...MEMORY_ACCOMPLISHMENTS];
       if (params.year) filtered = filtered.filter((a) => a.fiscalYear === Number(params.year));
       if (params.quarter) filtered = filtered.filter((a) => a.quarter === Number(params.quarter));
@@ -87,6 +92,7 @@ export class AccomplishmentService {
           : null,
       }));
     } catch {
+      if (options.strict) throw new AppError('Report source unavailable', 503, 'DATA_UNAVAILABLE');
       let filtered = [...MEMORY_ACCOMPLISHMENTS];
       if (params.year) filtered = filtered.filter((a) => a.fiscalYear === Number(params.year));
       if (params.quarter) filtered = filtered.filter((a) => a.quarter === Number(params.quarter));
@@ -354,14 +360,7 @@ export class AccomplishmentService {
    */
   public static async getPublicAccomplishments(params?: { year?: number; quarter?: number }) {
     if (!isDatabaseConnected()) {
-      let list = FALLBACK_ACCOMPLISHMENTS;
-      if (params?.year) {
-        list = list.filter((a) => a.fiscalYear === Number(params.year));
-      }
-      if (params?.quarter) {
-        list = list.filter((a) => a.quarter === Number(params.quarter));
-      }
-      return list;
+      throw new AppError('Public source unavailable', 503, 'DATA_UNAVAILABLE');
     }
 
     try {
@@ -375,26 +374,11 @@ export class AccomplishmentService {
           id: true,
           fiscalYear: true,
           quarter: true,
-          actualOutput: true,
           actualMale: true,
           actualFemale: true,
           actualBudgetUsed: true,
-          outputSummary: true,
-          program: {
-            select: {
-              id: true,
-              title: true,
-              sector: true,
-              office: { select: { code: true, name: true } },
-            },
-          },
-          gadPlanItem: {
-            select: {
-              id: true,
-              activity: true,
-              responsibleOffice: true,
-            },
-          },
+          // Interim disclosure safeguard: no unrestricted narratives or linked
+          // activity/office labels until an approved public projection exists.
         },
         orderBy: [{ fiscalYear: 'desc' }, { quarter: 'desc' }],
       });
@@ -403,24 +387,17 @@ export class AccomplishmentService {
         id: a.id,
         fiscalYear: a.fiscalYear,
         quarter: a.quarter,
-        activityTitle: a.gadPlanItem?.activity || a.program?.title || 'GAD Project Activity',
-        office: a.program?.office?.name || a.gadPlanItem?.responsibleOffice || 'LGU Talibon',
-        actualOutput: a.actualOutput,
+        activityTitle: 'Details withheld pending disclosure review',
+        office: '',
+        actualOutput: '',
         actualBudgetUsed: Number(a.actualBudgetUsed),
         actualMale: a.actualMale,
         actualFemale: a.actualFemale,
         totalBeneficiaries: a.actualMale + a.actualFemale,
-        outputSummary: a.outputSummary,
+        outputSummary: '',
       }));
     } catch {
-      let list = FALLBACK_ACCOMPLISHMENTS;
-      if (params?.year) {
-        list = list.filter((a) => a.fiscalYear === Number(params.year));
-      }
-      if (params?.quarter) {
-        list = list.filter((a) => a.quarter === Number(params.quarter));
-      }
-      return list;
+      throw new AppError('Public source unavailable', 503, 'DATA_UNAVAILABLE');
     }
   }
 }

@@ -1,6 +1,6 @@
 import prisma, { isDatabaseConnected } from '../lib/prisma';
 import { ProgramStatus, Role } from '@prisma/client';
-import { NotFoundError, OfficeScopeError } from '../lib/errors';
+import { AppError, NotFoundError, OfficeScopeError } from '../lib/errors';
 import { AuditService } from './AuditService';
 import { Request } from 'express';
 import { FALLBACK_PROGRAMS } from '../lib/fallbackStore';
@@ -381,14 +381,7 @@ export class ProgramService {
    */
   public static async getPublicPrograms(params?: { year?: number; sector?: string }) {
     if (!isDatabaseConnected()) {
-      let list = FALLBACK_PROGRAMS.filter((p) => p.status === 'ACTIVE' || p.status === 'COMPLETED');
-      if (params?.year) {
-        list = list.filter((p) => p.fiscalYear === Number(params.year));
-      }
-      if (params?.sector) {
-        list = list.filter((p) => p.sector.toLowerCase() === params.sector?.toLowerCase());
-      }
-      return list;
+      throw new AppError('Public source unavailable', 503, 'DATA_UNAVAILABLE');
     }
 
     try {
@@ -440,14 +433,7 @@ export class ProgramService {
         officeName: p.office.name,
       }));
     } catch {
-      let list = FALLBACK_PROGRAMS.filter((p) => p.status === 'ACTIVE' || p.status === 'COMPLETED');
-      if (params?.year) {
-        list = list.filter((p) => p.fiscalYear === Number(params.year));
-      }
-      if (params?.sector) {
-        list = list.filter((p) => p.sector.toLowerCase() === params.sector?.toLowerCase());
-      }
-      return list;
+      throw new AppError('Public source unavailable', 503, 'DATA_UNAVAILABLE');
     }
   }
 }

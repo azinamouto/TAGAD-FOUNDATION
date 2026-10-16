@@ -1,6 +1,7 @@
 import prisma, { isDatabaseConnected } from '../lib/prisma';
 import { Sex, Role, GADPlanStatus } from '@prisma/client';
-import { getFallbackPublicDashboard } from '../lib/fallbackStore';
+import { AppError } from '../lib/errors';
+import { requireReadScope } from '../lib/readScope';
 
 export class DashboardService {
   /**
@@ -10,7 +11,7 @@ export class DashboardService {
     const currentYear = year || new Date().getFullYear();
 
     if (!isDatabaseConnected()) {
-      return getFallbackPublicDashboard(currentYear);
+      throw new AppError('Dashboard data unavailable', 503, 'DATA_UNAVAILABLE');
     }
 
     try {
@@ -86,7 +87,7 @@ export class DashboardService {
         byBarangay: Object.values(byBarangayMap),
       };
     } catch {
-      return getFallbackPublicDashboard(currentYear);
+      throw new AppError('Dashboard data unavailable', 503, 'DATA_UNAVAILABLE');
     }
   }
 
@@ -99,28 +100,22 @@ export class DashboardService {
   ) {
     const currentYear = year || new Date().getFullYear();
 
+    const officeId = requireReadScope(actorUser);
     if (!isDatabaseConnected()) {
-      const fallback = getFallbackPublicDashboard(currentYear);
-      return {
-        summary: {
-          ...fallback.summary,
-          totalPrograms: fallback.summary.activeProgramsCount,
-          budgetUtilizationRate: Math.round(fallback.summary.utilizationRate * 100) / 100,
-        },
-        gadPlansByStatus: { DRAFT: 1, SUBMITTED: 1, APPROVED: 3, REVISED: 0 },
-        bySector: fallback.bySector,
-        byBarangay: fallback.byBarangay,
-        recentBeneficiaries: [],
-        recentAuditLogs: [],
-      };
+      throw new AppError('Dashboard data unavailable', 503, 'DATA_UNAVAILABLE');
     }
+    const beneficiaryWhere = { isArchived: false, ...(officeId ? { officeId } : {}) };
+    const accomplishmentWhere = { fiscalYear: currentYear, ...(officeId ? { OR: [
+      { program: { officeId } },
+      { gadPlanItem: { gadPlan: { officeId } } },
+    ] } : {}) };
 
     const programWhere: any = { fiscalYear: currentYear };
     const planWhere: any = { fiscalYear: currentYear };
 
-    if (actorUser && actorUser.role === Role.ENCODER && actorUser.officeId) {
-      programWhere.officeId = actorUser.officeId;
-      planWhere.officeId = actorUser.officeId;
+    if (officeId) {
+      programWhere.officeId = officeId;
+      planWhere.officeId = officeId;
     }
 
     try {
@@ -137,35 +132,35 @@ export class DashboardService {
         byBarangayData,
         barangays,
       ] = await Promise.all([
-        prisma.beneficiary.count({ where: { isArchived: false } }),
-        prisma.beneficiary.count({ where: { sex: Sex.MALE, isArchived: false } }),
-        prisma.beneficiary.count({ where: { sex: Sex.FEMALE, isArchived: false } }),
+        prisma.beneficiary.count({ where: beneficiaryWhere }),
+        prisma.beneficiary.count({ where: { ...beneficiaryWhere, sex: Sex.MALE } }),
+        prisma.beneficiary.count({ where: { ...beneficiaryWhere, sex: Sex.FEMALE } }),
         prisma.program.findMany({ where: programWhere }),
-        prisma.gADAccomplishment.findMany({ where: { fiscalYear: currentYear } }),
+        prisma.gADAccomplishment.findMany({ where: accomplishmentWhere }),
         prisma.gADPlan.groupBy({
           by: ['status'],
           where: planWhere,
           _count: { id: true },
         }),
         prisma.beneficiary.findMany({
-          where: { isArchived: false },
+          where: beneficiaryWhere,
           include: { barangay: true, office: true },
           take: 8,
           orderBy: { createdAt: 'desc' },
         }),
-        prisma.auditLog.findMany({
+        actorUser && [Role.ADMIN, Role.SUPER_ADMIN].includes(actorUser.role as any) ? prisma.auditLog.findMany({
           take: 8,
           orderBy: { createdAt: 'desc' },
           include: { user: { select: { fullName: true, role: true } } },
-        }),
+        }) : Promise.resolve([]),
         prisma.beneficiary.groupBy({
           by: ['sector'],
-          where: { isArchived: false },
+          where: beneficiaryWhere,
           _count: { id: true },
         }),
         prisma.beneficiary.groupBy({
           by: ['barangayId', 'sex'],
-          where: { isArchived: false },
+          where: beneficiaryWhere,
           _count: { id: true },
         }),
         prisma.barangay.findMany({ select: { id: true, name: true } }),
@@ -238,19 +233,7 @@ export class DashboardService {
         })),
       };
     } catch {
-      const fallback = getFallbackPublicDashboard(currentYear);
-      return {
-        summary: {
-          ...fallback.summary,
-          totalPrograms: fallback.summary.activeProgramsCount,
-          budgetUtilizationRate: Math.round(fallback.summary.utilizationRate * 100) / 100,
-        },
-        gadPlansByStatus: { DRAFT: 1, SUBMITTED: 1, APPROVED: 3, REVISED: 0 },
-        bySector: fallback.bySector,
-        byBarangay: fallback.byBarangay,
-        recentBeneficiaries: [],
-        recentAuditLogs: [],
-      };
+      throw new AppError('Dashboard data unavailable', 503, 'DATA_UNAVAILABLE');
     }
   }
 }

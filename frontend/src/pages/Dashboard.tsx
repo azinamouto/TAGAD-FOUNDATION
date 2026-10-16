@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import {
    PieChart,
    Pie,
@@ -16,24 +17,34 @@ import {
  import { Skeleton } from '../components/ui/skeleton';
 
 const Dashboard: React.FC = () => {
+  const { hash } = useLocation();
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [year, setYear] = useState(new Date().getFullYear());
 
   useEffect(() => {
+    let active = true;
+    setLoading(true);
     const fetchStats = async () => {
       try {
         const { data } = await api.get(`/dashboard/stats?year=${year}`);
-        setStats(data);
+        if (active) setStats(data);
       } catch (error) {
         console.error('Failed to fetch stats', error);
-        setStats(null);
+        if (active) setStats(null);
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
     };
     fetchStats();
+    return () => { active = false; };
   }, [year]);
+
+  useEffect(() => {
+    if (!loading && hash === '#barangay-statistics') {
+      document.getElementById('barangay-statistics')?.scrollIntoView();
+    }
+  }, [hash, loading]);
 
   if (loading) {
     return (
@@ -51,7 +62,12 @@ const Dashboard: React.FC = () => {
     );
   }
 
-  if (!stats) {
+  const rawData = stats?.data || stats;
+  const summary = rawData?.summary || rawData;
+  const requiredMetrics = ['totalBeneficiaries', 'totalMale', 'totalFemale', 'totalPrograms', 'totalBudgetAllocated', 'totalBudgetUsed'];
+  const complete = requiredMetrics.every(key => typeof summary?.[key] === 'number' && Number.isFinite(summary[key]))
+    && Array.isArray(rawData?.byBarangay) && Array.isArray(rawData?.recentBeneficiaries);
+  if (!complete) {
     return (
       <div className="py-16 space-y-3">
         <h3 className="text-sm font-semibold text-rose-700 dark:text-rose-400">
@@ -64,15 +80,12 @@ const Dashboard: React.FC = () => {
     );
   }
 
-  const rawData = stats?.data || stats || {};
-  const summary = rawData?.summary || rawData;
-
-  const totalBeneficiaries = Number(summary?.totalBeneficiaries ?? rawData?.totalBeneficiaries ?? 0);
-  const totalMale = Number(summary?.totalMale ?? rawData?.totalMale ?? 0);
-  const totalFemale = Number(summary?.totalFemale ?? rawData?.totalFemale ?? 0);
-  const totalPrograms = Number(summary?.totalPrograms ?? rawData?.totalPrograms ?? 0);
-  const totalBudgetAllocated = Number(summary?.totalBudgetAllocated ?? rawData?.totalBudgetAllocated ?? 0);
-  const totalBudgetUsed = Number(summary?.totalBudgetUsed ?? rawData?.totalBudgetUsed ?? 0);
+  const totalBeneficiaries = summary.totalBeneficiaries;
+  const totalMale = summary.totalMale;
+  const totalFemale = summary.totalFemale;
+  const totalPrograms = summary.totalPrograms;
+  const totalBudgetAllocated = summary.totalBudgetAllocated;
+  const totalBudgetUsed = summary.totalBudgetUsed;
   const byBarangay = Array.isArray(rawData?.byBarangay) ? rawData.byBarangay : [];
   const recentBeneficiaries = Array.isArray(rawData?.recentBeneficiaries) ? rawData.recentBeneficiaries : [];
 
@@ -100,7 +113,7 @@ const Dashboard: React.FC = () => {
       <section className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-4">
         <div className="space-y-1">
           <h1 className="text-2xl font-semibold tracking-tight text-foreground dark:text-foreground">
-            Overview
+            Dashboard and Barangay Statistics
           </h1>
           <p className="text-xs text-muted-foreground dark:text-muted-foreground">
             Municipality of Talibon • Gender and Development Statistics
@@ -126,10 +139,15 @@ const Dashboard: React.FC = () => {
         </div>
       </section>
 
+      <p className="text-sm text-muted-foreground">
+        Source: current non-archived beneficiary registry, program budgets and reported accomplishments.
+        The year filter applies to programs and expenditures; registry counts and recent entries cover all years.
+        Registry records do not establish municipal population or service participation. Interactive mapping is not yet available.
+      </p>
       {/* Metrics Row */}
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         <div className="space-y-1 border-l-2 border-border dark:border-white pl-4">
-          <div className="text-xs text-muted-foreground font-medium">Total Beneficiaries</div>
+          <div className="text-xs text-muted-foreground font-medium">Registered Records</div>
           <div className="text-2xl font-semibold text-foreground dark:text-foreground tabular-nums">
             {totalBeneficiaries.toLocaleString()}
           </div>
@@ -139,7 +157,7 @@ const Dashboard: React.FC = () => {
         </div>
 
         <div className="space-y-1 border-l-2 border-border dark:border-border pl-4">
-          <div className="text-xs text-muted-foreground font-medium">Active Programs</div>
+          <div className="text-xs text-muted-foreground font-medium">Programs in Selected Year</div>
           <div className="text-2xl font-semibold text-foreground dark:text-foreground tabular-nums">
             {totalPrograms}
           </div>
@@ -151,7 +169,7 @@ const Dashboard: React.FC = () => {
           <div className="text-2xl font-semibold text-foreground dark:text-foreground tabular-nums">
             {formatCurrency(totalBudgetAllocated)}
           </div>
-          <div className="text-[11px] text-muted-foreground">Annual GAD Plan Total</div>
+          <div className="text-[11px] text-muted-foreground">Program budget targets</div>
         </div>
 
         <div className="space-y-1 border-l-2 border-border dark:border-border pl-4">
@@ -168,14 +186,14 @@ const Dashboard: React.FC = () => {
       <hr className="border-border dark:border-border" />
 
       {/* Charts Section */}
-      <section className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+      <section id="barangay-statistics" className="scroll-mt-20 grid grid-cols-1 lg:grid-cols-3 gap-12">
         {/* Barangay Distribution (2 cols) */}
         <div className="lg:col-span-2 space-y-4">
           <div className="space-y-1">
             <h2 className="text-sm font-semibold text-foreground dark:text-foreground">
               Beneficiaries by Barangay
             </h2>
-            <p className="text-xs text-muted-foreground">Disaggregated demographic distribution</p>
+            <p className="text-xs text-muted-foreground">Current non-archived registry records by barangay and recorded sex</p>
           </div>
           <div className="h-72 w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -293,7 +311,7 @@ const Dashboard: React.FC = () => {
               {recentBeneficiaries.length === 0 && (
                 <tr>
                   <td colSpan={5} className="py-8 text-center text-muted-foreground">
-                    No recent data entries recorded for this period.
+                    No recent registry entries are available in your scope.
                   </td>
                 </tr>
               )}

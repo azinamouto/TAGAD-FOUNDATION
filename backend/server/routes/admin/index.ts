@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { requireAuth } from '../../middleware/authMiddleware';
+import { dashboardReadRateLimiter, beneficiaryRateLimiter } from '../../middleware/rateLimiter';
 import { getDashboardStats } from '../../controllers/admin/dashboardController';
 
 import beneficiaryRoutes from './beneficiaries';
@@ -20,6 +21,8 @@ import feedbackRoutes from './feedback';
 import statisticalSearchRoutes from './statisticalSearch';
 
 const router = Router();
+router.use('/dashboard', dashboardReadRateLimiter);
+router.use('/beneficiaries', beneficiaryRateLimiter);
 
 // All /api/admin/* endpoints strictly require authentication
 router.use(requireAuth);

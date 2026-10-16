@@ -1,9 +1,8 @@
 import prisma, { isDatabaseConnected } from '../lib/prisma';
 import { Sex, Role } from '@prisma/client';
-import { NotFoundError, OfficeScopeError, ForbiddenError } from '../lib/errors';
+import { AppError, NotFoundError, OfficeScopeError, ForbiddenError } from '../lib/errors';
 import { AuditService } from './AuditService';
 import { Request } from 'express';
-import { getFallbackDemographicsData } from '../lib/fallbackStore';
 
 export const MEMORY_BENEFICIARIES: any[] = [];
 
@@ -28,7 +27,8 @@ export class BeneficiaryService {
       year?: number;
       isArchived?: boolean;
     },
-    actorUser?: { id: string; role: Role; officeId: string | null }
+    actorUser?: { id: string; role: Role; officeId: string | null },
+    options: { strict?: boolean } = {}
   ) {
     const officeScope = this.readOffice(actorUser);
     if (officeScope) {
@@ -42,6 +42,7 @@ export class BeneficiaryService {
     const skip = (page - 1) * limit;
 
     if (!isDatabaseConnected()) {
+      if (options.strict) throw new AppError('Registry source unavailable', 503, 'DATA_UNAVAILABLE');
       let filtered = [...MEMORY_BENEFICIARIES];
       if (params.isArchived !== undefined) {
         filtered = filtered.filter((b) => b.isArchived === params.isArchived);
@@ -145,6 +146,7 @@ export class BeneficiaryService {
         },
       };
     } catch {
+      if (options.strict) throw new AppError('Registry source unavailable', 503, 'DATA_UNAVAILABLE');
       let filtered = [...MEMORY_BENEFICIARIES];
       if (params.isArchived !== undefined) {
         filtered = filtered.filter((b) => b.isArchived === params.isArchived);
@@ -477,7 +479,7 @@ export class BeneficiaryService {
    */
   public static async getDemographicsAggregates(params?: { year?: number; barangayId?: string }) {
     if (!isDatabaseConnected()) {
-      return getFallbackDemographicsData(params?.year, params?.barangayId);
+      throw new AppError('Demographic data unavailable', 503, 'DATA_UNAVAILABLE');
     }
 
     try {
@@ -551,7 +553,7 @@ export class BeneficiaryService {
         byBarangay: Object.values(byBarangayMap),
       };
     } catch {
-      return getFallbackDemographicsData(params?.year, params?.barangayId);
+      throw new AppError('Demographic data unavailable', 503, 'DATA_UNAVAILABLE');
     }
   }
 }

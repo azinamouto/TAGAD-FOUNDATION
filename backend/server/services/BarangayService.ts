@@ -1,5 +1,5 @@
 import prisma, { isDatabaseConnected } from '../lib/prisma';
-import { NotFoundError } from '../lib/errors';
+import { AppError, NotFoundError } from '../lib/errors';
 import { FALLBACK_BARANGAYS } from '../lib/fallbackStore';
 
 export class BarangayService {
@@ -27,6 +27,9 @@ export class BarangayService {
 
   public static async getBarangays() {
     if (!isDatabaseConnected()) {
+      if (process.env.DEMO_MODE !== 'true' || process.env.NODE_ENV === 'production') {
+        throw new AppError('Barangay data unavailable', 503, 'DATA_UNAVAILABLE');
+      }
       return FALLBACK_BARANGAYS;
     }
 
@@ -35,17 +38,20 @@ export class BarangayService {
         orderBy: { name: 'asc' },
       });
     } catch {
-      return FALLBACK_BARANGAYS;
+      throw new AppError('Barangay data unavailable', 503, 'DATA_UNAVAILABLE');
     }
   }
 
   public static async getBarangayById(id: string) {
     if (!isDatabaseConnected()) {
+      if (process.env.DEMO_MODE !== 'true' || process.env.NODE_ENV === 'production') {
+        throw new AppError('Barangay data unavailable', 503, 'DATA_UNAVAILABLE');
+      }
       const brgy = FALLBACK_BARANGAYS.find((b) => b.id === id || b.code === id || b.name.toLowerCase() === id.toLowerCase());
       if (brgy) {
         return {
           ...brgy,
-          _count: { households: 120, beneficiaries: 85 },
+          _count: null,
         };
       }
       throw new NotFoundError('Barangay');
@@ -71,15 +77,7 @@ export class BarangayService {
       return barangay;
     } catch (err: any) {
       if (err instanceof NotFoundError) throw err;
-      const brgy = FALLBACK_BARANGAYS.find((b) => b.id === id || b.code === id || b.name.toLowerCase() === id.toLowerCase());
-      if (brgy) {
-        return {
-          ...brgy,
-          _count: { households: 120, beneficiaries: 85 },
-        };
-      }
-      throw new NotFoundError('Barangay');
+      throw new AppError('Barangay data unavailable', 503, 'DATA_UNAVAILABLE');
     }
   }
 }
-

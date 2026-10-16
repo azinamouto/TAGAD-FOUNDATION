@@ -4,6 +4,23 @@ import { sendError } from '../lib/response';
 import { AppError } from '../lib/errors';
 import { logger } from '../lib/logger';
 
+// Shared by legacy and admin dashboard aliases: switching URLs does not reset
+// the per-IP budget. Technical load protection, not an institutional access rule.
+export const dashboardReadRateLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 120,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Shared across beneficiary aliases, before token verification and database lookups.
+export const beneficiaryRateLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 120,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 /**
  * Rate limiter for authentication login endpoint (POST /api/auth/login).
  * Protects against brute-force and credential stuffing attacks.

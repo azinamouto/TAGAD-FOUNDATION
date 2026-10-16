@@ -1,4 +1,5 @@
-﻿import prisma, { isDatabaseConnected } from '../lib/prisma';
+import { requireReadScope } from '../lib/readScope';
+import prisma, { isDatabaseConnected } from '../lib/prisma';
 import { GADPlanStatus, Role } from '@prisma/client';
 import { NotFoundError, OfficeScopeError, ForbiddenError, ValidationError, ConflictError, AppError } from '../lib/errors';
 import { AuditService } from './AuditService';
@@ -90,9 +91,12 @@ export class GADPlanService {
       office?: string;
       status?: string;
     },
-    actorUser?: { id: string; role: Role; officeId: string | null }
+    actorUser?: { id: string; role: Role; officeId: string | null },
+    options: { strict?: boolean } = {}
   ) {
+    if (options.strict) requireReadScope(actorUser);
     if (!isDatabaseConnected()) {
+      if (options.strict) throw new AppError('Report source unavailable', 503, 'DATA_UNAVAILABLE');
       let filteredPlans = [...MEMORY_GAD_PLANS];
       if (params.year) filteredPlans = filteredPlans.filter((p) => p.fiscalYear === Number(params.year));
       if (params.officeId) filteredPlans = filteredPlans.filter((p) => p.officeId === params.officeId);
@@ -172,16 +176,16 @@ export class GADPlanService {
               office: plan.office.code || plan.office.name,
               officeId: plan.officeId,
               officeName: plan.office.name,
-              genderIssue: 'General Allocation',
+              genderIssue: '',
               causeOfIssue: '',
-              gadResult: 'Annual GAD Plan Allocation',
-              activity: 'GAD Direct and Attributed Activities',
-              performanceIndicator: '100% GAD compliance',
-              targetGroup: 'General Population',
+              gadResult: '',
+              activity: 'No activity items recorded',
+              performanceIndicator: '',
+              targetGroup: '',
               timeline: `FY ${plan.fiscalYear}`,
               responsibleOffice: plan.office.code || plan.office.name,
               budget: Number(plan.gadBudget),
-              fundSource: 'General Fund (5% GAD)',
+              fundSource: '',
               status: plan.status,
               accomplishments: [],
               createdAt: plan.createdAt,
@@ -232,6 +236,7 @@ export class GADPlanService {
         items: itemsFlat,
       };
     } catch {
+      if (options.strict) throw new AppError('Report source unavailable', 503, 'DATA_UNAVAILABLE');
       let filtered = [...MEMORY_GAD_PLANS];
       if (params.year) filtered = filtered.filter((p) => p.fiscalYear === Number(params.year));
       if (params.officeId) filtered = filtered.filter((p) => p.officeId === params.officeId);
@@ -1003,14 +1008,7 @@ export class GADPlanService {
    */
   public static async getPublicGADPlans(params?: { year?: number; officeId?: string }) {
     if (!isDatabaseConnected()) {
-      let list = FALLBACK_GAD_PLANS;
-      if (params?.year) {
-        list = list.filter((p) => p.fiscalYear === Number(params.year));
-      }
-      if (params?.officeId) {
-        list = list.filter((p) => p.officeId === params.officeId || p.office.toLowerCase() === params.officeId.toLowerCase());
-      }
-      return list;
+      throw new AppError('Public source unavailable', 503, 'DATA_UNAVAILABLE');
     }
 
     try {
@@ -1061,14 +1059,7 @@ export class GADPlanService {
         })),
       }));
     } catch {
-      let list = FALLBACK_GAD_PLANS;
-      if (params?.year) {
-        list = list.filter((p) => p.fiscalYear === Number(params.year));
-      }
-      if (params?.officeId) {
-        list = list.filter((p) => p.officeId === params.officeId || p.office.toLowerCase() === params.officeId.toLowerCase());
-      }
-      return list;
+      throw new AppError('Public source unavailable', 503, 'DATA_UNAVAILABLE');
     }
   }
 }

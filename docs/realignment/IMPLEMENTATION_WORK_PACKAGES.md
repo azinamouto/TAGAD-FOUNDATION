@@ -1,5 +1,7 @@
 # Implementation work packages
 
+**Execution update, 2026-10-13:** the subsequent scope-reduction request authorized Phase A/B and policy-independent WP02 corrections. That limited subset is implemented and verified in the [scope-reduction delivery](SCOPE_REDUCTION_DELIVERY.md). WP02 is not fully accepted; D01–D13 remain open and WP03–WP14 remain unstarted. The original WP01 planning status below is retained as history.
+
 **WP01 documentation authorized on 2026-10-13; candidate deliverables prepared, stakeholder agreement pending. WP02–WP14 remain planning only and unstarted.** See the [WP01 delivery report](wp01/DELIVERY_REPORT.md). Proposal IDs refer to [REQUIREMENTS_TRACEABILITY.md](REQUIREMENTS_TRACEABILITY.md); file evidence IDs resolve in [VERIFICATION_BASELINE.md](VERIFICATION_BASELINE.md). Future code/model names are proposals, not claims of existing files.
 
 Each package should become a small PR or a short sequence of separately reviewable PRs with its own acceptance evidence. Do not bundle all packages into a rewrite. All packages preserve historical records, source values and IDs. Rollback never restores a known confidentiality defect or discards data written under a newer model.

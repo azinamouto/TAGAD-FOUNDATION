@@ -1,5 +1,7 @@
 # Open decisions
 
+**Execution update, 2026-10-13:** subsequent user authorization covers scope-reduction presentation and the policy-independent WP02 subset in the [delivery report](SCOPE_REDUCTION_DELIVERY.md). It does not approve any D01–D13 decision. Earlier statements that all WP02 work is unstarted describe the WP01 handoff, before this limited authorization. All policy-dependent work remains gated.
+
 These are required inputs for later implementation, not reasons to leave this documentation audit incomplete. Owners below are proposed reviewers based on proposal XI; they are not invented approval delegations. Record decision, accountable approver, evidence/source version, date and affected requirements before closing an item. No item is silently resolved by existing code defaults.
 
 | ID | Decision / proposed owner | Input needed | Proposed interim treatment / blocked packages |
