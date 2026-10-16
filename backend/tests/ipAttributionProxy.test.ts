@@ -12,6 +12,9 @@ for (const [name, setting, forwarded, expected] of [
   ['trusted hop ignores forged prefix', '1', '203.0.113.1, 198.51.100.9', '198.51.100.9'],
   ['trusted CIDR resolves nearest untrusted address', 'loopback', '203.0.113.1, 198.51.100.9', '198.51.100.9'],
   ['untrusted CIDR peer cannot supply client IP', '10.0.0.0/8', '203.0.113.1', '127.0.0.1'],
+  ['short IPv4-mapped IPv6 prefix cannot trust arbitrary IPv4 peers', '::ffff:10.0.0.0/8', '203.0.113.1', '127.0.0.1'],
+  ['zero-leading IPv6 subnet cannot trust IPv4 peers', '::/1', '203.0.113.1', '127.0.0.1'],
+  ['correct IPv4-mapped subnet excludes unrelated IPv4 peers', '::ffff:10.0.0.0/104', '203.0.113.1', '127.0.0.1'],
   ['multiple trusted proxies stop at client', 'loopback, 10.0.0.0/8', '203.0.113.1, 198.51.100.9, 10.0.0.4', '198.51.100.9'],
 ]) {
   test(name, async () => {
