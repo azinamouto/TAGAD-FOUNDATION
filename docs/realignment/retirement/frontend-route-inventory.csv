@@ -1,0 +1,40 @@
+route_before,route_after,disposition
+/,/,KEEP
+/demographics,/demographics,KEEP
+/public-programs,/public-programs,KEEP
+/public-accomplishments,/public-accomplishments,KEEP
+/public-plans,/public-plans,KEEP
+/statistical-catalog,"Catch-all Page Not Found (SPA response, not HTTP 410)",RETIRE
+/statistical-data,"Catch-all Page Not Found (SPA response, not HTTP 410)",RETIRE
+/statistical-data/:tableId,"Catch-all Page Not Found (SPA response, not HTTP 410)",RETIRE
+/table-builder,"Catch-all Page Not Found (SPA response, not HTTP 410)",RETIRE
+/table-builder/:id,"Catch-all Page Not Found (SPA response, not HTTP 410)",RETIRE
+/feedback,/feedback,KEEP
+/login,/login,KEEP
+/dashboard,/dashboard,KEEP
+/programs,/programs,KEEP
+/gad-plan,/gad-plan,KEEP
+/accomplishments,/accomplishments,KEEP
+/data-encoding,/data-encoding,KEEP
+/beneficiaries,/beneficiaries,KEEP
+/reports,/reports,KEEP
+/statistical-catalog,"Catch-all Page Not Found (SPA response, not HTTP 410)",RETIRE
+/users,/users,KEEP
+/admin,/admin,KEEP
+/admin/dashboard,/admin/dashboard,KEEP
+/admin/programs,/admin/programs,KEEP
+/admin/gad-plan,/admin/gad-plan,KEEP
+/admin/accomplishments,/admin/accomplishments,KEEP
+/admin/data-encoding,/admin/data-encoding,KEEP
+/admin/beneficiaries,/admin/beneficiaries,KEEP
+/admin/reports,/admin/reports,KEEP
+/admin/statistical-catalog,"Catch-all Page Not Found (SPA response, not HTTP 410)",RETIRE
+/admin/statistical-data,"Catch-all Page Not Found (SPA response, not HTTP 410)",RETIRE
+/admin/statistical-data/:tableId,"Catch-all Page Not Found (SPA response, not HTTP 410)",RETIRE
+/admin/table-builder,"Catch-all Page Not Found (SPA response, not HTTP 410)",RETIRE
+/admin/table-builder/:id,"Catch-all Page Not Found (SPA response, not HTTP 410)",RETIRE
+/admin/users,/admin/users,KEEP
+/unauthorized,/unauthorized,KEEP
+/403,/403,KEEP
+/404,/404,KEEP
+*,*,KEEP

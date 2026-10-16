@@ -1,0 +1,1460 @@
+{
+  "backend/prisma/seed.ts": [],
+  "backend/scripts/e2e-qualification-issue10.ts": [],
+  "backend/scripts/e2e-qualification-issue16.ts": [],
+  "backend/scripts/e2e-qualification-issue17.ts": [],
+  "backend/scripts/e2e-qualification-sprint6.ts": [],
+  "backend/scripts/qualify-audit-integrity.ts": [],
+  "backend/scripts/qualify-cbms-catalog.ts": [],
+  "backend/scripts/qualify-gad-workflow.ts": [],
+  "backend/scripts/qualify-import-layout.ts": [],
+  "backend/scripts/qualify-revocation.ts": [],
+  "backend/scripts/qualify-statistical-search.ts": [],
+  "backend/scripts/run-qualification.mjs": [],
+  "backend/scripts/start-production.mjs": [],
+  "backend/scripts/test-backend.ts": [],
+  "backend/scripts/test-sprint7-phase1.ts": [],
+  "backend/server.ts": [
+    "backend/scripts/start-production.mjs",
+    "server.ts"
+  ],
+  "backend/server/controllers/admin/accomplishmentController.ts": [
+    "backend/server/routes/accomplishments.ts",
+    "backend/server/routes/admin/accomplishments.ts"
+  ],
+  "backend/server/controllers/admin/auditLogController.ts": [
+    "backend/server/routes/admin/auditLogs.ts"
+  ],
+  "backend/server/controllers/admin/barangayController.ts": [
+    "backend/server/routes/admin/barangays.ts",
+    "backend/server/routes/public.ts"
+  ],
+  "backend/server/controllers/admin/beneficiaryController.ts": [
+    "backend/server/routes/admin/beneficiaries.ts",
+    "backend/server/routes/beneficiaries.ts"
+  ],
+  "backend/server/controllers/admin/dashboardController.ts": [
+    "backend/server/routes/admin/index.ts",
+    "backend/tests/scopeReduction.test.ts"
+  ],
+  "backend/server/controllers/admin/datasetController.ts": [
+    "backend/server/routes/admin/datasets.ts"
+  ],
+  "backend/server/controllers/admin/gadPlanController.ts": [
+    "backend/server/routes/admin/gadPlans.ts",
+    "backend/server/routes/gadPlans.ts"
+  ],
+  "backend/server/controllers/admin/ingestionController.ts": [
+    "backend/scripts/test-backend.ts",
+    "backend/server/routes/admin/ingestion.ts"
+  ],
+  "backend/server/controllers/admin/observationController.ts": [
+    "backend/server/routes/admin/tableBuilder.ts"
+  ],
+  "backend/server/controllers/admin/officeController.ts": [
+    "backend/server/routes/admin/offices.ts"
+  ],
+  "backend/server/controllers/admin/programController.ts": [
+    "backend/server/routes/admin/programs.ts",
+    "backend/server/routes/programs.ts"
+  ],
+  "backend/server/controllers/admin/statisticalImportController.ts": [
+    "backend/server/routes/admin/statisticalImport.ts"
+  ],
+  "backend/server/controllers/admin/tableBuilderController.ts": [
+    "backend/server/controllers/tableBuilderController.ts",
+    "backend/server/routes/admin/tableBuilder.ts"
+  ],
+  "backend/server/controllers/admin/userController.ts": [
+    "backend/server/routes/admin/users.ts",
+    "backend/server/routes/users.ts"
+  ],
+  "backend/server/controllers/authController.ts": [
+    "backend/server/routes/auth.ts"
+  ],
+  "backend/server/controllers/beneficiaryController.ts": [],
+  "backend/server/controllers/dashboardController.ts": [],
+  "backend/server/controllers/gadController.ts": [],
+  "backend/server/controllers/programController.ts": [],
+  "backend/server/controllers/publicController.ts": [
+    "backend/server/routes/public.ts"
+  ],
+  "backend/server/controllers/reportController.ts": [
+    "backend/server/routes/reports.ts",
+    "backend/tests/beneficiaryReports.test.ts",
+    "backend/tests/scopeReduction.test.ts",
+    "backend/tests/scopeReduction.test.ts"
+  ],
+  "backend/server/controllers/tableBuilderController.ts": [],
+  "backend/server/controllers/userController.ts": [],
+  "backend/server/data/cbmsSourceRows.ts": [
+    "backend/scripts/qualify-statistical-search.ts",
+    "backend/server/services/StatisticalCatalogService.ts",
+    "backend/server/services/StatisticalSearchService.ts",
+    "backend/tests/cbmsSourceReconciliation.test.ts"
+  ],
+  "backend/server/instrument.ts": [
+    "backend/server.ts"
+  ],
+  "backend/server/lib/cors.ts": [
+    "backend/server.ts",
+    "backend/tests/frontendCors.test.ts",
+    "backend/tests/sprint9BackendSecurity.test.ts"
+  ],
+  "backend/server/lib/csvParser.ts": [
+    "backend/server/services/StatisticalObservationIngestionService.ts",
+    "backend/tests/csvLayout.test.ts"
+  ],
+  "backend/server/lib/databaseConnectionMonitor.ts": [
+    "backend/server/lib/prisma.ts",
+    "backend/tests/databaseRecovery.test.ts"
+  ],
+  "backend/server/lib/errorTracking.ts": [
+    "backend/server/instrument.ts",
+    "backend/server/lib/response.ts",
+    "backend/tests/errorTracking.test.ts"
+  ],
+  "backend/server/lib/errors.ts": [
+    "backend/scripts/e2e-qualification-issue10.ts",
+    "backend/server/controllers/admin/datasetController.ts",
+    "backend/server/controllers/admin/ingestionController.ts",
+    "backend/server/controllers/admin/observationController.ts",
+    "backend/server/controllers/admin/statisticalImportController.ts",
+    "backend/server/controllers/admin/tableBuilderController.ts",
+    "backend/server/lib/csvParser.ts",
+    "backend/server/lib/readScope.ts",
+    "backend/server/lib/response.ts",
+    "backend/server/middleware/authMiddleware.ts",
+    "backend/server/middleware/authMiddleware.ts",
+    "backend/server/middleware/rateLimiter.ts",
+    "backend/server/middleware/validate.ts",
+    "backend/server/services/AccomplishmentService.ts",
+    "backend/server/services/AccomplishmentService.ts",
+    "backend/server/services/AuditService.ts",
+    "backend/server/services/AuthService.ts",
+    "backend/server/services/AuthService.ts",
+    "backend/server/services/BarangayService.ts",
+    "backend/server/services/BeneficiaryService.ts",
+    "backend/server/services/CsvIngestionService.ts",
+    "backend/server/services/DashboardService.ts",
+    "backend/server/services/FeedbackService.ts",
+    "backend/server/services/GADPlanService.ts",
+    "backend/server/services/GarReportService.ts",
+    "backend/server/services/MOVAttachmentService.ts",
+    "backend/server/services/ObservationService.ts",
+    "backend/server/services/OfficeService.ts",
+    "backend/server/services/ProgramService.ts",
+    "backend/server/services/StatisticalDatasetService.ts",
+    "backend/server/services/StatisticalObservationIngestionService.ts",
+    "backend/server/services/StatisticalSearchService.ts",
+    "backend/server/services/TableBuilderService.ts",
+    "backend/server/services/TokenRevocationService.ts",
+    "backend/server/services/UserService.ts",
+    "backend/server/validators/statisticalImportValidator.ts",
+    "backend/tests/errorResponsePrivacy.test.ts",
+    "backend/tests/errorTracking.test.ts",
+    "backend/tests/gadDomainCompletionIssue10.test.ts",
+    "backend/tests/gridExport.test.ts",
+    "backend/tests/statisticalGovernanceIssue17.test.ts",
+    "backend/tests/tableBuilder.test.ts"
+  ],
+  "backend/server/lib/fallbackStore.ts": [
+    "backend/scripts/e2e-qualification-issue16.ts",
+    "backend/server/services/AccomplishmentService.ts",
+    "backend/server/services/BarangayService.ts",
+    "backend/server/services/CsvDiscoveryService.ts",
+    "backend/server/services/CsvIngestionService.ts",
+    "backend/server/services/GADPlanService.ts",
+    "backend/server/services/GarReportService.ts",
+    "backend/server/services/OfficeService.ts",
+    "backend/server/services/ProgramService.ts",
+    "backend/tests/garFallbackGrouping.test.ts"
+  ],
+  "backend/server/lib/jwt.ts": [
+    "backend/scripts/qualify-gad-workflow.ts",
+    "backend/scripts/qualify-import-layout.ts",
+    "backend/scripts/qualify-revocation.ts",
+    "backend/scripts/qualify-statistical-search.ts",
+    "backend/scripts/test-backend.ts",
+    "backend/server.ts",
+    "backend/server/middleware/authMiddleware.ts",
+    "backend/server/services/AuthService.ts",
+    "backend/tests/dashboardAuth.test.ts",
+    "backend/tests/feedback.test.ts",
+    "backend/tests/gadDomainCompletionIssue10.test.ts",
+    "backend/tests/ingestionAuth.test.ts",
+    "backend/tests/observationService.test.ts",
+    "backend/tests/revocationDurability.test.ts",
+    "backend/tests/scopeReduction.test.ts",
+    "backend/tests/sessionLogout.test.ts",
+    "backend/tests/sprint9BackendSecurity.test.ts",
+    "backend/tests/statisticalCsvImport.test.ts",
+    "backend/tests/statisticalDataEntryGrid.test.ts",
+    "backend/tests/statisticalSearch.test.ts",
+    "backend/tests/tableBuilderHttpIntegration.test.ts"
+  ],
+  "backend/server/lib/logger.ts": [
+    "backend/server.ts",
+    "backend/server/lib/cors.ts",
+    "backend/server/middleware/rateLimiter.ts",
+    "backend/server/middleware/requestLogger.ts",
+    "backend/server/services/AuthService.ts",
+    "backend/server/services/StatisticalObservationIngestionService.ts",
+    "backend/server/services/TokenRevocationService.ts",
+    "backend/tests/loggerRedaction.test.ts",
+    "backend/tests/requestUrlRedaction.test.ts",
+    "backend/tests/sprint9BackendSecurity.test.ts"
+  ],
+  "backend/server/lib/prisma.ts": [
+    "backend/scripts/e2e-qualification-issue16.ts",
+    "backend/scripts/e2e-qualification-issue17.ts",
+    "backend/scripts/e2e-qualification-sprint6.ts",
+    "backend/scripts/qualify-audit-integrity.ts",
+    "backend/scripts/qualify-gad-workflow.ts",
+    "backend/scripts/qualify-import-layout.ts",
+    "backend/scripts/qualify-revocation.ts",
+    "backend/scripts/qualify-statistical-search.ts",
+    "backend/scripts/test-backend.ts",
+    "backend/scripts/test-backend.ts",
+    "backend/server.ts",
+    "backend/server/controllers/beneficiaryController.ts",
+    "backend/server/controllers/dashboardController.ts",
+    "backend/server/controllers/gadController.ts",
+    "backend/server/controllers/programController.ts",
+    "backend/server/controllers/userController.ts",
+    "backend/server/middleware/authMiddleware.ts",
+    "backend/server/services/AccomplishmentService.ts",
+    "backend/server/services/AuditService.ts",
+    "backend/server/services/AuthService.ts",
+    "backend/server/services/BarangayService.ts",
+    "backend/server/services/BeneficiaryService.ts",
+    "backend/server/services/CsvIngestionService.ts",
+    "backend/server/services/DashboardService.ts",
+    "backend/server/services/FeedbackService.ts",
+    "backend/server/services/GADPlanService.ts",
+    "backend/server/services/GarReportService.ts",
+    "backend/server/services/MOVAttachmentService.ts",
+    "backend/server/services/ObservationService.ts",
+    "backend/server/services/OfficeService.ts",
+    "backend/server/services/ProgramService.ts",
+    "backend/server/services/StatisticalCatalogService.ts",
+    "backend/server/services/StatisticalDatasetService.ts",
+    "backend/server/services/StatisticalObservationIngestionService.ts",
+    "backend/server/services/StatisticalSearchService.ts",
+    "backend/server/services/TableBuilderService.ts",
+    "backend/server/services/TokenRevocationService.ts",
+    "backend/server/services/UserService.ts",
+    "backend/tests/barangayGeo.test.ts",
+    "backend/tests/beneficiaryReports.test.ts",
+    "backend/tests/beneficiaryScope.test.ts",
+    "backend/tests/dashboardAuth.test.ts",
+    "backend/tests/datasetHistoryScope.test.ts",
+    "backend/tests/dimensionLock.test.ts",
+    "backend/tests/durableAuditRollback.test.ts",
+    "backend/tests/garFallbackGrouping.test.ts",
+    "backend/tests/gridExport.test.ts",
+    "backend/tests/importNumbers.test.ts",
+    "backend/tests/movScope.test.ts",
+    "backend/tests/revocationDurability.test.ts",
+    "backend/tests/revocationRecovery.test.ts",
+    "backend/tests/scopeReduction.test.ts",
+    "backend/tests/statisticalDataStatus.test.ts",
+    "backend/tests/statisticalWorkspaceAccess.test.ts"
+  ],
+  "backend/server/lib/readScope.ts": [
+    "backend/server/controllers/reportController.ts",
+    "backend/server/services/AccomplishmentService.ts",
+    "backend/server/services/DashboardService.ts",
+    "backend/server/services/GADPlanService.ts",
+    "backend/server/services/GarReportService.ts"
+  ],
+  "backend/server/lib/response.ts": [
+    "backend/server.ts",
+    "backend/server/controllers/admin/accomplishmentController.ts",
+    "backend/server/controllers/admin/auditLogController.ts",
+    "backend/server/controllers/admin/barangayController.ts",
+    "backend/server/controllers/admin/beneficiaryController.ts",
+    "backend/server/controllers/admin/dashboardController.ts",
+    "backend/server/controllers/admin/datasetController.ts",
+    "backend/server/controllers/admin/gadPlanController.ts",
+    "backend/server/controllers/admin/ingestionController.ts",
+    "backend/server/controllers/admin/observationController.ts",
+    "backend/server/controllers/admin/officeController.ts",
+    "backend/server/controllers/admin/programController.ts",
+    "backend/server/controllers/admin/statisticalImportController.ts",
+    "backend/server/controllers/admin/tableBuilderController.ts",
+    "backend/server/controllers/admin/userController.ts",
+    "backend/server/controllers/authController.ts",
+    "backend/server/controllers/publicController.ts",
+    "backend/server/controllers/reportController.ts",
+    "backend/server/middleware/authMiddleware.ts",
+    "backend/server/middleware/rateLimiter.ts",
+    "backend/server/middleware/validate.ts",
+    "backend/server/routes/admin/feedback.ts",
+    "backend/server/routes/admin/movAttachments.ts",
+    "backend/server/routes/admin/statisticalSearch.ts",
+    "backend/server/routes/dashboard.ts",
+    "backend/server/routes/gadPlans.ts",
+    "backend/server/routes/reports.ts",
+    "backend/server/routes/statisticalCatalog.ts",
+    "backend/server/validators/statisticalImportValidator.ts",
+    "backend/tests/errorResponsePrivacy.test.ts",
+    "backend/tests/errorTracking.test.ts"
+  ],
+  "backend/server/lib/sensitiveKeys.ts": [
+    "backend/server/lib/logger.ts",
+    "backend/server/middleware/piiSanitizer.ts",
+    "backend/tests/loggerRedaction.test.ts"
+  ],
+  "backend/server/lib/statisticalDataStatus.ts": [
+    "backend/server/services/StatisticalCatalogService.ts",
+    "backend/server/services/TableBuilderService.ts"
+  ],
+  "backend/server/lib/supabase.ts": [
+    "backend/server/services/MOVAttachmentService.ts"
+  ],
+  "backend/server/lib/trustProxy.ts": [
+    "backend/server.ts",
+    "backend/tests/ipAttributionProxy.test.ts"
+  ],
+  "backend/server/middleware/authMiddleware.ts": [
+    "backend/server/controllers/admin/accomplishmentController.ts",
+    "backend/server/controllers/admin/auditLogController.ts",
+    "backend/server/controllers/admin/barangayController.ts",
+    "backend/server/controllers/admin/beneficiaryController.ts",
+    "backend/server/controllers/admin/dashboardController.ts",
+    "backend/server/controllers/admin/datasetController.ts",
+    "backend/server/controllers/admin/gadPlanController.ts",
+    "backend/server/controllers/admin/ingestionController.ts",
+    "backend/server/controllers/admin/observationController.ts",
+    "backend/server/controllers/admin/officeController.ts",
+    "backend/server/controllers/admin/programController.ts",
+    "backend/server/controllers/admin/statisticalImportController.ts",
+    "backend/server/controllers/admin/tableBuilderController.ts",
+    "backend/server/controllers/admin/userController.ts",
+    "backend/server/controllers/authController.ts",
+    "backend/server/controllers/reportController.ts",
+    "backend/server/routes/accomplishments.ts",
+    "backend/server/routes/admin/accomplishments.ts",
+    "backend/server/routes/admin/auditLogs.ts",
+    "backend/server/routes/admin/beneficiaries.ts",
+    "backend/server/routes/admin/datasets.ts",
+    "backend/server/routes/admin/feedback.ts",
+    "backend/server/routes/admin/gadPlans.ts",
+    "backend/server/routes/admin/index.ts",
+    "backend/server/routes/admin/ingestion.ts",
+    "backend/server/routes/admin/movAttachments.ts",
+    "backend/server/routes/admin/movAttachments.ts",
+    "backend/server/routes/admin/offices.ts",
+    "backend/server/routes/admin/programs.ts",
+    "backend/server/routes/admin/statisticalImport.ts",
+    "backend/server/routes/admin/statisticalSearch.ts",
+    "backend/server/routes/admin/tableBuilder.ts",
+    "backend/server/routes/admin/users.ts",
+    "backend/server/routes/auth.ts",
+    "backend/server/routes/beneficiaries.ts",
+    "backend/server/routes/dashboard.ts",
+    "backend/server/routes/gadPlans.ts",
+    "backend/server/routes/programs.ts",
+    "backend/server/routes/reports.ts",
+    "backend/server/routes/users.ts",
+    "backend/tests/revocationDurability.test.ts",
+    "backend/tests/scopeReduction.test.ts"
+  ],
+  "backend/server/middleware/piiSanitizer.ts": [
+    "backend/scripts/test-backend.ts",
+    "backend/server/routes/public.ts",
+    "backend/server/routes/statisticalCatalog.ts"
+  ],
+  "backend/server/middleware/rateLimiter.ts": [
+    "backend/server/routes/admin/index.ts",
+    "backend/server/routes/auth.ts",
+    "backend/server/routes/beneficiaries.ts",
+    "backend/server/routes/dashboard.ts",
+    "backend/server/routes/public.ts",
+    "backend/tests/ipAttributionProxy.test.ts",
+    "backend/tests/scopeReduction.test.ts"
+  ],
+  "backend/server/middleware/requestLogger.ts": [
+    "backend/server.ts",
+    "backend/tests/requestUrlRedaction.test.ts"
+  ],
+  "backend/server/middleware/validate.ts": [
+    "backend/server/routes/accomplishments.ts",
+    "backend/server/routes/admin/accomplishments.ts",
+    "backend/server/routes/admin/barangays.ts",
+    "backend/server/routes/admin/beneficiaries.ts",
+    "backend/server/routes/admin/datasets.ts",
+    "backend/server/routes/admin/feedback.ts",
+    "backend/server/routes/admin/gadPlans.ts",
+    "backend/server/routes/admin/ingestion.ts",
+    "backend/server/routes/admin/offices.ts",
+    "backend/server/routes/admin/programs.ts",
+    "backend/server/routes/admin/statisticalSearch.ts",
+    "backend/server/routes/admin/tableBuilder.ts",
+    "backend/server/routes/admin/users.ts",
+    "backend/server/routes/auth.ts",
+    "backend/server/routes/beneficiaries.ts",
+    "backend/server/routes/gadPlans.ts",
+    "backend/server/routes/programs.ts",
+    "backend/server/routes/public.ts",
+    "backend/server/routes/users.ts"
+  ],
+  "backend/server/routes/accomplishments.ts": [
+    "backend/server.ts"
+  ],
+  "backend/server/routes/admin/accomplishments.ts": [
+    "backend/server/routes/admin/index.ts"
+  ],
+  "backend/server/routes/admin/auditLogs.ts": [
+    "backend/server/routes/admin/index.ts"
+  ],
+  "backend/server/routes/admin/barangays.ts": [
+    "backend/server/routes/admin/index.ts"
+  ],
+  "backend/server/routes/admin/beneficiaries.ts": [
+    "backend/server/routes/admin/index.ts",
+    "backend/tests/scopeReduction.test.ts"
+  ],
+  "backend/server/routes/admin/datasets.ts": [
+    "backend/server/routes/admin/index.ts"
+  ],
+  "backend/server/routes/admin/feedback.ts": [
+    "backend/server/routes/admin/index.ts"
+  ],
+  "backend/server/routes/admin/gadPlans.ts": [
+    "backend/server/routes/admin/index.ts"
+  ],
+  "backend/server/routes/admin/index.ts": [
+    "backend/scripts/qualify-gad-workflow.ts",
+    "backend/scripts/qualify-import-layout.ts",
+    "backend/scripts/qualify-statistical-search.ts",
+    "backend/server.ts",
+    "backend/tests/feedback.test.ts",
+    "backend/tests/gadDomainCompletionIssue10.test.ts",
+    "backend/tests/ingestionAuth.test.ts",
+    "backend/tests/observationService.test.ts",
+    "backend/tests/scopeReduction.test.ts",
+    "backend/tests/statisticalCsvImport.test.ts",
+    "backend/tests/statisticalDataEntryGrid.test.ts",
+    "backend/tests/statisticalSearch.test.ts",
+    "backend/tests/tableBuilderHttpIntegration.test.ts"
+  ],
+  "backend/server/routes/admin/ingestion.ts": [
+    "backend/server/routes/admin/index.ts"
+  ],
+  "backend/server/routes/admin/movAttachments.ts": [
+    "backend/server/routes/admin/index.ts",
+    "backend/tests/movMultipart.test.ts"
+  ],
+  "backend/server/routes/admin/offices.ts": [
+    "backend/server/routes/admin/index.ts"
+  ],
+  "backend/server/routes/admin/programs.ts": [
+    "backend/server/routes/admin/index.ts"
+  ],
+  "backend/server/routes/admin/statisticalImport.ts": [
+    "backend/server/routes/admin/index.ts"
+  ],
+  "backend/server/routes/admin/statisticalSearch.ts": [
+    "backend/server/routes/admin/index.ts"
+  ],
+  "backend/server/routes/admin/tableBuilder.ts": [
+    "backend/server/routes/admin/index.ts",
+    "backend/tests/gridExport.test.ts"
+  ],
+  "backend/server/routes/admin/users.ts": [
+    "backend/server/routes/admin/index.ts"
+  ],
+  "backend/server/routes/auth.ts": [
+    "backend/server.ts",
+    "backend/tests/rateLimitEnforcement.test.ts"
+  ],
+  "backend/server/routes/beneficiaries.ts": [
+    "backend/server.ts",
+    "backend/tests/scopeReduction.test.ts"
+  ],
+  "backend/server/routes/dashboard.ts": [
+    "backend/server.ts",
+    "backend/tests/dashboardAuth.test.ts",
+    "backend/tests/scopeReduction.test.ts"
+  ],
+  "backend/server/routes/gadPlans.ts": [
+    "backend/scripts/qualify-gad-workflow.ts",
+    "backend/server.ts",
+    "backend/tests/gadDomainCompletionIssue10.test.ts"
+  ],
+  "backend/server/routes/programs.ts": [
+    "backend/server.ts"
+  ],
+  "backend/server/routes/public.ts": [
+    "backend/scripts/qualify-import-layout.ts",
+    "backend/server.ts",
+    "backend/tests/barangayGeo.test.ts",
+    "backend/tests/feedback.test.ts",
+    "backend/tests/rateLimitEnforcement.test.ts",
+    "backend/tests/scopeReduction.test.ts"
+  ],
+  "backend/server/routes/reports.ts": [
+    "backend/server.ts",
+    "backend/tests/gadDomainCompletionIssue10.test.ts",
+    "backend/tests/scopeReduction.test.ts"
+  ],
+  "backend/server/routes/statisticalCatalog.ts": [
+    "backend/server.ts",
+    "backend/server/routes/admin/index.ts"
+  ],
+  "backend/server/routes/users.ts": [
+    "backend/server.ts"
+  ],
+  "backend/server/services/AccomplishmentService.ts": [
+    "backend/scripts/qualify-audit-integrity.ts",
+    "backend/scripts/test-backend.ts",
+    "backend/server/controllers/admin/accomplishmentController.ts",
+    "backend/server/controllers/publicController.ts",
+    "backend/server/controllers/reportController.ts",
+    "backend/tests/durableAuditRollback.test.ts",
+    "backend/tests/scopeReduction.test.ts"
+  ],
+  "backend/server/services/AuditService.ts": [
+    "backend/scripts/e2e-qualification-sprint6.ts",
+    "backend/scripts/test-backend.ts",
+    "backend/server/controllers/admin/auditLogController.ts",
+    "backend/server/controllers/publicController.ts",
+    "backend/server/services/AccomplishmentService.ts",
+    "backend/server/services/AuthService.ts",
+    "backend/server/services/BeneficiaryService.ts",
+    "backend/server/services/CsvIngestionService.ts",
+    "backend/server/services/GADPlanService.ts",
+    "backend/server/services/MOVAttachmentService.ts",
+    "backend/server/services/ObservationService.ts",
+    "backend/server/services/OfficeService.ts",
+    "backend/server/services/ProgramService.ts",
+    "backend/server/services/StatisticalCatalogService.ts",
+    "backend/server/services/StatisticalDatasetService.ts",
+    "backend/server/services/StatisticalObservationIngestionService.ts",
+    "backend/server/services/TableBuilderService.ts",
+    "backend/server/services/UserService.ts",
+    "backend/tests/datasetHistoryScope.test.ts",
+    "backend/tests/durableAuditRollback.test.ts",
+    "backend/tests/ipAttributionProxy.test.ts",
+    "backend/tests/observationService.test.ts",
+    "backend/tests/tableBuilder.test.ts",
+    "backend/tests/tableBuilderHttpIntegration.test.ts"
+  ],
+  "backend/server/services/AuthService.ts": [
+    "backend/scripts/e2e-qualification-sprint6.ts",
+    "backend/scripts/qualify-revocation.ts",
+    "backend/scripts/test-backend.ts",
+    "backend/server.ts",
+    "backend/server/controllers/authController.ts",
+    "backend/server/middleware/authMiddleware.ts",
+    "backend/server/services/UserService.ts",
+    "backend/tests/demoModeAuth.test.ts",
+    "backend/tests/revocationDurability.test.ts",
+    "backend/tests/sessionLogout.test.ts"
+  ],
+  "backend/server/services/BarangayService.ts": [
+    "backend/scripts/e2e-qualification-issue16.ts",
+    "backend/scripts/e2e-qualification-issue17.ts",
+    "backend/scripts/e2e-qualification-sprint6.ts",
+    "backend/scripts/test-backend.ts",
+    "backend/scripts/test-sprint7-phase1.ts",
+    "backend/server/controllers/admin/barangayController.ts",
+    "backend/server/controllers/publicController.ts",
+    "backend/server/services/ObservationService.ts",
+    "backend/server/services/StatisticalObservationIngestionService.ts",
+    "backend/tests/importNumbers.test.ts",
+    "backend/tests/scopeReduction.test.ts"
+  ],
+  "backend/server/services/BeneficiaryService.ts": [
+    "backend/scripts/e2e-qualification-sprint6.ts",
+    "backend/scripts/qualify-audit-integrity.ts",
+    "backend/scripts/test-backend.ts",
+    "backend/server/controllers/admin/beneficiaryController.ts",
+    "backend/server/controllers/publicController.ts",
+    "backend/server/controllers/reportController.ts",
+    "backend/server/services/CsvIngestionService.ts",
+    "backend/tests/beneficiaryReports.test.ts",
+    "backend/tests/beneficiaryScope.test.ts",
+    "backend/tests/durableAuditRollback.test.ts",
+    "backend/tests/scopeReduction.test.ts"
+  ],
+  "backend/server/services/CsvDiscoveryService.ts": [
+    "backend/scripts/e2e-qualification-sprint6.ts",
+    "backend/scripts/test-backend.ts",
+    "backend/server/controllers/admin/ingestionController.ts",
+    "backend/server/services/CsvIngestionService.ts"
+  ],
+  "backend/server/services/CsvIngestionService.ts": [
+    "backend/scripts/e2e-qualification-sprint6.ts",
+    "backend/scripts/qualify-audit-integrity.ts",
+    "backend/scripts/test-backend.ts",
+    "backend/server/controllers/admin/ingestionController.ts"
+  ],
+  "backend/server/services/DashboardService.ts": [
+    "backend/scripts/test-backend.ts",
+    "backend/server/controllers/admin/dashboardController.ts",
+    "backend/server/controllers/publicController.ts",
+    "backend/server/routes/dashboard.ts",
+    "backend/tests/scopeReduction.test.ts"
+  ],
+  "backend/server/services/FeedbackService.ts": [
+    "backend/scripts/qualify-audit-integrity.ts",
+    "backend/server/controllers/publicController.ts",
+    "backend/server/routes/admin/feedback.ts"
+  ],
+  "backend/server/services/GADPlanService.ts": [
+    "backend/scripts/e2e-qualification-issue10.ts",
+    "backend/scripts/qualify-audit-integrity.ts",
+    "backend/scripts/test-backend.ts",
+    "backend/server/controllers/admin/gadPlanController.ts",
+    "backend/server/controllers/publicController.ts",
+    "backend/server/controllers/reportController.ts",
+    "backend/server/routes/gadPlans.ts",
+    "backend/tests/gadDomainCompletionIssue10.test.ts",
+    "backend/tests/gadPlanApproval.test.ts",
+    "backend/tests/gadWorkflowBypass.test.ts",
+    "backend/tests/scopeReduction.test.ts"
+  ],
+  "backend/server/services/GadBudgetValidator.ts": [
+    "backend/scripts/e2e-qualification-issue10.ts",
+    "backend/server/services/GADPlanService.ts",
+    "backend/tests/gadDomainCompletionIssue10.test.ts"
+  ],
+  "backend/server/services/GarReportService.ts": [
+    "backend/scripts/e2e-qualification-issue10.ts",
+    "backend/server/routes/reports.ts",
+    "backend/tests/gadDomainCompletionIssue10.test.ts",
+    "backend/tests/garFallbackGrouping.test.ts",
+    "backend/tests/scopeReduction.test.ts"
+  ],
+  "backend/server/services/HgdgScoringService.ts": [
+    "backend/scripts/e2e-qualification-issue10.ts",
+    "backend/server/services/GADPlanService.ts",
+    "backend/tests/gadDomainCompletionIssue10.test.ts"
+  ],
+  "backend/server/services/MOVAttachmentService.ts": [
+    "backend/server/routes/admin/movAttachments.ts",
+    "backend/tests/movMultipart.test.ts",
+    "backend/tests/movScope.test.ts"
+  ],
+  "backend/server/services/ObservationService.ts": [
+    "backend/scripts/e2e-qualification-issue16.ts",
+    "backend/scripts/e2e-qualification-issue17.ts",
+    "backend/scripts/qualify-audit-integrity.ts",
+    "backend/server/controllers/admin/observationController.ts",
+    "backend/server/services/StatisticalObservationIngestionService.ts",
+    "backend/server/services/TableBuilderService.ts",
+    "backend/tests/dimensionLock.test.ts",
+    "backend/tests/importNumbers.test.ts",
+    "backend/tests/observationService.test.ts",
+    "backend/tests/statisticalCsvImport.test.ts",
+    "backend/tests/statisticalDataEntryGrid.test.ts",
+    "backend/tests/statisticalGovernanceIssue17.test.ts",
+    "backend/tests/statisticalWorkspaceAccess.test.ts"
+  ],
+  "backend/server/services/OfficeService.ts": [
+    "backend/scripts/e2e-qualification-sprint6.ts",
+    "backend/scripts/qualify-audit-integrity.ts",
+    "backend/scripts/test-backend.ts",
+    "backend/server/controllers/admin/officeController.ts",
+    "backend/server/controllers/publicController.ts",
+    "backend/tests/durableAuditRollback.test.ts"
+  ],
+  "backend/server/services/ProgramService.ts": [
+    "backend/scripts/e2e-qualification-sprint6.ts",
+    "backend/scripts/qualify-audit-integrity.ts",
+    "backend/scripts/test-backend.ts",
+    "backend/server/controllers/admin/programController.ts",
+    "backend/server/controllers/publicController.ts",
+    "backend/server/services/CsvIngestionService.ts",
+    "backend/tests/durableAuditRollback.test.ts"
+  ],
+  "backend/server/services/StatisticalCatalogService.ts": [
+    "backend/prisma/seed.ts",
+    "backend/scripts/e2e-qualification-issue17.ts",
+    "backend/scripts/qualify-audit-integrity.ts",
+    "backend/scripts/qualify-cbms-catalog.ts",
+    "backend/scripts/test-sprint7-phase1.ts",
+    "backend/server/routes/statisticalCatalog.ts",
+    "backend/server/services/TableBuilderService.ts",
+    "backend/server/services/reconcileCbmsCatalog.ts",
+    "backend/tests/cbmsSourceReconciliation.test.ts",
+    "backend/tests/statisticalCatalog.test.ts",
+    "backend/tests/statisticalDataStatus.test.ts",
+    "backend/tests/statisticalGovernanceIssue17.test.ts"
+  ],
+  "backend/server/services/StatisticalDatasetService.ts": [
+    "backend/scripts/e2e-qualification-issue16.ts",
+    "backend/scripts/e2e-qualification-issue17.ts",
+    "backend/scripts/qualify-audit-integrity.ts",
+    "backend/server/controllers/admin/datasetController.ts",
+    "backend/server/controllers/publicController.ts",
+    "backend/server/services/ObservationService.ts",
+    "backend/server/services/StatisticalObservationIngestionService.ts",
+    "backend/server/services/StatisticalSearchService.ts",
+    "backend/tests/datasetGovernance.test.ts",
+    "backend/tests/datasetHistoryScope.test.ts",
+    "backend/tests/dimensionLock.test.ts",
+    "backend/tests/gridExport.test.ts",
+    "backend/tests/observationService.test.ts",
+    "backend/tests/statisticalCsvImport.test.ts",
+    "backend/tests/statisticalDataEntryGrid.test.ts",
+    "backend/tests/statisticalGovernanceIssue17.test.ts",
+    "backend/tests/statisticalWorkspaceAccess.test.ts"
+  ],
+  "backend/server/services/StatisticalObservationIngestionService.ts": [
+    "backend/scripts/e2e-qualification-issue16.ts",
+    "backend/scripts/e2e-qualification-issue17.ts",
+    "backend/scripts/qualify-audit-integrity.ts",
+    "backend/server/controllers/admin/statisticalImportController.ts",
+    "backend/tests/importNumbers.test.ts",
+    "backend/tests/statisticalCsvImport.test.ts"
+  ],
+  "backend/server/services/StatisticalSearchService.ts": [
+    "backend/server/routes/admin/statisticalSearch.ts",
+    "backend/tests/statisticalSearch.test.ts"
+  ],
+  "backend/server/services/TableBuilderService.ts": [
+    "backend/scripts/e2e-qualification-issue16.ts",
+    "backend/scripts/e2e-qualification-issue17.ts",
+    "backend/scripts/qualify-audit-integrity.ts",
+    "backend/server/controllers/admin/statisticalImportController.ts",
+    "backend/server/controllers/admin/tableBuilderController.ts",
+    "backend/server/services/FeedbackService.ts",
+    "backend/server/services/ObservationService.ts",
+    "backend/server/services/StatisticalObservationIngestionService.ts",
+    "backend/server/services/StatisticalSearchService.ts",
+    "backend/tests/dimensionLock.test.ts",
+    "backend/tests/gridExport.test.ts",
+    "backend/tests/importNumbers.test.ts",
+    "backend/tests/observationService.test.ts",
+    "backend/tests/statisticalCsvImport.test.ts",
+    "backend/tests/statisticalDataEntryGrid.test.ts",
+    "backend/tests/statisticalDataStatus.test.ts",
+    "backend/tests/statisticalGovernanceIssue17.test.ts",
+    "backend/tests/statisticalWorkspaceAccess.test.ts",
+    "backend/tests/tableBuilder.test.ts",
+    "backend/tests/tableBuilderHttpIntegration.test.ts"
+  ],
+  "backend/server/services/TokenRevocationService.ts": [
+    "backend/scripts/qualify-revocation.ts",
+    "backend/server.ts",
+    "backend/server/lib/jwt.ts",
+    "backend/server/middleware/authMiddleware.ts",
+    "backend/server/services/AuthService.ts",
+    "backend/tests/revocationDurability.test.ts",
+    "backend/tests/revocationRecovery.test.ts",
+    "backend/tests/sessionLogout.test.ts",
+    "backend/tests/sprint9BackendSecurity.test.ts"
+  ],
+  "backend/server/services/UserService.ts": [
+    "backend/scripts/e2e-qualification-sprint6.ts",
+    "backend/scripts/qualify-audit-integrity.ts",
+    "backend/scripts/test-backend.ts",
+    "backend/server/controllers/admin/userController.ts",
+    "backend/tests/durableAuditRollback.test.ts"
+  ],
+  "backend/server/services/reconcileCbmsCatalog.ts": [
+    "backend/prisma/seed.ts",
+    "backend/scripts/qualify-cbms-catalog.ts",
+    "backend/server/services/StatisticalCatalogService.ts"
+  ],
+  "backend/server/types/statisticalImport.types.ts": [
+    "backend/server/services/StatisticalObservationIngestionService.ts",
+    "backend/server/validators/statisticalImportValidator.ts"
+  ],
+  "backend/server/validation/schemas.ts": [
+    "backend/scripts/test-backend.ts",
+    "backend/server/routes/accomplishments.ts",
+    "backend/server/routes/admin/accomplishments.ts",
+    "backend/server/routes/admin/barangays.ts",
+    "backend/server/routes/admin/beneficiaries.ts",
+    "backend/server/routes/admin/gadPlans.ts",
+    "backend/server/routes/admin/offices.ts",
+    "backend/server/routes/admin/programs.ts",
+    "backend/server/routes/admin/users.ts",
+    "backend/server/routes/auth.ts",
+    "backend/server/routes/beneficiaries.ts",
+    "backend/server/routes/gadPlans.ts",
+    "backend/server/routes/programs.ts",
+    "backend/server/routes/public.ts",
+    "backend/server/routes/users.ts",
+    "backend/tests/gadWorkflowBypass.test.ts",
+    "backend/tests/partialUpdateDefaults.test.ts"
+  ],
+  "backend/server/validators/datasetValidator.ts": [
+    "backend/server/routes/admin/datasets.ts"
+  ],
+  "backend/server/validators/ingestionValidator.ts": [
+    "backend/server/routes/admin/ingestion.ts"
+  ],
+  "backend/server/validators/observationValidator.ts": [
+    "backend/server/routes/admin/tableBuilder.ts"
+  ],
+  "backend/server/validators/statisticalImportValidator.ts": [
+    "backend/server/routes/admin/statisticalImport.ts"
+  ],
+  "backend/server/validators/tableBuilderValidator.ts": [
+    "backend/server/routes/admin/tableBuilder.ts"
+  ],
+  "backend/tests/barangayGeo.test.ts": [],
+  "backend/tests/beneficiaryReports.test.ts": [],
+  "backend/tests/beneficiaryScope.test.ts": [],
+  "backend/tests/cbmsSourceReconciliation.test.ts": [],
+  "backend/tests/csvLayout.test.ts": [],
+  "backend/tests/dashboardAuth.test.ts": [],
+  "backend/tests/databaseRecovery.test.ts": [],
+  "backend/tests/datasetGovernance.test.ts": [],
+  "backend/tests/datasetHistoryScope.test.ts": [],
+  "backend/tests/demoModeAuth.test.ts": [],
+  "backend/tests/dimensionLock.test.ts": [],
+  "backend/tests/durableAuditRollback.test.ts": [],
+  "backend/tests/errorResponsePrivacy.test.ts": [],
+  "backend/tests/errorTracking.test.ts": [],
+  "backend/tests/feedback.test.ts": [],
+  "backend/tests/frontendCors.test.ts": [],
+  "backend/tests/gadDomainCompletionIssue10.test.ts": [],
+  "backend/tests/gadPlanApproval.test.ts": [],
+  "backend/tests/gadWorkflowBypass.test.ts": [],
+  "backend/tests/garFallbackGrouping.test.ts": [],
+  "backend/tests/gridExport.test.ts": [],
+  "backend/tests/importNumbers.test.ts": [],
+  "backend/tests/ingestionAuth.test.ts": [],
+  "backend/tests/ipAttributionProxy.test.ts": [],
+  "backend/tests/loggerRedaction.test.ts": [],
+  "backend/tests/movMultipart.test.ts": [],
+  "backend/tests/movScope.test.ts": [],
+  "backend/tests/observationService.test.ts": [],
+  "backend/tests/partialUpdateDefaults.test.ts": [],
+  "backend/tests/productionStartup.test.ts": [],
+  "backend/tests/rateLimitEnforcement.test.ts": [],
+  "backend/tests/requestUrlRedaction.test.ts": [],
+  "backend/tests/revocationDurability.test.ts": [],
+  "backend/tests/revocationRecovery.test.ts": [],
+  "backend/tests/rlsMigration.test.ts": [],
+  "backend/tests/scopeReduction.test.ts": [],
+  "backend/tests/sessionLogout.test.ts": [],
+  "backend/tests/sprint9BackendSecurity.test.ts": [],
+  "backend/tests/statisticalCatalog.test.ts": [],
+  "backend/tests/statisticalCsvImport.test.ts": [],
+  "backend/tests/statisticalDataEntryGrid.test.ts": [],
+  "backend/tests/statisticalDataStatus.test.ts": [],
+  "backend/tests/statisticalGovernanceIssue17.test.ts": [],
+  "backend/tests/statisticalSearch.test.ts": [],
+  "backend/tests/statisticalWorkspaceAccess.test.ts": [],
+  "backend/tests/tableBuilder.test.ts": [],
+  "backend/tests/tableBuilderHttpIntegration.test.ts": [],
+  "backend/tests/testEnvironment.ts": [
+    "backend/tests/barangayGeo.test.ts",
+    "backend/tests/beneficiaryReports.test.ts",
+    "backend/tests/beneficiaryScope.test.ts",
+    "backend/tests/cbmsSourceReconciliation.test.ts",
+    "backend/tests/dashboardAuth.test.ts",
+    "backend/tests/datasetGovernance.test.ts",
+    "backend/tests/datasetHistoryScope.test.ts",
+    "backend/tests/dimensionLock.test.ts",
+    "backend/tests/feedback.test.ts",
+    "backend/tests/frontendCors.test.ts",
+    "backend/tests/gadDomainCompletionIssue10.test.ts",
+    "backend/tests/gadPlanApproval.test.ts",
+    "backend/tests/gadWorkflowBypass.test.ts",
+    "backend/tests/garFallbackGrouping.test.ts",
+    "backend/tests/gridExport.test.ts",
+    "backend/tests/importNumbers.test.ts",
+    "backend/tests/ingestionAuth.test.ts",
+    "backend/tests/movMultipart.test.ts",
+    "backend/tests/movScope.test.ts",
+    "backend/tests/observationService.test.ts",
+    "backend/tests/rateLimitEnforcement.test.ts",
+    "backend/tests/revocationDurability.test.ts",
+    "backend/tests/revocationRecovery.test.ts",
+    "backend/tests/scopeReduction.test.ts",
+    "backend/tests/sessionLogout.test.ts",
+    "backend/tests/sprint9BackendSecurity.test.ts",
+    "backend/tests/statisticalCatalog.test.ts",
+    "backend/tests/statisticalCsvImport.test.ts",
+    "backend/tests/statisticalDataEntryGrid.test.ts",
+    "backend/tests/statisticalDataStatus.test.ts",
+    "backend/tests/statisticalGovernanceIssue17.test.ts",
+    "backend/tests/statisticalSearch.test.ts",
+    "backend/tests/statisticalWorkspaceAccess.test.ts",
+    "backend/tests/tableBuilder.test.ts",
+    "backend/tests/tableBuilderHttpIntegration.test.ts"
+  ],
+  "frontend/playwright.config.ts": [],
+  "frontend/src/App.tsx": [
+    "frontend/src/main.tsx"
+  ],
+  "frontend/src/api/apiUrl.ts": [
+    "frontend/src/api/axios.ts",
+    "frontend/src/modules/auth/authService.ts",
+    "frontend/src/pages/Reports.tsx",
+    "frontend/tests/apiUrl.test.ts"
+  ],
+  "frontend/src/api/axios.ts": [
+    "frontend/src/api/movAttachments.ts",
+    "frontend/src/api/publicApi.ts",
+    "frontend/src/api/statisticalCatalog.ts",
+    "frontend/src/api/statisticalData.ts",
+    "frontend/src/api/tableBuilder.ts",
+    "frontend/src/modules/ingestion/ingestionApi.ts",
+    "frontend/src/modules/statisticalData/components/StatisticalSearch.tsx",
+    "frontend/src/modules/statisticalData/components/StatisticalSummary.tsx",
+    "frontend/src/pages/Accomplishments.tsx",
+    "frontend/src/pages/Dashboard.tsx",
+    "frontend/src/pages/DataEncoding.tsx",
+    "frontend/src/pages/GADPlan.tsx",
+    "frontend/src/pages/ProgramMonitoring.tsx",
+    "frontend/src/pages/UserManagement.tsx"
+  ],
+  "frontend/src/api/movAttachments.ts": [
+    "frontend/src/modules/documents/components/MOVAttachmentWidget.tsx"
+  ],
+  "frontend/src/api/publicApi.ts": [
+    "frontend/src/pages/public/LandingPage.tsx",
+    "frontend/src/pages/public/PublicAccomplishments.tsx",
+    "frontend/src/pages/public/PublicDemographics.tsx",
+    "frontend/src/pages/public/PublicFeedback.tsx",
+    "frontend/src/pages/public/PublicGADPlans.tsx",
+    "frontend/src/pages/public/PublicPrograms.tsx"
+  ],
+  "frontend/src/api/statisticalCatalog.ts": [
+    "frontend/src/pages/StatisticalCatalog.tsx"
+  ],
+  "frontend/src/api/statisticalData.ts": [
+    "frontend/src/modules/statisticalData/components/CreateDatasetModal.tsx",
+    "frontend/src/modules/statisticalData/components/DataEntryGrid.tsx",
+    "frontend/src/modules/statisticalData/components/DatasetSelector.tsx",
+    "frontend/src/modules/statisticalData/components/StatisticalCsvImportModal.tsx",
+    "frontend/src/modules/statisticalData/components/StatisticalDataCatalog.tsx"
+  ],
+  "frontend/src/api/tableBuilder.ts": [
+    "frontend/src/modules/statisticalData/components/StatisticalDataCatalog.tsx",
+    "frontend/src/modules/statisticalData/components/TableDataEntryView.tsx",
+    "frontend/src/modules/tableBuilder/components/BindDimensionModal.tsx",
+    "frontend/src/modules/tableBuilder/components/CreateCustomTableModal.tsx",
+    "frontend/src/modules/tableBuilder/components/EditTableMetadataModal.tsx",
+    "frontend/src/modules/tableBuilder/components/IndicatorFormModal.tsx",
+    "frontend/src/modules/tableBuilder/components/TableBuilderList.tsx",
+    "frontend/src/modules/tableBuilder/components/TableDetailView.tsx"
+  ],
+  "frontend/src/app/config/env.ts": [
+    "frontend/src/lib/supabase/client.ts",
+    "frontend/src/modules/audit/auditService.ts",
+    "frontend/src/modules/budgets/budgetService.ts",
+    "frontend/src/modules/documents/documentService.ts",
+    "frontend/src/modules/programs/programService.ts",
+    "frontend/src/modules/users/userService.ts"
+  ],
+  "frontend/src/app/providers/AppProviders.tsx": [
+    "frontend/src/App.tsx"
+  ],
+  "frontend/src/app/router/AppRouter.tsx": [
+    "frontend/src/App.tsx"
+  ],
+  "frontend/src/components/common/CommunityUnityIllustration.tsx": [
+    "frontend/src/components/layout/PublicLayout.tsx"
+  ],
+  "frontend/src/components/common/ErrorBoundary.tsx": [
+    "frontend/src/app/router/AppRouter.tsx"
+  ],
+  "frontend/src/components/common/LoadingSpinner.tsx": [
+    "frontend/src/pages/public/LandingPage.tsx",
+    "frontend/src/pages/public/PublicAccomplishments.tsx",
+    "frontend/src/pages/public/PublicDemographics.tsx",
+    "frontend/src/pages/public/PublicGADPlans.tsx",
+    "frontend/src/pages/public/PublicPrograms.tsx"
+  ],
+  "frontend/src/components/common/Logo.tsx": [
+    "frontend/src/components/layout/PublicLayout.tsx",
+    "frontend/src/components/layout/TopBar.tsx"
+  ],
+  "frontend/src/components/common/StatusBadge.tsx": [],
+  "frontend/src/components/illustrations/AmbientDecorations.tsx": [
+    "frontend/src/components/illustrations/index.ts"
+  ],
+  "frontend/src/components/illustrations/BarangayNetworkArtwork.tsx": [
+    "frontend/src/components/illustrations/index.ts"
+  ],
+  "frontend/src/components/illustrations/HeroPeekingConstituents.tsx": [
+    "frontend/src/components/illustrations/index.ts"
+  ],
+  "frontend/src/components/illustrations/LandingBackgroundOverlays.tsx": [
+    "frontend/src/components/illustrations/index.ts"
+  ],
+  "frontend/src/components/illustrations/MunicipalSealWatermark.tsx": [
+    "frontend/src/components/illustrations/index.ts"
+  ],
+  "frontend/src/components/illustrations/StatsCornerArtwork.tsx": [
+    "frontend/src/components/illustrations/index.ts"
+  ],
+  "frontend/src/components/illustrations/index.ts": [
+    "frontend/src/pages/public/LandingPage.tsx"
+  ],
+  "frontend/src/components/layout/AppLayout.tsx": [
+    "frontend/src/app/router/AppRouter.tsx"
+  ],
+  "frontend/src/components/layout/Layout.tsx": [],
+  "frontend/src/components/layout/Navbar.tsx": [
+    "frontend/src/components/layout/Layout.tsx"
+  ],
+  "frontend/src/components/layout/PublicLayout.tsx": [
+    "frontend/src/app/router/AppRouter.tsx"
+  ],
+  "frontend/src/components/layout/Sidebar.tsx": [
+    "frontend/src/components/layout/AppLayout.tsx",
+    "frontend/src/components/layout/Layout.tsx"
+  ],
+  "frontend/src/components/layout/TopBar.tsx": [
+    "frontend/src/components/layout/AppLayout.tsx"
+  ],
+  "frontend/src/components/ui/avatar.tsx": [],
+  "frontend/src/components/ui/badge.tsx": [
+    "frontend/src/modules/ingestion/components/ConfirmationStep.tsx",
+    "frontend/src/modules/ingestion/components/MappingStep.tsx",
+    "frontend/src/modules/ingestion/components/PreviewStep.tsx",
+    "frontend/src/modules/ingestion/components/SummaryStep.tsx",
+    "frontend/src/modules/statisticalData/components/DataEntryGrid.tsx",
+    "frontend/src/modules/statisticalData/components/DatasetSelector.tsx",
+    "frontend/src/modules/statisticalData/components/StatisticalCsvImportModal.tsx",
+    "frontend/src/modules/statisticalData/components/StatisticalDataCatalog.tsx",
+    "frontend/src/modules/statisticalData/components/TableDataEntryView.tsx",
+    "frontend/src/pages/Reports.tsx",
+    "frontend/src/pages/UserManagement.tsx",
+    "frontend/src/pages/dashboard/DashboardPage.tsx"
+  ],
+  "frontend/src/components/ui/button.tsx": [
+    "frontend/src/components/ui/dialog.tsx",
+    "frontend/src/modules/documents/components/MOVAttachmentWidget.tsx",
+    "frontend/src/modules/ingestion/components/ConfirmationStep.tsx",
+    "frontend/src/modules/ingestion/components/CsvImportModal.tsx",
+    "frontend/src/modules/ingestion/components/MappingStep.tsx",
+    "frontend/src/modules/ingestion/components/PreviewStep.tsx",
+    "frontend/src/modules/ingestion/components/SummaryStep.tsx",
+    "frontend/src/modules/ingestion/components/UploadStep.tsx",
+    "frontend/src/modules/statisticalData/components/CreateDatasetModal.tsx",
+    "frontend/src/modules/statisticalData/components/DataEntryGrid.tsx",
+    "frontend/src/modules/statisticalData/components/DatasetSelector.tsx",
+    "frontend/src/modules/statisticalData/components/StatisticalCsvImportModal.tsx",
+    "frontend/src/modules/statisticalData/components/StatisticalDataCatalog.tsx",
+    "frontend/src/modules/statisticalData/components/StatisticalSearch.tsx",
+    "frontend/src/modules/statisticalData/components/StatisticalSummary.tsx",
+    "frontend/src/modules/statisticalData/components/TableDataEntryView.tsx",
+    "frontend/src/modules/tableBuilder/components/BindDimensionModal.tsx",
+    "frontend/src/modules/tableBuilder/components/CreateCustomTableModal.tsx",
+    "frontend/src/modules/tableBuilder/components/DeleteConfirmDialog.tsx",
+    "frontend/src/modules/tableBuilder/components/EditTableMetadataModal.tsx",
+    "frontend/src/modules/tableBuilder/components/IndicatorFormModal.tsx",
+    "frontend/src/modules/tableBuilder/components/TableBuilderList.tsx",
+    "frontend/src/modules/tableBuilder/components/TableDetailView.tsx",
+    "frontend/src/pages/Accomplishments.tsx",
+    "frontend/src/pages/DataEncoding.tsx",
+    "frontend/src/pages/GADPlan.tsx",
+    "frontend/src/pages/ProgramMonitoring.tsx",
+    "frontend/src/pages/Reports.tsx",
+    "frontend/src/pages/UserManagement.tsx"
+  ],
+  "frontend/src/components/ui/card.tsx": [
+    "frontend/src/modules/ingestion/components/ConfirmationStep.tsx",
+    "frontend/src/modules/ingestion/components/MappingStep.tsx",
+    "frontend/src/modules/ingestion/components/PreviewStep.tsx",
+    "frontend/src/modules/ingestion/components/SummaryStep.tsx",
+    "frontend/src/pages/Accomplishments.tsx",
+    "frontend/src/pages/DataEncoding.tsx",
+    "frontend/src/pages/GADPlan.tsx",
+    "frontend/src/pages/ProgramMonitoring.tsx",
+    "frontend/src/pages/Reports.tsx",
+    "frontend/src/pages/UserManagement.tsx",
+    "frontend/src/pages/dashboard/DashboardPage.tsx"
+  ],
+  "frontend/src/components/ui/dialog.tsx": [
+    "frontend/src/modules/ingestion/components/CsvImportModal.tsx",
+    "frontend/src/modules/statisticalData/components/CreateDatasetModal.tsx",
+    "frontend/src/modules/statisticalData/components/StatisticalCsvImportModal.tsx",
+    "frontend/src/modules/tableBuilder/components/BindDimensionModal.tsx",
+    "frontend/src/modules/tableBuilder/components/CreateCustomTableModal.tsx",
+    "frontend/src/modules/tableBuilder/components/DeleteConfirmDialog.tsx",
+    "frontend/src/modules/tableBuilder/components/EditTableMetadataModal.tsx",
+    "frontend/src/modules/tableBuilder/components/IndicatorFormModal.tsx",
+    "frontend/src/pages/Accomplishments.tsx",
+    "frontend/src/pages/DataEncoding.tsx",
+    "frontend/src/pages/GADPlan.tsx",
+    "frontend/src/pages/ProgramMonitoring.tsx",
+    "frontend/src/pages/UserManagement.tsx"
+  ],
+  "frontend/src/components/ui/dropdown-menu.tsx": [],
+  "frontend/src/components/ui/input.tsx": [
+    "frontend/src/modules/statisticalData/components/CreateDatasetModal.tsx",
+    "frontend/src/modules/statisticalData/components/DataEntryGrid.tsx",
+    "frontend/src/modules/statisticalData/components/StatisticalDataCatalog.tsx",
+    "frontend/src/modules/tableBuilder/components/BindDimensionModal.tsx",
+    "frontend/src/modules/tableBuilder/components/CreateCustomTableModal.tsx",
+    "frontend/src/modules/tableBuilder/components/EditTableMetadataModal.tsx",
+    "frontend/src/modules/tableBuilder/components/IndicatorFormModal.tsx",
+    "frontend/src/modules/tableBuilder/components/TableBuilderList.tsx",
+    "frontend/src/pages/Accomplishments.tsx",
+    "frontend/src/pages/DataEncoding.tsx",
+    "frontend/src/pages/GADPlan.tsx",
+    "frontend/src/pages/ProgramMonitoring.tsx",
+    "frontend/src/pages/UserManagement.tsx"
+  ],
+  "frontend/src/components/ui/label.tsx": [
+    "frontend/src/modules/statisticalData/components/CreateDatasetModal.tsx",
+    "frontend/src/modules/statisticalData/components/StatisticalCsvImportModal.tsx",
+    "frontend/src/modules/tableBuilder/components/BindDimensionModal.tsx",
+    "frontend/src/modules/tableBuilder/components/CreateCustomTableModal.tsx",
+    "frontend/src/modules/tableBuilder/components/EditTableMetadataModal.tsx",
+    "frontend/src/modules/tableBuilder/components/IndicatorFormModal.tsx",
+    "frontend/src/pages/Accomplishments.tsx",
+    "frontend/src/pages/DataEncoding.tsx",
+    "frontend/src/pages/GADPlan.tsx",
+    "frontend/src/pages/ProgramMonitoring.tsx",
+    "frontend/src/pages/UserManagement.tsx"
+  ],
+  "frontend/src/components/ui/progress.tsx": [],
+  "frontend/src/components/ui/scroll-area.tsx": [],
+  "frontend/src/components/ui/select.tsx": [
+    "frontend/src/modules/ingestion/components/MappingStep.tsx",
+    "frontend/src/modules/statisticalData/components/DataEntryGrid.tsx",
+    "frontend/src/modules/statisticalData/components/DatasetSelector.tsx",
+    "frontend/src/modules/statisticalData/components/StatisticalCsvImportModal.tsx",
+    "frontend/src/modules/statisticalData/components/StatisticalDataCatalog.tsx",
+    "frontend/src/modules/tableBuilder/components/BindDimensionModal.tsx",
+    "frontend/src/modules/tableBuilder/components/CreateCustomTableModal.tsx",
+    "frontend/src/modules/tableBuilder/components/EditTableMetadataModal.tsx",
+    "frontend/src/modules/tableBuilder/components/IndicatorFormModal.tsx",
+    "frontend/src/modules/tableBuilder/components/TableBuilderList.tsx",
+    "frontend/src/pages/Accomplishments.tsx",
+    "frontend/src/pages/DataEncoding.tsx",
+    "frontend/src/pages/ProgramMonitoring.tsx",
+    "frontend/src/pages/Reports.tsx",
+    "frontend/src/pages/UserManagement.tsx"
+  ],
+  "frontend/src/components/ui/separator.tsx": [],
+  "frontend/src/components/ui/skeleton.tsx": [
+    "frontend/src/pages/Dashboard.tsx"
+  ],
+  "frontend/src/components/ui/sonner.tsx": [
+    "frontend/src/app/providers/AppProviders.tsx",
+    "frontend/src/components/layout/Layout.tsx"
+  ],
+  "frontend/src/components/ui/table.tsx": [
+    "frontend/src/pages/Accomplishments.tsx",
+    "frontend/src/pages/DataEncoding.tsx",
+    "frontend/src/pages/GADPlan.tsx",
+    "frontend/src/pages/UserManagement.tsx"
+  ],
+  "frontend/src/components/ui/tabs.tsx": [],
+  "frontend/src/context/AuthContext.tsx": [],
+  "frontend/src/lib/supabase/client.ts": [
+    "frontend/src/modules/audit/auditService.ts",
+    "frontend/src/modules/budgets/budgetService.ts",
+    "frontend/src/modules/documents/documentService.ts",
+    "frontend/src/modules/programs/programService.ts",
+    "frontend/src/modules/users/userService.ts"
+  ],
+  "frontend/src/lib/utils.ts": [
+    "frontend/src/components/ui/avatar.tsx",
+    "frontend/src/components/ui/badge.tsx",
+    "frontend/src/components/ui/button.tsx",
+    "frontend/src/components/ui/card.tsx",
+    "frontend/src/components/ui/dialog.tsx",
+    "frontend/src/components/ui/dropdown-menu.tsx",
+    "frontend/src/components/ui/input.tsx",
+    "frontend/src/components/ui/label.tsx",
+    "frontend/src/components/ui/progress.tsx",
+    "frontend/src/components/ui/scroll-area.tsx",
+    "frontend/src/components/ui/select.tsx",
+    "frontend/src/components/ui/separator.tsx",
+    "frontend/src/components/ui/skeleton.tsx",
+    "frontend/src/components/ui/table.tsx",
+    "frontend/src/components/ui/tabs.tsx",
+    "frontend/src/modules/ingestion/components/ConfirmationStep.tsx",
+    "frontend/src/modules/ingestion/components/MappingStep.tsx",
+    "frontend/src/modules/ingestion/components/PreviewStep.tsx",
+    "frontend/src/modules/ingestion/components/StepIndicator.tsx",
+    "frontend/src/modules/ingestion/components/UploadStep.tsx",
+    "frontend/src/pages/Accomplishments.tsx",
+    "frontend/src/pages/DataEncoding.tsx",
+    "frontend/src/pages/GADPlan.tsx",
+    "frontend/src/pages/ProgramMonitoring.tsx",
+    "frontend/src/pages/UserManagement.tsx"
+  ],
+  "frontend/src/lib/utils/cn.ts": [
+    "frontend/src/components/layout/Sidebar.tsx",
+    "frontend/src/components/layout/TopBar.tsx",
+    "frontend/src/pages/dashboard/DashboardPage.tsx"
+  ],
+  "frontend/src/lib/validation/auth.ts": [
+    "frontend/src/pages/auth/LoginPage.tsx",
+    "frontend/tests/auth.test.ts"
+  ],
+  "frontend/src/main.tsx": [],
+  "frontend/src/modules/audit/auditService.ts": [],
+  "frontend/src/modules/auth/AuthContext.tsx": [
+    "frontend/src/app/providers/AppProviders.tsx",
+    "frontend/src/components/layout/Sidebar.tsx",
+    "frontend/src/components/layout/TopBar.tsx",
+    "frontend/src/modules/auth/ProtectedRoute.tsx",
+    "frontend/src/modules/statisticalData/components/DataEntryGrid.tsx",
+    "frontend/src/modules/statisticalData/components/DatasetSelector.tsx",
+    "frontend/src/modules/tableBuilder/components/TableBuilderList.tsx",
+    "frontend/src/modules/tableBuilder/components/TableDetailView.tsx",
+    "frontend/src/pages/Accomplishments.tsx",
+    "frontend/src/pages/DataEncoding.tsx",
+    "frontend/src/pages/GADPlan.tsx",
+    "frontend/src/pages/ProgramMonitoring.tsx",
+    "frontend/src/pages/StatisticalCatalog.tsx",
+    "frontend/src/pages/UserManagement.tsx",
+    "frontend/src/pages/auth/LoginPage.tsx",
+    "frontend/src/pages/dashboard/DashboardPage.tsx",
+    "frontend/src/routes/ProtectedRoute.tsx"
+  ],
+  "frontend/src/modules/auth/ProtectedRoute.tsx": [
+    "frontend/src/app/router/AppRouter.tsx"
+  ],
+  "frontend/src/modules/auth/authService.ts": [
+    "frontend/src/modules/auth/AuthContext.tsx",
+    "frontend/tests/auth.test.ts"
+  ],
+  "frontend/src/modules/budgets/budgetService.ts": [],
+  "frontend/src/modules/documents/components/MOVAttachmentWidget.tsx": [
+    "frontend/src/pages/Accomplishments.tsx"
+  ],
+  "frontend/src/modules/documents/documentService.ts": [],
+  "frontend/src/modules/ingestion/components/ConfirmationStep.tsx": [
+    "frontend/src/modules/ingestion/components/CsvImportModal.tsx",
+    "frontend/src/modules/ingestion/index.ts"
+  ],
+  "frontend/src/modules/ingestion/components/CsvImportModal.tsx": [
+    "frontend/src/modules/ingestion/index.ts"
+  ],
+  "frontend/src/modules/ingestion/components/ExecutionStep.tsx": [
+    "frontend/src/modules/ingestion/components/CsvImportModal.tsx",
+    "frontend/src/modules/ingestion/index.ts"
+  ],
+  "frontend/src/modules/ingestion/components/MappingStep.tsx": [
+    "frontend/src/modules/ingestion/components/CsvImportModal.tsx",
+    "frontend/src/modules/ingestion/index.ts"
+  ],
+  "frontend/src/modules/ingestion/components/PreviewStep.tsx": [
+    "frontend/src/modules/ingestion/components/CsvImportModal.tsx",
+    "frontend/src/modules/ingestion/index.ts"
+  ],
+  "frontend/src/modules/ingestion/components/StepIndicator.tsx": [
+    "frontend/src/modules/ingestion/components/CsvImportModal.tsx",
+    "frontend/src/modules/ingestion/index.ts"
+  ],
+  "frontend/src/modules/ingestion/components/SummaryStep.tsx": [
+    "frontend/src/modules/ingestion/components/CsvImportModal.tsx",
+    "frontend/src/modules/ingestion/index.ts"
+  ],
+  "frontend/src/modules/ingestion/components/UploadStep.tsx": [
+    "frontend/src/modules/ingestion/components/CsvImportModal.tsx",
+    "frontend/src/modules/ingestion/index.ts"
+  ],
+  "frontend/src/modules/ingestion/constants.ts": [
+    "frontend/src/modules/ingestion/components/ConfirmationStep.tsx",
+    "frontend/src/modules/ingestion/components/MappingStep.tsx",
+    "frontend/src/modules/ingestion/components/SummaryStep.tsx",
+    "frontend/src/modules/ingestion/components/UploadStep.tsx",
+    "frontend/src/modules/ingestion/index.ts"
+  ],
+  "frontend/src/modules/ingestion/index.ts": [
+    "frontend/src/pages/DataEncoding.tsx"
+  ],
+  "frontend/src/modules/ingestion/ingestionApi.ts": [
+    "frontend/src/modules/ingestion/components/CsvImportModal.tsx",
+    "frontend/src/modules/ingestion/index.ts"
+  ],
+  "frontend/src/modules/ingestion/types.ts": [
+    "frontend/src/modules/ingestion/components/ConfirmationStep.tsx",
+    "frontend/src/modules/ingestion/components/CsvImportModal.tsx",
+    "frontend/src/modules/ingestion/components/MappingStep.tsx",
+    "frontend/src/modules/ingestion/components/PreviewStep.tsx",
+    "frontend/src/modules/ingestion/components/StepIndicator.tsx",
+    "frontend/src/modules/ingestion/components/SummaryStep.tsx",
+    "frontend/src/modules/ingestion/constants.ts",
+    "frontend/src/modules/ingestion/index.ts",
+    "frontend/src/modules/ingestion/ingestionApi.ts"
+  ],
+  "frontend/src/modules/programs/programService.ts": [],
+  "frontend/src/modules/statisticalCatalog/components/TableDetailModal.tsx": [
+    "frontend/src/pages/StatisticalCatalog.tsx"
+  ],
+  "frontend/src/modules/statisticalData/components/CreateDatasetModal.tsx": [
+    "frontend/src/modules/statisticalData/components/DatasetSelector.tsx"
+  ],
+  "frontend/src/modules/statisticalData/components/DataEntryGrid.tsx": [
+    "frontend/src/modules/statisticalData/components/TableDataEntryView.tsx"
+  ],
+  "frontend/src/modules/statisticalData/components/DatasetSelector.tsx": [
+    "frontend/src/modules/statisticalData/components/StatisticalDataCatalog.tsx",
+    "frontend/src/modules/statisticalData/components/TableDataEntryView.tsx"
+  ],
+  "frontend/src/modules/statisticalData/components/StatisticalCsvImportModal.tsx": [
+    "frontend/src/modules/statisticalData/components/DataEntryGrid.tsx"
+  ],
+  "frontend/src/modules/statisticalData/components/StatisticalDataCatalog.tsx": [
+    "frontend/src/pages/admin/StatisticalDataEntryPage.tsx"
+  ],
+  "frontend/src/modules/statisticalData/components/StatisticalSearch.tsx": [
+    "frontend/src/pages/StatisticalCatalog.tsx"
+  ],
+  "frontend/src/modules/statisticalData/components/StatisticalSummary.tsx": [
+    "frontend/src/modules/statisticalData/components/TableDataEntryView.tsx"
+  ],
+  "frontend/src/modules/statisticalData/components/TableDataEntryView.tsx": [
+    "frontend/src/pages/admin/StatisticalDataEntryPage.tsx"
+  ],
+  "frontend/src/modules/statisticalData/importMapping.ts": [
+    "frontend/src/modules/statisticalData/components/StatisticalCsvImportModal.tsx",
+    "frontend/tests/importMapping.test.ts"
+  ],
+  "frontend/src/modules/tableBuilder/components/BindDimensionModal.tsx": [
+    "frontend/src/modules/tableBuilder/components/TableDetailView.tsx"
+  ],
+  "frontend/src/modules/tableBuilder/components/CreateCustomTableModal.tsx": [
+    "frontend/src/pages/admin/TableBuilderPage.tsx"
+  ],
+  "frontend/src/modules/tableBuilder/components/DeleteConfirmDialog.tsx": [
+    "frontend/src/modules/tableBuilder/components/TableDetailView.tsx"
+  ],
+  "frontend/src/modules/tableBuilder/components/EditTableMetadataModal.tsx": [
+    "frontend/src/modules/tableBuilder/components/TableDetailView.tsx"
+  ],
+  "frontend/src/modules/tableBuilder/components/IndicatorFormModal.tsx": [
+    "frontend/src/modules/tableBuilder/components/TableDetailView.tsx"
+  ],
+  "frontend/src/modules/tableBuilder/components/TableBuilderList.tsx": [
+    "frontend/src/pages/admin/TableBuilderPage.tsx"
+  ],
+  "frontend/src/modules/tableBuilder/components/TableDetailView.tsx": [
+    "frontend/src/pages/admin/TableBuilderPage.tsx"
+  ],
+  "frontend/src/modules/users/userService.ts": [],
+  "frontend/src/pages/Accomplishments.tsx": [
+    "frontend/src/app/router/AppRouter.tsx"
+  ],
+  "frontend/src/pages/Dashboard.tsx": [],
+  "frontend/src/pages/DataEncoding.tsx": [
+    "frontend/src/app/router/AppRouter.tsx"
+  ],
+  "frontend/src/pages/GADPlan.tsx": [
+    "frontend/src/app/router/AppRouter.tsx"
+  ],
+  "frontend/src/pages/Login.tsx": [],
+  "frontend/src/pages/ProgramMonitoring.tsx": [
+    "frontend/src/app/router/AppRouter.tsx"
+  ],
+  "frontend/src/pages/Reports.tsx": [
+    "frontend/src/app/router/AppRouter.tsx"
+  ],
+  "frontend/src/pages/StatisticalCatalog.tsx": [
+    "frontend/src/app/router/AppRouter.tsx",
+    "frontend/src/pages/admin/StatisticalCatalogPage.tsx"
+  ],
+  "frontend/src/pages/UserManagement.tsx": [
+    "frontend/src/app/router/AppRouter.tsx"
+  ],
+  "frontend/src/pages/admin/StatisticalCatalogPage.tsx": [],
+  "frontend/src/pages/admin/StatisticalDataEntryPage.tsx": [
+    "frontend/src/app/router/AppRouter.tsx"
+  ],
+  "frontend/src/pages/admin/TableBuilderPage.tsx": [
+    "frontend/src/app/router/AppRouter.tsx"
+  ],
+  "frontend/src/pages/auth/LoginPage.tsx": [
+    "frontend/src/app/router/AppRouter.tsx",
+    "frontend/src/pages/Login.tsx"
+  ],
+  "frontend/src/pages/dashboard/DashboardPage.tsx": [],
+  "frontend/src/pages/error/NotFoundPage.tsx": [
+    "frontend/src/app/router/AppRouter.tsx"
+  ],
+  "frontend/src/pages/error/UnauthorizedPage.tsx": [
+    "frontend/src/app/router/AppRouter.tsx"
+  ],
+  "frontend/src/pages/public/LandingPage.tsx": [
+    "frontend/src/app/router/AppRouter.tsx"
+  ],
+  "frontend/src/pages/public/PublicAccomplishments.tsx": [
+    "frontend/src/app/router/AppRouter.tsx"
+  ],
+  "frontend/src/pages/public/PublicDemographics.tsx": [
+    "frontend/src/app/router/AppRouter.tsx"
+  ],
+  "frontend/src/pages/public/PublicFeedback.tsx": [
+    "frontend/src/app/router/AppRouter.tsx"
+  ],
+  "frontend/src/pages/public/PublicGADPlans.tsx": [
+    "frontend/src/app/router/AppRouter.tsx"
+  ],
+  "frontend/src/pages/public/PublicPrograms.tsx": [
+    "frontend/src/app/router/AppRouter.tsx"
+  ],
+  "frontend/src/routes/ProtectedRoute.tsx": [],
+  "frontend/src/types/auth.types.ts": [
+    "frontend/src/types/index.ts"
+  ],
+  "frontend/src/types/database.types.ts": [
+    "frontend/src/lib/supabase/client.ts",
+    "frontend/src/modules/audit/auditService.ts",
+    "frontend/src/modules/budgets/budgetService.ts",
+    "frontend/src/modules/documents/documentService.ts",
+    "frontend/src/modules/programs/programService.ts",
+    "frontend/src/modules/users/userService.ts",
+    "frontend/src/types/auth.types.ts",
+    "frontend/src/types/index.ts"
+  ],
+  "frontend/src/types/index.ts": [
+    "frontend/src/modules/auth/AuthContext.tsx",
+    "frontend/src/modules/auth/ProtectedRoute.tsx",
+    "frontend/src/modules/auth/authService.ts",
+    "frontend/src/routes/ProtectedRoute.tsx"
+  ],
+  "frontend/src/types/public.types.ts": [
+    "frontend/src/api/publicApi.ts",
+    "frontend/src/pages/public/LandingPage.tsx",
+    "frontend/src/pages/public/PublicAccomplishments.tsx",
+    "frontend/src/pages/public/PublicDemographics.tsx",
+    "frontend/src/pages/public/PublicGADPlans.tsx",
+    "frontend/src/pages/public/PublicPrograms.tsx",
+    "frontend/src/types/index.ts"
+  ],
+  "frontend/src/types/statisticalCatalog.ts": [
+    "frontend/src/api/statisticalCatalog.ts",
+    "frontend/src/modules/statisticalCatalog/components/TableDetailModal.tsx",
+    "frontend/src/pages/StatisticalCatalog.tsx"
+  ],
+  "frontend/src/types/statisticalData.ts": [
+    "frontend/src/api/statisticalData.ts",
+    "frontend/src/modules/statisticalData/components/CreateDatasetModal.tsx",
+    "frontend/src/modules/statisticalData/components/DataEntryGrid.tsx",
+    "frontend/src/modules/statisticalData/components/DatasetSelector.tsx",
+    "frontend/src/modules/statisticalData/components/StatisticalCsvImportModal.tsx",
+    "frontend/src/modules/statisticalData/components/StatisticalDataCatalog.tsx",
+    "frontend/src/modules/statisticalData/components/TableDataEntryView.tsx",
+    "frontend/src/pages/admin/StatisticalDataEntryPage.tsx"
+  ],
+  "frontend/src/types/tableBuilder.ts": [
+    "frontend/src/api/tableBuilder.ts",
+    "frontend/src/modules/tableBuilder/components/BindDimensionModal.tsx",
+    "frontend/src/modules/tableBuilder/components/CreateCustomTableModal.tsx",
+    "frontend/src/modules/tableBuilder/components/EditTableMetadataModal.tsx",
+    "frontend/src/modules/tableBuilder/components/IndicatorFormModal.tsx",
+    "frontend/src/modules/tableBuilder/components/TableBuilderList.tsx",
+    "frontend/src/modules/tableBuilder/components/TableDetailView.tsx",
+    "frontend/src/types/statisticalData.ts"
+  ],
+  "frontend/src/vite-env.d.ts": [],
+  "frontend/tests/apiUrl.test.ts": [],
+  "frontend/tests/auth.test.ts": [],
+  "frontend/tests/browser/scope-reduction.spec.ts": [],
+  "frontend/tests/browser/security-workflows.spec.ts": [],
+  "frontend/tests/importMapping.test.ts": [],
+  "frontend/vite.config.ts": [],
+  "server.ts": []
+}
