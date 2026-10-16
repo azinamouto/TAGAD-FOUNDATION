@@ -124,5 +124,21 @@ served the browser tests successfully. Database readiness failure was expected.
 
 ## Final remote verification
 
-Pending push and CodeQL re-analysis. Merge recommendation remains BLOCKED until
-the actual alert and final-head checks have been verified. No automatic merge.
+Verified against implementation commit `db1f962ef8ac2ff367aa78e6fe21ea3dc0f26646`:
+
+- Code scanning API for `refs/pull/42/merge`: alert **20 = fixed**. Alerts 17-19
+  also remain fixed. No dismissal, suppression, or security configuration change.
+- [CodeQL result](https://github.com/azinamouto/TAGAD-FOUNDATION/runs/117087018329): PASS.
+- Backend CI, frontend CI, full database qualification, CodeQL SAST, dependency
+  audit, and secret hygiene: all PASS (seven checks including CodeQL result).
+- Local browser and test evidence above matches the committed implementation.
+  The following documentation-only commit records these remote results.
+
+**Merge recommendation: PASS for PR #42 final review**, subject to final-head
+checks. This is not approval for production deployment or full WP02/D05 acceptance.
+The remaining public disclosure risks above remain explicit review limitations;
+no publication policy is implied. Existing workflows label dependency audit
+success even when its command reports findings, so that job alone is not a
+vulnerability-free dependency certification. No automatic merge. No retirement
+work started. Both test servers were stopped; unrelated existing servers and
+untracked audit documentation were preserved.
