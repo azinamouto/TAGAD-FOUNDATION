@@ -6,16 +6,20 @@ import { formatRole } from '../../lib/utils/cn';
 export const Sidebar: React.FC = () => {
   const { user, roles, isAdmin } = useAuth();
   const groups = [
-    { title: 'Dashboard and Barangay Statistics', links: [{ name: 'Dashboard', path: '/dashboard' }] },
-    { title: 'Data Encoding and Management', links: [{ name: 'Beneficiary Registry', path: '/data-encoding' }] },
-    { title: 'GAD Program and Service Monitoring', links: [
+    { title: 'Sex-Disaggregated Barangay Statistics', links: [
+      { name: 'Dashboard', path: '/dashboard' },
+      { name: 'Barangay and Sex Statistics', path: '/dashboard#barangay-statistics' },
+    ], note: 'Charts available. Interactive mapping is not yet available.' },
+    { title: 'GAD Data Management', links: [{ name: 'Beneficiary Registry', path: '/data-encoding' }] },
+    { title: 'Programs and Services', links: [
       { name: 'Programs and Services', path: '/programs' },
-      { name: 'GAD Plans and Budgets', path: '/gad-plan' },
       { name: 'Accomplishments', path: '/accomplishments' },
     ] },
-    { title: 'Analytics and Barangay Mapping', links: [{ name: 'Barangay and Sex Statistics', path: '/dashboard#barangay-statistics' }], note: 'Charts available. Interactive mapping is not yet available.' },
-    { title: 'Reports and Exports', links: [{ name: 'Working Reports', path: '/reports' }] },
-    ...(isAdmin ? [{ title: 'User and System Administration', links: [{ name: 'User Management', path: '/users' }], note: 'Access controls and privacy safeguards apply across the workspace.' }] : []),
+    { title: 'GAD Planning and Reports', links: [
+      { name: 'GAD Plans and Budgets', path: '/gad-plan' },
+      { name: 'Working Reports', path: '/reports' },
+    ] },
+    ...(isAdmin ? [{ title: 'Administration', links: [{ name: 'User Management', path: '/users' }], note: 'Access controls and privacy safeguards apply across the workspace.' }] : []),
   ];
 
   return (

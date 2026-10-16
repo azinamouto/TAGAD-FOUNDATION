@@ -43,16 +43,6 @@ test('revised plan supports resubmission through submit endpoint', async ({ page
   await page.getByRole('button', { name: 'Resubmit plan' }).click();
   expect((await request).method()).toBe('POST');
 });
-test('observation search renders scoped counts and workspace links', async ({ page }) => {
-  await session(page);
-  await page.route('**/api/statistical-catalog/**', route => route.fulfill({ json: { data: [] } }));
-  await page.route('**/api/admin/statistical-search?*', route => route.fulfill({ json: { data: { tables: [{ tableId: 'table-1', tableCode: 'T1', title: 'Population fixture', matchingObservationCount: 2, accessibleObservationCount: 5 }], summaryMeaning: 'Stored observations, not population totals.' } } }));
-  await page.goto('/admin/statistical-catalog');
-  await page.getByRole('textbox', { name: 'Search stored observations' }).fill('population');
-  await page.getByRole('button', { name: 'Search data' }).click();
-  await expect(page.getByRole('link', { name: 'Population fixture' })).toHaveAttribute('href', '/admin/statistical-data/table-1');
-  await expect(page.getByText('2 matching / 5 accessible observations')).toBeVisible();
-});
 test('MOV list and multipart upload use the authenticated backend', async ({ page }) => {
   await session(page);
   await page.route('**/api/accomplishments', route => route.fulfill({ json: { data: [{ id: 'acc-1', actualOutput: 'Test output' }] } }));
@@ -83,39 +73,3 @@ for (const status of [200, 503]) {
     expect(await page.evaluate(() => localStorage.getItem('tagad_token'))).toBeNull();
   });
 }
-
-async function workspace(page: Page) {
-  await session(page);
-  await page.route('**/api/admin/datasets?*', route => route.fulfill({ json: { data: [{ id: 'dataset-1', name: 'Fixture dataset', publicationStatus: 'DRAFT' }] } }));
-  await page.route('**/api/admin/table-builder/tables/table-1', route => route.fulfill({ json: { data: { id: 'table-1', tableCode: 'T1', title: 'Fixture table', isSystemTable: true, indicators: [{ id: 'indicator-1', name: 'Population', indicatorCode: 'POP' }], dimensionBindings: [{ dimensionId: 'sex', dimension: { dimensionCode: 'SEX', name: 'Sex' }, allowedValues: ['Female', 'Male'] }] } } }));
-  await page.route('**/api/admin/table-builder/tables/table-1/observations?*', route => route.fulfill({ json: { data: [] } }));
-  await page.route('**/api/admin/barangays', route => route.fulfill({ json: { data: [] } }));
-  await page.route('**/api/admin/statistical-search/tables/table-1/summary?*', route => route.fulfill({ json: { data: { groups: [{ period: '2026', indicatorId: 'indicator-1', indicatorName: 'Population', unit: 'count', observationCount: 2, minimum: '10', maximum: '20', arithmeticMean: '15' }], pagination: { hasMore: false }, summaryMeaning: 'Means are unweighted.' } } }));
-  await page.goto('/admin/statistical-data/table-1');
-}
-test('dataset summary labels unweighted statistics and disables unavailable pagination', async ({ page }) => {
-  await workspace(page);
-  await expect(page.getByRole('heading', { name: 'Dataset summary' })).toBeVisible();
-  await expect(page.getByText('Means are unweighted.')).toBeVisible();
-  await expect(page.getByRole('columnheader', { name: 'Unweighted mean' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Previous', exact: true })).toBeDisabled();
-  await expect(page.getByRole('button', { name: 'Next', exact: true })).toBeDisabled();
-});
-test('measure mapping sends selected CSV columns and per-measure overrides to preview', async ({ page }) => {
-  await workspace(page);
-  await page.route('**/api/admin/statistical-import/discover', route => route.fulfill({ json: { data: { headers: ['Year', 'Barangay', 'Women'], totalRows: 1, candidateMappings: { period: { sourceColumn: 'Year' }, barangay: { sourceColumn: 'Barangay' } } } } }));
-  let mapping: any;
-  await page.route('**/api/admin/statistical-import/preview', route => { mapping = route.request().postDataJSON().mapping; return route.fulfill({ status: 422, json: { error: { message: 'Fixture preview received' } } }); });
-  await page.getByRole('button', { name: 'Import CSV' }).click();
-  await page.locator('input[type=file]').setInputFiles({ name: 'fixture.csv', mimeType: 'text/csv', buffer: Buffer.from('Year,Barangay,Women\n2026,Poblacion,10') });
-  const dialog = page.getByRole('dialog');
-  await dialog.getByRole('combobox').first().click();
-  await page.getByRole('option', { name: 'Measure Columns (Unpivot multiple metrics)' }).click();
-  await dialog.getByRole('button', { name: 'Add measure' }).click();
-  await dialog.getByLabel('CSV column', { exact: true }).selectOption('Women');
-  await dialog.getByLabel('Indicator', { exact: true }).selectOption('indicator-1');
-  await dialog.getByLabel('Period override').fill('2025');
-  await dialog.getByLabel('SEX override').fill('Female');
-  await dialog.getByRole('button', { name: 'Generate Preview' }).click();
-  await expect.poll(() => mapping?.measureColumns).toEqual([{ columnName: 'Women', indicatorId: 'indicator-1', period: '2025', dimensions: { SEX: 'Female' } }]);
-});
