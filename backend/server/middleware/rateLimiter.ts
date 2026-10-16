@@ -13,6 +13,14 @@ export const dashboardReadRateLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+// Shared across beneficiary aliases, before token verification and database lookups.
+export const beneficiaryRateLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 120,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 /**
  * Rate limiter for authentication login endpoint (POST /api/auth/login).
  * Protects against brute-force and credential stuffing attacks.

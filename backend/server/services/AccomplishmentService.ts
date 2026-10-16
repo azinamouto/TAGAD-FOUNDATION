@@ -374,26 +374,11 @@ export class AccomplishmentService {
           id: true,
           fiscalYear: true,
           quarter: true,
-          actualOutput: true,
           actualMale: true,
           actualFemale: true,
           actualBudgetUsed: true,
-          outputSummary: true,
-          program: {
-            select: {
-              id: true,
-              title: true,
-              sector: true,
-              office: { select: { code: true, name: true } },
-            },
-          },
-          gadPlanItem: {
-            select: {
-              id: true,
-              activity: true,
-              responsibleOffice: true,
-            },
-          },
+          // Interim disclosure safeguard: no unrestricted narratives or linked
+          // activity/office labels until an approved public projection exists.
         },
         orderBy: [{ fiscalYear: 'desc' }, { quarter: 'desc' }],
       });
@@ -402,14 +387,14 @@ export class AccomplishmentService {
         id: a.id,
         fiscalYear: a.fiscalYear,
         quarter: a.quarter,
-        activityTitle: a.gadPlanItem?.activity || a.program?.title || 'GAD Project Activity',
-        office: a.program?.office?.name || a.gadPlanItem?.responsibleOffice || 'LGU Talibon',
-        actualOutput: a.actualOutput,
+        activityTitle: 'Details withheld pending disclosure review',
+        office: '',
+        actualOutput: '',
         actualBudgetUsed: Number(a.actualBudgetUsed),
         actualMale: a.actualMale,
         actualFemale: a.actualFemale,
         totalBeneficiaries: a.actualMale + a.actualFemale,
-        outputSummary: a.outputSummary,
+        outputSummary: '',
       }));
     } catch {
       throw new AppError('Public source unavailable', 503, 'DATA_UNAVAILABLE');

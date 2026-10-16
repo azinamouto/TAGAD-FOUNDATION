@@ -11,7 +11,10 @@ import { validate } from '../middleware/validate';
 import { uuidParamSchema, createBeneficiarySchema, updateBeneficiarySchema } from '../validation/schemas';
 import { Role } from '@prisma/client';
 
+import { beneficiaryRateLimiter } from '../middleware/rateLimiter';
+
 const router = Router();
+router.use(beneficiaryRateLimiter);
 
 router.use(requireAuth);
 router.get('/', getBeneficiaries);

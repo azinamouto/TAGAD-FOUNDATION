@@ -85,3 +85,15 @@ test('review: incomplete successful dashboard payload is unavailable, not measur
   await expect(page.getByText('Failed to load analytics')).toBeVisible();
   await expect(page.getByText('Registered Records', { exact: true })).toHaveCount(0);
 });
+
+
+test('report outage does not download a fabricated export', async ({ page }) => {
+  await session(page);
+  await page.route('**/api/reports/**', route => route.fulfill({ status: 503, json: { error: { message: 'Unavailable' } } }));
+  let downloads = 0;
+  page.on('download', () => { downloads++; });
+  await page.goto('/reports');
+  await page.getByRole('button', { name: /Download/ }).first().click();
+  await expect(page.getByText('Failed to generate report')).toBeVisible();
+  expect(downloads).toBe(0);
+});

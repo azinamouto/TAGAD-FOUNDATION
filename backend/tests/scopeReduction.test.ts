@@ -15,12 +15,13 @@ import { getGPBExcel, getGARExcel } from '../server/controllers/reportController
 import dashboardRoutes from '../server/routes/dashboard';
 import beneficiaryRoutes from '../server/routes/beneficiaries';
 import adminBeneficiaryRoutes from '../server/routes/admin/beneficiaries';
+import adminRoutes from '../server/routes/admin/index';
 import reportRoutes from '../server/routes/reports';
 import publicRoutes from '../server/routes/public';
 import { getBeneficiariesPDF } from '../server/controllers/reportController';
 import { getDashboardStats } from '../server/controllers/admin/dashboardController';
 import { requireAuth } from '../server/middleware/authMiddleware';
-import { dashboardReadRateLimiter } from '../server/middleware/rateLimiter';
+import { dashboardReadRateLimiter, beneficiaryRateLimiter } from '../server/middleware/rateLimiter';
 import { signAccessToken } from '../server/lib/jwt';
 
 const restores: Array<() => void> = [];
@@ -120,7 +121,7 @@ test('legacy/admin writes have equal demographic validation and retain name-base
   mock.method(BeneficiaryService, 'updateBeneficiary', async (_id: any, data: any) => { saved.push(data); return data; });
   const app = express(); app.use(express.json());
   app.use('/api/beneficiaries', beneficiaryRoutes);
-  app.use('/api/admin/beneficiaries', requireAuth, adminBeneficiaryRoutes);
+  app.use('/api/admin/beneficiaries', beneficiaryRateLimiter, requireAuth, adminBeneficiaryRoutes);
   const token = signAccessToken({ id: 'usr-superadmin-01', email: 'fixture@example.test', role: 'SUPER_ADMIN' });
   const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
   const valid = { firstName: 'Synthetic', lastName: 'Record', age: '0', sex: 'FEMALE', sector: 'Fixture', barangay: 'Fixture', office: 'A' };
@@ -302,4 +303,50 @@ test('review: dashboard aliases share a rate budget before authentication', asyn
       for (const path of paths) assert.equal((await fetch(url + path)).status, 429);
     });
   } finally { dashboardReadRateLimiter.resetKey('127.0.0.1'); }
+});
+
+
+test('beneficiary production mounts share a rate budget before authentication', async () => {
+  beneficiaryRateLimiter.resetKey('127.0.0.1');
+  const app = express();
+  app.use('/api/beneficiaries', beneficiaryRoutes);
+  app.use('/api/admin', adminRoutes);
+  let lookups = 0;
+  setDatabaseConnected(true);
+  mock.method(prisma.user, 'findUnique', async () => { lookups++; return null; });
+  try {
+    await serve(app, async url => {
+      const paths = ['/api/beneficiaries', '/api/admin/beneficiaries'];
+      for (let i = 0; i < 120; i++) assert.equal((await fetch(url + paths[i % 2])).status, 401);
+      const token = signAccessToken({ ...actor, email: 'fixture@example.test' });
+      for (const path of paths) {
+        const response = await fetch(url + path, { headers: { Authorization: `Bearer ${token}` } });
+        assert.equal(response.status, 429);
+        assert.ok(response.headers.get('retry-after'));
+      }
+      assert.equal(lookups, 0, 'limited requests must not reach authentication database lookup');
+    });
+  } finally { beneficiaryRateLimiter.resetKey('127.0.0.1'); }
+});
+
+test('public accomplishments withhold unrestricted identifying text at query and HTTP boundaries', async () => {
+  setDatabaseConnected(true);
+  const identifying = 'Synthetic Person, confidential case, fixture@example.test';
+  mock.method(prisma.gADAccomplishment, 'findMany', async ({ select }: any) => {
+    assert.deepEqual(Object.keys(select).sort(), ['id', 'fiscalYear', 'quarter', 'actualMale', 'actualFemale', 'actualBudgetUsed'].sort());
+    return [{ id: 'fixture', fiscalYear: 2026, quarter: 1, actualMale: 2, actualFemale: 3,
+      actualBudgetUsed: 50, actualOutput: identifying, outputSummary: identifying,
+      program: { title: identifying, office: { name: identifying } },
+      gadPlanItem: { activity: identifying, responsibleOffice: identifying } }];
+  });
+  const app = express(); app.use('/public', publicRoutes);
+  await serve(app, async url => {
+    const response = await fetch(url + '/public/accomplishments');
+    assert.equal(response.status, 200);
+    const body = await response.json();
+    assert.doesNotMatch(JSON.stringify(body), /Synthetic Person|confidential case|fixture@example/);
+    assert.equal(body.data[0].totalBeneficiaries, 5);
+    assert.equal(body.data[0].actualOutput, '');
+    assert.equal(body.data[0].outputSummary, '');
+  });
 });
