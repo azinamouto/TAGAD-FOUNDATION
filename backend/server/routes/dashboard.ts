@@ -2,8 +2,10 @@ import { Router, Request, Response } from 'express';
 import { DashboardService } from '../services/DashboardService';
 import { sendSuccess, sendError } from '../lib/response';
 import { requireAuth, AuthenticatedRequest } from '../middleware/authMiddleware';
+import { dashboardReadRateLimiter } from '../middleware/rateLimiter';
 
 const router = Router();
+router.use(dashboardReadRateLimiter);
 
 // Legacy dashboard route returns public aggregates or full dashboard
 router.get('/stats', requireAuth, async (req: AuthenticatedRequest, res: Response) => {

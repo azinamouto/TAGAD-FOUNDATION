@@ -77,3 +77,11 @@ test('reports disclose template and registry limits and dashboard outage shows n
   await expect(page.getByText('Failed to load analytics')).toBeVisible();
   await expect(page.getByText('Registered Records', { exact: true })).toHaveCount(0);
 });
+
+test('review: incomplete successful dashboard payload is unavailable, not measured zero', async ({ page }) => {
+  await session(page);
+  await page.route('**/api/dashboard/stats?*', route => route.fulfill({ json: { summary: {} } }));
+  await page.goto('/dashboard');
+  await expect(page.getByText('Failed to load analytics')).toBeVisible();
+  await expect(page.getByText('Registered Records', { exact: true })).toHaveCount(0);
+});

@@ -1008,14 +1008,7 @@ export class GADPlanService {
    */
   public static async getPublicGADPlans(params?: { year?: number; officeId?: string }) {
     if (!isDatabaseConnected()) {
-      let list = FALLBACK_GAD_PLANS;
-      if (params?.year) {
-        list = list.filter((p) => p.fiscalYear === Number(params.year));
-      }
-      if (params?.officeId) {
-        list = list.filter((p) => p.officeId === params.officeId || p.office.toLowerCase() === params.officeId.toLowerCase());
-      }
-      return list;
+      throw new AppError('Public source unavailable', 503, 'DATA_UNAVAILABLE');
     }
 
     try {
@@ -1066,14 +1059,7 @@ export class GADPlanService {
         })),
       }));
     } catch {
-      let list = FALLBACK_GAD_PLANS;
-      if (params?.year) {
-        list = list.filter((p) => p.fiscalYear === Number(params.year));
-      }
-      if (params?.officeId) {
-        list = list.filter((p) => p.officeId === params.officeId || p.office.toLowerCase() === params.officeId.toLowerCase());
-      }
-      return list;
+      throw new AppError('Public source unavailable', 503, 'DATA_UNAVAILABLE');
     }
   }
 }

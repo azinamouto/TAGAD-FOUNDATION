@@ -23,18 +23,21 @@ const Dashboard: React.FC = () => {
   const [year, setYear] = useState(new Date().getFullYear());
 
   useEffect(() => {
+    let active = true;
+    setLoading(true);
     const fetchStats = async () => {
       try {
         const { data } = await api.get(`/dashboard/stats?year=${year}`);
-        setStats(data);
+        if (active) setStats(data);
       } catch (error) {
         console.error('Failed to fetch stats', error);
-        setStats(null);
+        if (active) setStats(null);
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
     };
     fetchStats();
+    return () => { active = false; };
   }, [year]);
 
   useEffect(() => {
@@ -59,7 +62,12 @@ const Dashboard: React.FC = () => {
     );
   }
 
-  if (!stats) {
+  const rawData = stats?.data || stats;
+  const summary = rawData?.summary || rawData;
+  const requiredMetrics = ['totalBeneficiaries', 'totalMale', 'totalFemale', 'totalPrograms', 'totalBudgetAllocated', 'totalBudgetUsed'];
+  const complete = requiredMetrics.every(key => typeof summary?.[key] === 'number' && Number.isFinite(summary[key]))
+    && Array.isArray(rawData?.byBarangay) && Array.isArray(rawData?.recentBeneficiaries);
+  if (!complete) {
     return (
       <div className="py-16 space-y-3">
         <h3 className="text-sm font-semibold text-rose-700 dark:text-rose-400">
@@ -72,15 +80,12 @@ const Dashboard: React.FC = () => {
     );
   }
 
-  const rawData = stats?.data || stats || {};
-  const summary = rawData?.summary || rawData;
-
-  const totalBeneficiaries = Number(summary?.totalBeneficiaries ?? rawData?.totalBeneficiaries ?? 0);
-  const totalMale = Number(summary?.totalMale ?? rawData?.totalMale ?? 0);
-  const totalFemale = Number(summary?.totalFemale ?? rawData?.totalFemale ?? 0);
-  const totalPrograms = Number(summary?.totalPrograms ?? rawData?.totalPrograms ?? 0);
-  const totalBudgetAllocated = Number(summary?.totalBudgetAllocated ?? rawData?.totalBudgetAllocated ?? 0);
-  const totalBudgetUsed = Number(summary?.totalBudgetUsed ?? rawData?.totalBudgetUsed ?? 0);
+  const totalBeneficiaries = summary.totalBeneficiaries;
+  const totalMale = summary.totalMale;
+  const totalFemale = summary.totalFemale;
+  const totalPrograms = summary.totalPrograms;
+  const totalBudgetAllocated = summary.totalBudgetAllocated;
+  const totalBudgetUsed = summary.totalBudgetUsed;
   const byBarangay = Array.isArray(rawData?.byBarangay) ? rawData.byBarangay : [];
   const recentBeneficiaries = Array.isArray(rawData?.recentBeneficiaries) ? rawData.recentBeneficiaries : [];
 

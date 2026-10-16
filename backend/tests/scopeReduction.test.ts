@@ -16,8 +16,11 @@ import dashboardRoutes from '../server/routes/dashboard';
 import beneficiaryRoutes from '../server/routes/beneficiaries';
 import adminBeneficiaryRoutes from '../server/routes/admin/beneficiaries';
 import reportRoutes from '../server/routes/reports';
+import publicRoutes from '../server/routes/public';
+import { getBeneficiariesPDF } from '../server/controllers/reportController';
 import { getDashboardStats } from '../server/controllers/admin/dashboardController';
 import { requireAuth } from '../server/middleware/authMiddleware';
+import { dashboardReadRateLimiter } from '../server/middleware/rateLimiter';
 import { signAccessToken } from '../server/lib/jwt';
 
 const restores: Array<() => void> = [];
@@ -81,12 +84,31 @@ test('all dashboard HTTP aliases forward authenticated scope and reject anonymou
   });
   const app = express();
   app.use('/api/dashboard', dashboardRoutes);
-  app.get('/api/admin/dashboard', requireAuth, getDashboardStats);
+  app.get('/api/admin/dashboard', dashboardReadRateLimiter, requireAuth, getDashboardStats);
   const token = signAccessToken({ id: 'usr-superadmin-01', email: 'fixture@example.test', role: 'SUPER_ADMIN' });
   await serve(app, async url => {
     for (const path of ['/api/dashboard', '/api/dashboard/stats', '/api/admin/dashboard']) {
       assert.equal((await fetch(url + path)).status, 401);
       assert.equal((await fetch(url + path, { headers: { Authorization: `Bearer ${token}` } })).status, 200);
+    }
+  });
+});
+
+test('review: real dashboard service isolates encoder through every HTTP alias', async () => {
+  dashboardDatabase();
+  mock.method(prisma.revokedToken, 'findFirst', async () => null);
+  mock.method(prisma.user, 'findUnique', async () => ({ ...actor, isActive: true, email: 'fixture@example.test' }));
+  const app = express(); app.use('/api/dashboard', dashboardRoutes);
+  app.get('/api/admin/dashboard', dashboardReadRateLimiter, requireAuth, getDashboardStats);
+  const token = signAccessToken({ ...actor, email: 'fixture@example.test' });
+  await serve(app, async url => {
+    for (const path of ['/api/dashboard', '/api/dashboard/stats', '/api/admin/dashboard']) {
+      const response = await fetch(url + path + '?officeId=office-b', { headers: { Authorization: `Bearer ${token}` } });
+      assert.equal(response.status, 200);
+      const body = await response.json(); const stats = body.data || body;
+      assert.equal(stats.summary.totalBeneficiaries, 1);
+      assert.deepEqual(stats.recentBeneficiaries.map((row: any) => row.id), ['a']);
+      assert.deepEqual(stats.recentAuditLogs, []);
     }
   });
 });
@@ -218,4 +240,66 @@ test('production barangay outage never returns a fabricated roster or counts', a
     await assert.rejects(BarangayService.getGeoData(), (error: any) => error.statusCode === 503);
     await assert.rejects(BarangayService.getBarangayById('fixture'), (error: any) => error.statusCode === 503);
   } finally { if (previous === undefined) delete process.env.NODE_ENV; else process.env.NODE_ENV = previous; }
+});
+
+test('review: public demographics outage cannot produce sample statistical totals', async () => {
+  const app = express(); app.use('/public', publicRoutes);
+  await serve(app, async url => {
+    for (const connected of [false, true]) {
+      setDatabaseConnected(connected);
+      mock.method(prisma.beneficiary, 'count', async () => { throw new Error('Synthetic outage'); });
+      mock.method(prisma.beneficiary, 'groupBy', async () => []);
+      mock.method(prisma.barangay, 'findMany', async () => []);
+      const response = await fetch(url + '/public/demographics?year=2026');
+      assert.equal(response.status, 503);
+      assert.equal((await response.json()).data, undefined);
+    }
+  });
+});
+
+test('review: registry PDF rejects absent data source rather than exporting memory', async () => {
+  const app = express();
+  app.use((req: any, _res, next) => { req.user = actor; next(); });
+  app.get('/pdf', getBeneficiariesPDF);
+  await serve(app, async url => {
+    for (const connected of [false, true]) {
+      setDatabaseConnected(connected);
+      mock.method(prisma.beneficiary, 'count', async () => { throw new Error('Synthetic outage'); });
+      mock.method(prisma.beneficiary, 'findMany', async () => []);
+      const response = await fetch(url + '/pdf');
+      assert.equal(response.status, 503);
+      assert.doesNotMatch(response.headers.get('content-type') || '', /pdf/);
+    }
+  });
+});
+
+test('review: all public statistical feeds report outages instead of sample narratives', async () => {
+  const app = express(); app.use('/public', publicRoutes);
+  await serve(app, async url => {
+    for (const connected of [false, true]) {
+      setDatabaseConnected(connected);
+      for (const model of [prisma.program, prisma.gADPlan, prisma.gADAccomplishment]) {
+        mock.method(model, 'findMany', async () => { throw new Error('Synthetic outage'); });
+      }
+      for (const path of ['/programs', '/gad-plans', '/accomplishments']) {
+        const response = await fetch(url + '/public' + path);
+        assert.equal(response.status, 503);
+        assert.equal((await response.json()).data, undefined);
+      }
+    }
+  });
+});
+
+test('review: dashboard aliases share a rate budget before authentication', async () => {
+  setDatabaseConnected(false);
+  dashboardReadRateLimiter.resetKey('127.0.0.1');
+  const app = express(); app.use('/api/dashboard', dashboardRoutes);
+  app.get('/api/admin/dashboard', dashboardReadRateLimiter, requireAuth, getDashboardStats);
+  try {
+    await serve(app, async url => {
+      const paths = ['/api/dashboard', '/api/dashboard/stats', '/api/admin/dashboard'];
+      for (let i = 0; i < 120; i++) assert.equal((await fetch(url + paths[i % 3])).status, 401);
+      for (const path of paths) assert.equal((await fetch(url + path)).status, 429);
+    });
+  } finally { dashboardReadRateLimiter.resetKey('127.0.0.1'); }
 });

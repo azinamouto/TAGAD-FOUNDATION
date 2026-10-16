@@ -360,14 +360,7 @@ export class AccomplishmentService {
    */
   public static async getPublicAccomplishments(params?: { year?: number; quarter?: number }) {
     if (!isDatabaseConnected()) {
-      let list = FALLBACK_ACCOMPLISHMENTS;
-      if (params?.year) {
-        list = list.filter((a) => a.fiscalYear === Number(params.year));
-      }
-      if (params?.quarter) {
-        list = list.filter((a) => a.quarter === Number(params.quarter));
-      }
-      return list;
+      throw new AppError('Public source unavailable', 503, 'DATA_UNAVAILABLE');
     }
 
     try {
@@ -419,14 +412,7 @@ export class AccomplishmentService {
         outputSummary: a.outputSummary,
       }));
     } catch {
-      let list = FALLBACK_ACCOMPLISHMENTS;
-      if (params?.year) {
-        list = list.filter((a) => a.fiscalYear === Number(params.year));
-      }
-      if (params?.quarter) {
-        list = list.filter((a) => a.quarter === Number(params.quarter));
-      }
-      return list;
+      throw new AppError('Public source unavailable', 503, 'DATA_UNAVAILABLE');
     }
   }
 }

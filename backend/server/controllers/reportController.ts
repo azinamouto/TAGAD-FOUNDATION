@@ -152,7 +152,7 @@ export const getGARExcel = async (req: AuthenticatedRequest, res: Response) => {
 
 export const getBeneficiariesExcel = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const result = await BeneficiaryService.getBeneficiaries({ limit: 1000 }, req.user);
+    const result = await BeneficiaryService.getBeneficiaries({ limit: 1000 }, req.user, { strict: true });
     const beneficiaries = result.data || [];
 
     const workbook = new ExcelJS.Workbook();
@@ -190,14 +190,13 @@ export const getBeneficiariesExcel = async (req: AuthenticatedRequest, res: Resp
     await workbook.xlsx.write(res);
     res.end();
   } catch (error) {
-    console.error('getBeneficiariesExcel error:', error);
-    res.status(500).json({ message: 'Server error generating Beneficiaries Excel' });
+    return sendError(res, error as Error);
   }
 };
 
 export const getBeneficiariesPDF = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const result = await BeneficiaryService.getBeneficiaries({ limit: 100 }, req.user);
+    const result = await BeneficiaryService.getBeneficiaries({ limit: 100 }, req.user, { strict: true });
     const beneficiaries = result.data || [];
 
     const doc = new PDFDocument({ margin: 40 });
@@ -223,8 +222,7 @@ export const getBeneficiariesPDF = async (req: AuthenticatedRequest, res: Respon
 
     doc.end();
   } catch (error) {
-    console.error('getBeneficiariesPDF error:', error);
-    res.status(500).json({ message: 'Server error generating PDF' });
+    return sendError(res, error as Error);
   }
 };
 
