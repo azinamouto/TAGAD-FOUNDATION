@@ -15,7 +15,7 @@
     "typecheck:backend": "npm --prefix backend run typecheck",
     "typecheck:frontend": "npm --prefix frontend run typecheck",
     "test:backend": "npm --prefix backend test",
-    "db:validate": "npm --prefix backend run db:validate"  
+    "db:validate": "npm --prefix backend run db:validate"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
@@ -45,7 +45,6 @@
     "react-dom": "^19.0.1",
     "react-router-dom": "^7.15.0",
     "recharts": "^3.8.1",
-    "shadcn": "^4.7.0",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.5.0",
     "tailwindcss": "^4.1.14",

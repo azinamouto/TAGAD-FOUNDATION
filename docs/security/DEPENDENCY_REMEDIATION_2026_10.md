@@ -1,6 +1,67 @@
 # Dependency remediation — October 2026
 
-Assessment date: 2026-10-17 (Asia/Shanghai). Recommendation: **BLOCKED** pending the unpatched high-severity `braces` dependency. Publish as a draft; do not merge.
+Assessment date: 2026-10-17 (Asia/Shanghai). Recommendation: **PASS for the high-severity blocker**, with the moderate UUID risk dispositioned below and remote CI pending for the follow-up commit. This is not a zero-vulnerability claim. Keep PR #44 in draft; do not merge or begin WP03. Initial remediation evidence is retained as history.
+
+## PR #44 blocker follow-up
+
+### Exact initial chains and exposure
+
+Fresh full audits confirmed six high package findings in **each** of root and frontend, all propagated from one advisory, [GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm). Each package below was installed at `node_modules/<package>` in its respective installation; no second nested copy was present. Backend had none.
+
+Let `S` mean root `shadcn@4.7.0` or frontend `shadcn@4.19.0`, respectively. Both manifests specified `^4.7.0`.
+
+| Audit finding | Installed version | Complete path(s) from the direct dependency |
+| --- | --- | --- |
+| shadcn | root 4.7.0; frontend 4.19.0 | S |
+| ts-morph | 26.0.0 | S -> ts-morph |
+| @ts-morph/common | 0.27.0 | S -> ts-morph@26.0.0 -> @ts-morph/common |
+| fast-glob | 3.3.3 | S -> fast-glob; S -> ts-morph@26.0.0 -> @ts-morph/common@0.27.0 -> fast-glob |
+| micromatch | 4.0.8 | Both fast-glob@3.3.3 paths above -> micromatch |
+| braces | 3.0.3 | Both micromatch@4.0.8 paths above -> braces |
+
+The edges are supported by declared ranges: S -> fast-glob `^3.3.3`, S -> ts-morph `^26.0.0`, ts-morph -> common `~0.27.0`, common -> fast-glob `^3.3.3`, fast-glob -> micromatch `^4.0.8`, micromatch -> braces `^3.0.3`.
+
+The advisory describes stack exhaustion in recursive AST walkers when deeply nested attacker-controlled brace patterns reach compilation/expansion; the pattern may fit the existing character limit. An uncaught RangeError can terminate the Node process. Before removal, invoking the CLI on untrusted patterns/project inputs was the relevant exposure. Source and script searches found no GAD HTTP, browser JavaScript, or build-script invocation of this CLI: the only build reference was `frontend/src/index.css` importing `shadcn/tailwind.css`. Static CSS cannot execute the vulnerable JavaScript. Nevertheless the production-declared CLI remained installed and correctly appeared in production audits; lack of a discovered request path was not treated as a fix.
+
+### Remediation and alternatives
+
+- Registry `braces` latest remains 3.0.3, and the advisory lists no patched release. A supported braces upgrade is unavailable.
+- Registry shadcn latest 4.22.0 still declares fast-glob `^3.3.3` and ts-morph `^26.0.0`; updating that parent does not remove either chain. npm's proposed shadcn 1.0.0 downgrade was rejected. Replacing/overriding internal glob or AST libraries would bypass their supported dependency ranges and require broader compatibility work.
+- **Implemented removal:** preserve the complete, unmodified CSS from the frontend's locked shadcn 4.19.0 under `frontend/src/styles/vendor/shadcn-tailwind.css`, retain the upstream MIT license and provenance, and point the existing CSS import there. Remove the unused shadcn CLI dependency from root and frontend. Checked-in UI components remain in place. This removes the vulnerable JavaScript and its dependency chains from both lockfiles, rather than reclassifying them as development dependencies or suppressing findings.
+- `npm uninstall shadcn --package-lock-only --ignore-scripts --no-audit` pruned only unused packages and updated dependency metadata. A before/after lock comparison found **no added package paths and no version changes to retained packages**. No new overrides, forced majors, audit exceptions, or CI changes were introduced in this follow-up.
+- Future component generation must review the CLI dependency audit before reintroduction; do not invoke an unreviewed `npx shadcn` during builds. The vendored CSS now needs manual upstream review, with its license retained. GAD features do not depend on the CLI.
+
+### UUID disposition
+
+Root retains `exceljs@4.4.0 -> uuid@8.3.2` at `node_modules/exceljs` and `node_modules/uuid`: two moderate package findings, one [GHSA-w5hq-g745-h8pq](https://github.com/advisories/GHSA-w5hq-g745-h8pq). Registry ExcelJS latest is 4.4.0 and requires uuid `^8.3.0`; the newest UUID 8 release is 8.3.2. Patched UUID 11.1.1 is outside that range. No compatible patched UUID 8 or supported newer ExcelJS release was available. npm proposes ExcelJS 3.4.0, a breaking downgrade; it was rejected. Replacing the reporting library would unnecessarily broaden this change. The backend's existing UUID 11.1.1 override is unchanged and is not copied into root.
+
+Exploitability requires use of UUID v3/v5/v6 with an undersized caller-provided output buffer or invalid offset, resulting in partial/stale identifier bytes. Inspection of `exceljs/lib` found only `lib/xlsx/xform/sheet/cf-ext/cf-rule-ext-xform.js`: it imports `v4` and calls `uuidv4()` at lines 43 and 77 without a buffer or offset. Those calls do not satisfy the advisory conditions. Backend service UUID imports also select v4; authentication uses Node's `randomUUID`. With separate installs, backend imports resolve its patched UUID 11.1.1, including when the root entry imports the backend. Root's vulnerable package still exists and is audited; this is a source-based non-reachability assessment, not a patched-package claim or deployment certification.
+
+Compensating controls are the existing v4-only calls and absence of caller-controlled UUID buffer/offset interfaces. Keep these constraints in future changes, continue full audits, and revisit when ExcelJS supports a patched UUID range. Residual risk: the old vulnerable package remains available to future callers, and source inspection cannot certify arbitrary deployments or future integrations. No security policy exception is encoded in CI.
+
+### Follow-up verification
+
+| Installation | Before C/H/M/L | Final C/H/M/L, full and production-only | Full / production / high-gate exit |
+| --- | --- | --- | --- |
+| Backend | 0/0/0/0 | 0/0/0/0 | 0 / 0 / 0 |
+| Frontend | 0/6/0/0 | 0/0/0/0 | 0 / 0 / 0 |
+| Root | 0/6/2/0 | 0/0/2/0 | 1 / 1 / 0 |
+
+The existing `npm audit --audit-level=high` matrix remains unchanged. Root's unrestricted audit still fails and reports UUID/ExcelJS; no finding is hidden. All six formerly affected packages are absent from both resulting lockfiles and clean installations.
+
+- PASS: root `npm ci --no-audit`, frontend `npm ci --include=dev --no-audit`; audits were run explicitly as separate checks. Backend dependencies were unchanged; its earlier clean-install evidence remains below.
+- PASS: `npm ls --all --json` in all three installations.
+- PASS: backend `npm test`: 267 tests, 70 suites, no failures/skips; posttest TypeScript build succeeds.
+- PASS: frontend typecheck and 19 unit tests, no failures/skips.
+- PASS: root `npm run build`, which runs the frontend production build and backend typecheck. Existing >500 kB chunk warning remains.
+- PASS: production CSS before/after is byte-for-byte identical (`index-Cq_zj742.css`, SHA-256 `46889fcc338b96bf85e89d7e8533688efbddce96bba5c7f87ee99db1a39f95c2`). The unmodified vendored source hash is recorded in its README.
+- PASS: all 18 browser security/scope tests with installed Chrome and local Vite at 127.0.0.1:5187, using the effective default two workers (the npm/PowerShell invocation did not forward the requested worker argument). No assertions, timeouts, or retries were changed; the complete run passed on its first attempt.
+- PASS: all six full/production-only audits and all three high-gate commands executed with the results above; `git diff --check` succeeds.
+- Database qualification was not rerun for this CLI/CSS removal; the previous passing run is retained below. No backend manifest, backend lockfile, database code, or schema changed in this follow-up.
+
+Remote CI must evaluate the pushed commit; checks from the preceding commit are not evidence for this one. Raw follow-up audit JSON and command logs are retained locally under `.git/blocker-resolution/`; unrelated untracked `docs/audits/` is preserved. No merge or WP03 work is authorized by this recommendation.
+
+## Initial remediation evidence (historical, before CLI removal)
 
 ## Baseline and scope
 
