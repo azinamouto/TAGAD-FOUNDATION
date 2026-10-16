@@ -39,6 +39,10 @@ jobs:
     name: Dependency Vulnerability Audit
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        application: [backend, frontend, "."]
 
     steps:
       - name: Checkout Repository
@@ -49,17 +53,9 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Audit Backend Dependencies
-        working-directory: ./backend
-        run: |
-          echo "Scanning backend dependencies for critical vulnerabilities..."
-          npm audit --audit-level=critical || echo "Review flagged backend vulnerabilities"
-
-      - name: Audit Frontend Dependencies
-        working-directory: ./frontend
-        run: |
-          echo "Scanning frontend dependencies for critical vulnerabilities..."
-          npm audit --audit-level=critical || echo "Review flagged frontend vulnerabilities"
+      - name: Audit Dependencies (high and critical)
+        working-directory: ${{ matrix.application }}
+        run: npm audit --audit-level=high
 
   secret-hygiene:
     name: Secret & Credential Hygiene Check
