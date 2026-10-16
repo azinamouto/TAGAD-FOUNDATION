@@ -16,7 +16,7 @@ for (const width of [390, 1280]) {
     await session(page);
     await page.goto('/dashboard');
     const nav = page.getByRole('navigation', { name: 'GAD workspace' });
-    await expect(nav.getByRole('heading')).toHaveCount(6);
+    await expect(nav.getByRole('heading')).toHaveCount(5);
     await expect(nav.getByRole('link')).toHaveCount(8);
     await expect(nav).toContainText('Interactive mapping is not yet available');
     await expect(nav.getByRole('link', { name: /Table Builder|Statistical Catalog|Data Entry Grid/ })).toHaveCount(0);
@@ -39,17 +39,23 @@ for (const width of [390, 1280]) {
   });
 }
 
-test('hidden statistical deep links retain existing access and data workspace', async ({ page }) => {
-  await session(page);
-  for (const path of ['/statistical-catalog', '/admin/statistical-catalog', '/statistical-data', '/admin/statistical-data', '/table-builder', '/admin/table-builder']) {
-    await page.goto(path);
-    await expect(page).toHaveURL(new RegExp(path + '$'));
-    await expect(page.getByRole('main')).not.toContainText('Page Not Found');
-    await expect(page.getByText('Loading page...', { exact: true })).toHaveCount(0);
-    const text = await page.getByRole('main').innerText();
-    expect(text.length).toBeGreaterThan(20);
-  }
-});
+for (const authenticated of [false, true]) {
+  test(`retired generic tools are unavailable for ${authenticated ? 'authenticated' : 'anonymous'} visitors`, async ({ page }) => {
+    if (authenticated) await session(page);
+    const requests: string[] = [];
+    page.on('request', request => {
+      if (/\/api\/.*(statistical|table-builder|datasets)/.test(request.url())) requests.push(request.url());
+    });
+    for (const prefix of ['', '/admin']) {
+      for (const path of ['/statistical-catalog', '/statistical-data', '/statistical-data/fixture', '/table-builder', '/table-builder/fixture']) {
+        await page.goto(`${prefix}${path}?datasetId=fixture#details`);
+        await expect(page.getByRole('heading', { name: 'Page Not Found', exact: true })).toBeVisible();
+        await expect(page.getByRole('link', { name: 'Go to Dashboard' })).toBeVisible();
+      }
+    }
+    expect(requests).toEqual([]);
+  });
+}
 
 test('viewer retains workspace access without administration and cannot open users', async ({ page }) => {
   await session(page, 'VIEWER');
@@ -59,9 +65,9 @@ test('viewer retains workspace access without administration and cannot open use
   await expect(page.getByRole('heading', { name: 'Access Restricted' })).toBeVisible();
 });
 
-test('anonymous statistical tools stay protected after navigation is hidden', async ({ page }) => {
+test('anonymous GAD workspace and administration remain protected', async ({ page }) => {
   await page.route(/^https?:\/\/[^/]+\/api\//, route => route.fulfill({ status: 401, json: {} }));
-  for (const path of ['/statistical-data', '/table-builder', '/admin/statistical-data', '/admin/table-builder', '/admin/statistical-catalog']) {
+  for (const path of ['/dashboard', '/data-encoding', '/beneficiaries', '/programs', '/gad-plan', '/accomplishments', '/reports', '/users', '/admin/users']) {
     await page.goto(path);
     await expect(page.getByRole('heading', { name: 'Personnel Sign In' })).toBeVisible();
   }
@@ -96,4 +102,16 @@ test('report outage does not download a fabricated export', async ({ page }) => 
   await page.getByRole('button', { name: /Download/ }).first().click();
   await expect(page.getByText('Failed to generate report')).toBeVisible();
   expect(downloads).toBe(0);
+});
+
+
+test('GAD registry aliases retain beneficiary CSV intake after generic grid retirement', async ({ page }) => {
+  await session(page);
+  await page.route('**/api/beneficiaries?*', route => route.fulfill({ json: { data: [], pagination: { total: 0, page: 1, totalPages: 0 } } }));
+  for (const path of ['/data-encoding', '/beneficiaries', '/admin/data-encoding', '/admin/beneficiaries']) {
+    await page.goto(path);
+    await page.getByRole('button', { name: 'Import CSV', exact: true }).click();
+    await expect(page.getByRole('heading', { name: 'Upload CSV Dataset', exact: true })).toBeVisible();
+    await expect(page.getByLabel('Upload CSV File')).toBeAttached();
+  }
 });

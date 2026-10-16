@@ -24,9 +24,6 @@ const Accomplishments = lazy(() => import('../../pages/Accomplishments'));
 const DataEncoding = lazy(() => import('../../pages/DataEncoding'));
 const Reports = lazy(() => import('../../pages/Reports'));
 const UserManagement = lazy(() => import('../../pages/UserManagement'));
-const StatisticalCatalog = lazy(() => import('../../pages/StatisticalCatalog'));
-const TableBuilderPage = lazy(() => import('../../pages/admin/TableBuilderPage'));
-const StatisticalDataEntryPage = lazy(() => import('../../pages/admin/StatisticalDataEntryPage'));
 
 // Error Pages
 const NotFoundPage = lazy(() => import('../../pages/error/NotFoundPage').then(module => ({ default: module.NotFoundPage })));
@@ -45,11 +42,6 @@ export const AppRouter: React.FC = () => {
             <Route path="/public-programs" element={<PublicPrograms />} />
             <Route path="/public-accomplishments" element={<PublicAccomplishments />} />
             <Route path="/public-plans" element={<PublicGADPlans />} />
-            <Route path="/statistical-catalog" element={<StatisticalCatalog />} />
-            <Route path="/statistical-data" element={<ProtectedRoute><StatisticalDataEntryPage /></ProtectedRoute>} />
-            <Route path="/statistical-data/:tableId" element={<ProtectedRoute><StatisticalDataEntryPage /></ProtectedRoute>} />
-            <Route path="/table-builder" element={<ProtectedRoute><TableBuilderPage /></ProtectedRoute>} />
-            <Route path="/table-builder/:id" element={<ProtectedRoute><TableBuilderPage /></ProtectedRoute>} />
             <Route path="/feedback" element={<PublicFeedback />} />
           </Route>
 
@@ -71,7 +63,6 @@ export const AppRouter: React.FC = () => {
             <Route path="/data-encoding" element={<DataEncoding />} />
             <Route path="/beneficiaries" element={<DataEncoding />} />
             <Route path="/reports" element={<Reports />} />
-            <Route path="/statistical-catalog" element={<StatisticalCatalog />} />
             <Route
               path="/users"
               element={
@@ -90,11 +81,6 @@ export const AppRouter: React.FC = () => {
             <Route path="/admin/data-encoding" element={<DataEncoding />} />
             <Route path="/admin/beneficiaries" element={<DataEncoding />} />
             <Route path="/admin/reports" element={<Reports />} />
-            <Route path="/admin/statistical-catalog" element={<StatisticalCatalog />} />
-            <Route path="/admin/statistical-data" element={<StatisticalDataEntryPage />} />
-            <Route path="/admin/statistical-data/:tableId" element={<StatisticalDataEntryPage />} />
-            <Route path="/admin/table-builder" element={<TableBuilderPage />} />
-            <Route path="/admin/table-builder/:id" element={<TableBuilderPage />} />
             <Route
               path="/admin/users"
               element={
