@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import multer from 'multer';
+import rateLimit from 'express-rate-limit';
 import { requireAuth, type AuthenticatedRequest } from '../middleware/authMiddleware';
 import { sendSuccess, sendError } from '../lib/response';
 import { isDatabaseConnected } from '../lib/prisma';
@@ -8,6 +9,8 @@ import { ProvisionalGadService, parseEntryFile, provisionalError, COLUMNS } from
 
 export const provisionalGadService = new ProvisionalGadService();
 const router = Router();
+// Bound authentication, upload parsing and database work per IP.
+router.use(rateLimit({ windowMs: 60 * 1000, max: 120, standardHeaders: true, legacyHeaders: false }));
 router.use((_req, res, next) => {
   if (!isDatabaseConnected()) return sendError(res, provisionalError(new Error('Database unavailable')));
   next();

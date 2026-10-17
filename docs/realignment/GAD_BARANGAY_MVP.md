@@ -66,6 +66,8 @@ Verification:
 
 ## Verification evidence
 
+PR #47's subsequent SQL/Prisma drift-gate reconciliation and verification are recorded in [PR47_DRIFT_VERIFICATION.md](PR47_DRIFT_VERIFICATION.md).
+
 All database work used a freshly initialized, loopback-only PostgreSQL 18 cluster with a generated port and synthetic fixtures. The runner overrides DATABASE_URL/DIRECT_URL, replays the complete SQL migration chain, runs qualification, stops the cluster, and removes only its verified temporary directory. It never consumes an existing database URL.
 
 | Check | Result |

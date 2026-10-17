@@ -577,8 +577,8 @@ model ProvisionalGadSeries {
   creatorId String @map("creator_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-  office Office @relation(fields: [owningOfficeId], references: [id], onDelete: Restrict)
-  creator User @relation(fields: [creatorId], references: [id], onDelete: Restrict)
+  office Office @relation(fields: [owningOfficeId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  creator User @relation(fields: [creatorId], references: [id], onDelete: Restrict, onUpdate: NoAction)
   entries ProvisionalGadEntry[]
   @@unique([id, owningOfficeId])
   @@map("tagad_provisional_gad_series")
@@ -592,7 +592,7 @@ model ProvisionalGadReference {
   isSynthetic Boolean @default(false) @map("is_synthetic")
   isActive Boolean @default(true) @map("is_active")
   createdAt DateTime @default(now()) @map("created_at")
-  barangay Barangay @relation(fields: [barangayId], references: [id], onDelete: Restrict)
+  barangay Barangay @relation(fields: [barangayId], references: [id], onDelete: Restrict, onUpdate: NoAction)
   @@map("tagad_provisional_gad_references")
 }
 
@@ -610,9 +610,9 @@ model ProvisionalGadEntry {
   batchId String @map("batch_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-  series ProvisionalGadSeries @relation(fields: [seriesId, owningOfficeId], references: [id, owningOfficeId], onDelete: Restrict)
-  barangay Barangay @relation(fields: [barangayId], references: [id], onDelete: Restrict)
-  creator User @relation(fields: [creatorId], references: [id], onDelete: Restrict)
+  series ProvisionalGadSeries @relation(fields: [seriesId, owningOfficeId], references: [id, owningOfficeId], onDelete: Restrict, onUpdate: NoAction)
+  barangay Barangay @relation(fields: [barangayId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  creator User @relation(fields: [creatorId], references: [id], onDelete: Restrict, onUpdate: NoAction)
   @@unique([seriesId, barangayId, period])
   @@index([owningOfficeId, seriesId, period], map: "tagad_provisional_gad_entries_scope")
   @@map("tagad_provisional_gad_entries")
