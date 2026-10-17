@@ -4,6 +4,8 @@ Date: 2026-10-17
 
 Status: implementation stopped under the requested safe-persistence gate. This is an assessment, not a delivered MVP or an institutional policy approval.
 
+**Subsequent engineering authorization:** The project owner later authorized the isolated additive model and internal testing. The original assessment below is retained as historical context. Implementation and verification are recorded in [GAD_BARANGAY_MVP.md](GAD_BARANGAY_MVP.md); institutional approval is still not implied.
+
 ## Prerequisite and scope
 
 PR [#46](https://github.com/azinamouto/TAGAD-FOUNDATION/pull/46) was verified MERGED into `main`, with merge commit `3126a6678d65c03cd2a5de4a833d89d43049ac20`. Branch `feat/gad-barangay-data-entry` starts from that updated remote main. No application, schema, migration, seed, or production data was changed.

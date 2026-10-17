@@ -30,6 +30,7 @@ api.interceptors.response.use(
           path.startsWith('/gad-plan') ||
           path.startsWith('/accomplishments') ||
           path.startsWith('/data-encoding') ||
+          path.startsWith('/barangay-statistics') ||
           path.startsWith('/beneficiaries') ||
           path.startsWith('/reports') ||
           path.startsWith('/users');

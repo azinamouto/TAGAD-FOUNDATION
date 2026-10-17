@@ -22,6 +22,7 @@ const ProgramMonitoring = lazy(() => import('../../pages/ProgramMonitoring'));
 const GADPlan = lazy(() => import('../../pages/GADPlan'));
 const Accomplishments = lazy(() => import('../../pages/Accomplishments'));
 const DataEncoding = lazy(() => import('../../pages/DataEncoding'));
+const BarangayStatistics = lazy(() => import('../../pages/BarangayStatistics'));
 const Reports = lazy(() => import('../../pages/Reports'));
 const UserManagement = lazy(() => import('../../pages/UserManagement'));
 
@@ -61,6 +62,7 @@ export const AppRouter: React.FC = () => {
             <Route path="/gad-plan" element={<GADPlan />} />
             <Route path="/accomplishments" element={<Accomplishments />} />
             <Route path="/data-encoding" element={<DataEncoding />} />
+            <Route path="/barangay-statistics" element={<BarangayStatistics />} />
             <Route path="/beneficiaries" element={<DataEncoding />} />
             <Route path="/reports" element={<Reports />} />
             <Route
