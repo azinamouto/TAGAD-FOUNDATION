@@ -1,0 +1,322 @@
+Environment variables loaded from .env
+Prisma schema loaded from prisma\schema.prisma
+The schema at prisma\schema.prisma is valid 🚀
+The files belonging to this database system will be owned by user "admin".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "C".
+The default text search configuration will be set to "english".
+
+Data page checksums are enabled.
+
+creating directory C:/Users/admin/Documents/TAGAD-FOUNDATION/backend/.qualification-f61lx2/data ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... windows
+selecting default "max_connections" ... 100
+selecting default "shared_buffers" ... 128MB
+selecting default time zone ... Asia/Shanghai
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+
+Success. You can now start the database server using:
+
+    ^"C^:^\Program^ Files^\PostgreSQL^\18^\bin^\pg^_ctl^" -D ^"C^:^\Users^\admin^\Documents^\TAGAD^-FOUNDATION^\backend^\^.qualification^-f61lx2^\data^" -l logfile start
+
+waiting for server to start.... done
+server started
+CREATE ROLE
+CREATE ROLE
+CREATE ROLE
+CREATE SCHEMA
+CREATE TABLE
+CREATE FUNCTION
+CREATE FUNCTION
+REPLAY 20260824000001_sprint1_foundation.sql sha256=11c85bb5d73ef1f7ecc34383df6a93ab71b8ddf019357a4a87834b432cf93420
+CREATE EXTENSION
+CREATE EXTENSION
+DO
+DO
+DO
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE FUNCTION
+node : psql:supabase/migrations/20260824000001_sprint1_foundation.sql:270: NOTICE:  trigger "set_updated_at_offices"
+for relation "public.offices" does not exist, skipping
+At line:2 char:241
++ ... only_2026'; node backend/scripts/run-qualification.mjs > wp03-qualifi ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (psql:supabase/m...exist, skipping:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+DROP TRIGGER
+CREATE TRIGGER
+psql:supabase/migrations/20260824000001_sprint1_foundation.sql:273: NOTICE:  trigger "set_updated_at_barangays" for
+relation "public.barangays" does not exist, skipping
+DROP TRIGGER
+CREATE TRIGGER
+psql:supabase/migrations/20260824000001_sprint1_foundation.sql:276: NOTICE:  trigger "set_updated_at_users" for
+relation "public.users" does not exist, skipping
+DROP TRIGGER
+CREATE TRIGGER
+psql:supabase/migrations/20260824000001_sprint1_foundation.sql:279: NOTICE:  trigger "set_updated_at_gad_programs" for
+relation "public.gad_programs" does not exist, skipping
+DROP TRIGGER
+CREATE TRIGGER
+DROP TRIGGER
+psql:supabase/migrations/20260824000001_sprint1_foundation.sql:282: NOTICE:  trigger "set_updated_at_gad_projects" for
+relation "public.gad_projects" does not exist, skipping
+CREATE TRIGGER
+psql:supabase/migrations/20260824000001_sprint1_foundation.sql:285: NOTICE:  trigger "set_updated_at_gad_activities"
+for relation "public.gad_activities" does not exist, skipping
+DROP TRIGGER
+CREATE TRIGGER
+DROP TRIGGER
+psql:supabase/migrations/20260824000001_sprint1_foundation.sql:288: NOTICE:  trigger "set_updated_at_budgets" for
+relation "public.budgets" does not exist, skipping
+CREATE TRIGGER
+psql:supabase/migrations/20260824000001_sprint1_foundation.sql:291: NOTICE:  trigger
+"set_updated_at_budget_allocations" for relation "public.budget_allocations" does not exist, skipping
+DROP TRIGGER
+CREATE TRIGGER
+psql:supabase/migrations/20260824000001_sprint1_foundation.sql:294: NOTICE:  trigger "set_updated_at_expenditures" for
+relation "public.expenditures" does not exist, skipping
+DROP TRIGGER
+CREATE TRIGGER
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+INSERT 0 5
+INSERT 0 4
+INSERT 0 5
+INSERT 0 25
+REPLAY 20260824000002_canonical_domain_model.sql sha256=68db1aa83da7149b31d87a9874132e13780d0932583bb3a44cd79c944a36109f
+psql:supabase/migrations/20260824000002_canonical_domain_model.sql:8: NOTICE:  extension "uuid-ossp" already exists,
+skipping
+CREATE EXTENSION
+psql:supabase/migrations/20260824000002_canonical_domain_model.sql:9: NOTICE:  extension "pgcrypto" already exists,
+skipping
+CREATE EXTENSION
+DO
+DO
+DO
+DO
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+INSERT 0 5
+INSERT 0 25
+REPLAY 20260831000001_add_super_admin_role.sql sha256=2d3a7e3ed6bca61034f2fd43f418d7da6eeded207548c43d3ec01bfae1b51fc7
+DO
+REPLAY 20260831000002_statistical_domain.sql sha256=50584dd462ef2e71579c4a5112e7d3ce46c806b122288f254eae884346a2fcf8
+DO
+DO
+DO
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+CREATE TABLE
+CREATE INDEX
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+REPLAY 20260831000003_table_dimension_bindings.sql sha256=c9b3156ecb3080637aeaa4bc2d7c64cb37ef60db3a0310dfe9f1688f9efd3df5
+ALTER TABLE
+CREATE INDEX
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+REPLAY 20260914141827_deny_tagad_data_api_access.sql sha256=30faa8b4aea2f6f0f88d7c726624d43f89684f90b0b94ded24b7a689b10165b5
+DO
+REPLAY 20260914230700_barangay_geography.sql sha256=ec36e6cb1a8499964d1d5c0be36923f9575464dbaf3197078ff1de2a5cab377d
+ALTER TABLE
+REPLAY 20260916041906_feedback_review.sql sha256=652e0b9206c547a2bd0b00e20464504e291eff8dfabaf96245a00d4c7ea6b4be
+CREATE TABLE
+CREATE INDEX
+ALTER TABLE
+REVOKE
+GRANT
+CREATE POLICY
+REPLAY 20261017000001_revoked_tokens.sql sha256=b9b5d5eb36e03d8c39975056666ac24ddb721a0c2bd42c31f93a07d63961612c
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+ALTER TABLE
+REVOKE
+GRANT
+CREATE POLICY
+Upgrade preservation PASS: all pre-existing tables unchanged.
+Data API isolation PASS: RLS enabled and anon/authenticated lack table DML privileges.
+Schema drift baseline PASS: exact match to reviewed SQL/Prisma differences.
+CBMS PostgreSQL qualification PASS: 74 legacy -> 69 exact source rows; custom retained; idempotent; linked data protected.
+◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+======================================================================
+  TAGAD ISSUE #16 — STATISTICAL CSV IMPORT FINAL QUALIFICATION AUDIT
+======================================================================
+
+>> [SETUP] Loaded 25 canonical Talibon barangays.
+>> [SETUP] Created Table TBL-QUAL-01, Draft Dataset DS-MPDC-2024-DRAFT, Locked Dataset DS-MPDC-2023-OFFICIAL.
+
+{"timestamp":"2026-10-17T04:47:48.959Z","level":"INFO","event":"STATISTICAL_CSV_IMPORT_SUCCESS","details":{"datasetCode":"DS-MPDC-2024-DRAFT","tableCode":"TBL-QUAL-01","insertedCount":1,"updatedCount":0,"skippedCount":0,"processingTimeMs":30}}
+{"timestamp":"2026-10-17T04:47:48.999Z","level":"INFO","event":"STATISTICAL_CSV_IMPORT_SUCCESS","details":{"datasetCode":"DS-MPDC-2024-DRAFT","tableCode":"TBL-QUAL-01","insertedCount":1,"updatedCount":0,"skippedCount":1,"processingTimeMs":24}}
+{"timestamp":"2026-10-17T04:47:49.022Z","level":"INFO","event":"STATISTICAL_CSV_IMPORT_SUCCESS","details":{"datasetCode":"DS-MPDC-2024-DRAFT","tableCode":"TBL-QUAL-01","insertedCount":0,"updatedCount":1,"skippedCount":0,"processingTimeMs":23}}
+{"timestamp":"2026-10-17T04:47:49.048Z","level":"INFO","event":"STATISTICAL_CSV_IMPORT_SUCCESS","details":{"datasetCode":"DS-MPDC-2024-DRAFT","tableCode":"TBL-QUAL-01","insertedCount":1,"updatedCount":0,"skippedCount":0,"processingTimeMs":21}}
+Test 8 caught expected error: AppError Import execution aborted due to duplicate coordinate collisions: Row 2: Coordinate collides with existing observation in dataset 'DS-MPDC-2024-DRAFT'. ConflictError
+
+----------------------------------------------------------------------
+  QUALIFICATION MATRIX VERIFICATION RESULTS
+----------------------------------------------------------------------
+[PASS] 1. Discovery - CSV Discovery & Candidate Mapping Suggestions
+       Evidence: Discovered 3 rows, 4 columns. Inferred roles: Year -> PERIOD, Barangay -> BARANGAY, Value -> MEASURE_VALUE. Candidates accurately populated.
+
+[PASS] 2. Preview - Side-Effect Free Preview & Coordinate Resolution (RECORD_PER_ROW)
+       Evidence: Validated 4/4 rows with exact canonical, fuzzy prefix, PSGC code, and municipal-token resolutions. Zero database writes committed during preview.
+
+[PASS] 3. Unpivoting - MEASURE_COLUMNS Multi-Metric Unpivoting
+       Evidence: 2 raw CSV rows unpivoted cleanly into 4 observation coordinates (2 indicators per row).
+
+[PASS] 4. Provenance & Hash - Authoritative Dimensions Hash & Provenance Linkage
+       Evidence: Dimensions hash 'a5fc5fcca3ab98652ed849958f796fa7c131f6cc1b0611184c56fd518d5bf7f1' generated via authoritative ObservationService algorithm. Provenance ID '4accf78d-52a6-42ca-a0b2-223e515e35aa' attached to observation.
+
+[PASS] 5. Duplicates - Duplicate Resolution Matrix (REJECT, SKIP, OVERWRITE)
+       Evidence: REJECT strictly threw ConflictError on duplicate coordinate. SKIP successfully imported 1st row and ignored 2nd row. OVERWRITE updated observation value to 999.
+
+[PASS] 6. Governance - Dataset Lifecycle Lock Enforcement (OFFICIAL Dataset)
+       Evidence: Import into dataset 'DS-MPDC-2023-OFFICIAL' (OFFICIAL) was strictly rejected with 403 Forbidden. Immutability guaranteed.
+
+[PASS] 7. RBAC Scoping - Role-Based Access Control & Municipal Office Isolation
+       Evidence: MPDC ENCODER permitted to import into MPDC dataset. MSWDO ENCODER strictly blocked from mutating foreign MPDC dataset (403 OfficeScopeError).
+
+[PASS] 8. Atomicity - Transactional Atomicity & Rollback Guarantees
+       Evidence: Mixed batch execution was strictly aborted before persistence. Observations count unchanged (before: 3, after: 3). Zero partial observations or provenance persisted.
+
+======================================================================
+  FINAL VERDICT: ISSUE #16 — QUALIFIED / PASS
+======================================================================
+
+{"timestamp":"2026-10-17T04:47:51.680Z","level":"INFO","event":"STATISTICAL_CSV_IMPORT_SUCCESS","details":{"datasetCode":"DS-MPDC-2024-DRAFT","tableCode":"TBL-QUAL-01","insertedCount":1,"updatedCount":0,"skippedCount":0,"processingTimeMs":24}}
+{"timestamp":"2026-10-17T04:47:51.757Z","level":"INFO","event":"STATISTICAL_CSV_IMPORT_SUCCESS","details":{"datasetCode":"DS-MPDC-2024-DRAFT","tableCode":"TBL-QUAL-01","insertedCount":2,"updatedCount":0,"skippedCount":0,"processingTimeMs":30}}
+Matrix PostgreSQL/HTTP PASS: one indicator, two dimension coordinates, per-column period, and invalid-number atomic rejection.
+Import layout PostgreSQL/HTTP PASS: discover, preview source record number, execute and persisted value.
+Feedback PostgreSQL/HTTP PASS: persisted private message, admin review, audited detail access, and stale-update conflict.
+GAD PostgreSQL/HTTP PASS: legacy-route bypass denied, budget enforced, override reason persisted, audit failure rolls back status.
+Audit rollback PASS: office create
+Audit rollback PASS: office update
+Audit rollback PASS: user role update
+Audit rollback PASS: user deactivation
+Audit rollback PASS: program delete
+Audit rollback PASS: GAD item create
+Audit rollback PASS: GAD submit
+Audit rollback PASS: beneficiary create
+Audit rollback PASS: accomplishment create
+Audit rollback PASS: dataset create
+Audit rollback PASS: table create
+Audit rollback PASS: dimension create
+Audit rollback PASS: observation create
+Audit rollback PASS: statistical CSV import
+Audit rollback PASS: catalog dataset create
+Audit rollback PASS: catalog indicator create
+Audit rollback PASS: catalog observation create
+Audit rollback PASS: feedback submit
+Audit rollback PASS: feedback review
+Audit rollback PASS: strict CSV chunk
+Audit rollback PASS: tolerant CSV chunk
+Audit PostgreSQL PASS: 21 failure cases leave every public table unchanged; successful mutations persist audits.
+Search PostgreSQL/HTTP PASS: 1001 observations, foreign-office isolation, published-only viewer data, suppression exclusion, literal query input, separate units and full-data summaries.
+Revocation PostgreSQL PASS: another running process, fresh process restart, concurrent single-use refresh consumption, and bearer-only session logout.
+Preservation fixture PASS: linked synthetic graph and all Prisma model columns readable.
+Local synthetic backup/restore PASS: all 35 public/auth tables match by count and row-content fingerprint; columns, constraints, indexes, policies, RLS, ACLs and triggers match; restore plus verification 8004ms.
+waiting for server to shut down......... done
+server stopped

@@ -1,0 +1,2132 @@
+
+> @tagad/backend@2.0.0 test
+> tsx --test tests/**/*.test.ts
+
+TAP version 13
+# Subtest: public GeoJSON exposes 25 explicitly unlocated barangays and uses longitude/latitude order
+ok 1 - public GeoJSON exposes 25 explicitly unlocated barangays and uses longitude/latitude order
+  ---
+  duration_ms: 193.5711
+  type: 'test'
+  ...
+# Subtest: geography migration preserves missing locations and rejects invalid coordinate pairs
+ok 2 - geography migration preserves missing locations and rejects invalid coordinate pairs
+  ---
+  duration_ms: 18583.1678
+  type: 'test'
+  ...
+# Subtest: beneficiary XLSX/PDF reports preserve encoder office scope
+ok 3 - beneficiary XLSX/PDF reports preserve encoder office scope
+  ---
+  duration_ms: 2296.7821
+  type: 'test'
+  ...
+# Subtest: beneficiary read isolation: memory
+ok 4 - beneficiary read isolation: memory
+  ---
+  duration_ms: 63.035
+  type: 'test'
+  ...
+# Subtest: beneficiary read isolation: database
+ok 5 - beneficiary read isolation: database
+  ---
+  duration_ms: 1.4307
+  type: 'test'
+  ...
+# Subtest: beneficiary read isolation: database-error
+ok 6 - beneficiary read isolation: database-error
+  ---
+  duration_ms: 2.5875
+  type: 'test'
+  ...
+# Subtest: all 69 catalog identities match the preserved LGU CSV, including its numbering gap
+ok 7 - all 69 catalog identities match the preserved LGU CSV, including its numbering gap
+  ---
+  duration_ms: 369.6832
+  type: 'test'
+  ...
+# Subtest: banner and merged parent headers preserve distinct measure columns and source records
+ok 8 - banner and merged parent headers preserve distinct measure columns and source records
+  ---
+  duration_ms: 4.6509
+  type: 'test'
+  ...
+# Subtest: explicit header layout handles nonstandard titles and preserves quoted commas/newlines
+ok 9 - explicit header layout handles nonstandard titles and preserves quoted commas/newlines
+  ---
+  duration_ms: 0.8871
+  type: 'test'
+  ...
+# Subtest: ambiguous headers and malformed CSV fail rather than overwrite or discard values
+ok 10 - ambiguous headers and malformed CSV fail rather than overwrite or discard values
+  ---
+  duration_ms: 1.7022
+  type: 'test'
+  ...
+# Subtest: dashboard routes require authentication and report unavailable without a data source
+ok 11 - dashboard routes require authentication and report unavailable without a data source
+  ---
+  duration_ms: 217.2383
+  type: 'test'
+  ...
+# Subtest: database probe retries failure, coalesces callers, and recovers without restart
+ok 12 - database probe retries failure, coalesces callers, and recovers without restart
+  ---
+  duration_ms: 55.6684
+  type: 'test'
+  ...
+# Subtest: stopping a pending monitor prevents late probe results overriding fixture state
+ok 13 - stopping a pending monitor prevents late probe results overriding fixture state
+  ---
+  duration_ms: 0.5099
+  type: 'test'
+  ...
+# Subtest: Sprint 7 Phase 4 — Dataset Governance & Lifecycle Transition Engine
+    # Subtest: 1. Authoritative State Machine Validation Logic (canTransition)
+        # Subtest: Identity Check: Rejects transition to the exact same status
+        ok 1 - Identity Check: Rejects transition to the exact same status
+          ---
+          duration_ms: 18.5946
+          type: 'test'
+          ...
+        # Subtest: Draft Valid Pathways: DRAFT -> VALIDATED is allowed for Admin
+        ok 2 - Draft Valid Pathways: DRAFT -> VALIDATED is allowed for Admin
+          ---
+          duration_ms: 0.5977
+          type: 'test'
+          ...
+        # Subtest: Draft Valid Pathways: DRAFT -> WITHDRAWN is allowed for Admin with reason
+        ok 3 - Draft Valid Pathways: DRAFT -> WITHDRAWN is allowed for Admin with reason
+          ---
+          duration_ms: 0.511
+          type: 'test'
+          ...
+        # Subtest: Draft Invalid Pathways: DRAFT -> OFFICIAL is forbidden (illegal skip)
+        ok 4 - Draft Invalid Pathways: DRAFT -> OFFICIAL is forbidden (illegal skip)
+          ---
+          duration_ms: 1.0174
+          type: 'test'
+          ...
+        # Subtest: Draft Invalid Pathways: DRAFT -> PUBLISHED is forbidden (illegal skip)
+        ok 5 - Draft Invalid Pathways: DRAFT -> PUBLISHED is forbidden (illegal skip)
+          ---
+          duration_ms: 0.9674
+          type: 'test'
+          ...
+        # Subtest: Validated Valid Pathways: VALIDATED -> OFFICIAL is allowed for Admin
+        ok 6 - Validated Valid Pathways: VALIDATED -> OFFICIAL is allowed for Admin
+          ---
+          duration_ms: 1.1022
+          type: 'test'
+          ...
+        # Subtest: Validated Invalid Pathways: VALIDATED -> DRAFT is forbidden (no regression)
+        ok 7 - Validated Invalid Pathways: VALIDATED -> DRAFT is forbidden (no regression)
+          ---
+          duration_ms: 0.4358
+          type: 'test'
+          ...
+        # Subtest: Validated Invalid Pathways: VALIDATED -> PUBLISHED is forbidden (requires officialization first)
+        ok 8 - Validated Invalid Pathways: VALIDATED -> PUBLISHED is forbidden (requires officialization first)
+          ---
+          duration_ms: 0.5529
+          type: 'test'
+          ...
+        # Subtest: Official Valid Pathways: OFFICIAL -> PUBLISHED is allowed for Super Admin
+        ok 9 - Official Valid Pathways: OFFICIAL -> PUBLISHED is allowed for Super Admin
+          ---
+          duration_ms: 0.6627
+          type: 'test'
+          ...
+        # Subtest: Official RBAC: OFFICIAL -> PUBLISHED is forbidden for regular ADMIN (Super Admin required)
+        ok 10 - Official RBAC: OFFICIAL -> PUBLISHED is forbidden for regular ADMIN (Super Admin required)
+          ---
+          duration_ms: 1.6645
+          type: 'test'
+          ...
+        # Subtest: Official Invalid Pathways: OFFICIAL -> DRAFT and OFFICIAL -> VALIDATED are forbidden
+        ok 11 - Official Invalid Pathways: OFFICIAL -> DRAFT and OFFICIAL -> VALIDATED are forbidden
+          ---
+          duration_ms: 0.6005
+          type: 'test'
+          ...
+        # Subtest: Terminal State: WITHDRAWN datasets cannot be transitioned to ANY status
+        ok 12 - Terminal State: WITHDRAWN datasets cannot be transitioned to ANY status
+          ---
+          duration_ms: 0.6353
+          type: 'test'
+          ...
+        # Subtest: Revocation Precondition: WITHDRAWN transition without reason is rejected
+        ok 13 - Revocation Precondition: WITHDRAWN transition without reason is rejected
+          ---
+          duration_ms: 0.5315
+          type: 'test'
+          ...
+        1..13
+    ok 1 - 1. Authoritative State Machine Validation Logic (canTransition)
+      ---
+      duration_ms: 36.2701
+      type: 'suite'
+      ...
+    # Subtest: 2. RBAC Access Control Enforcement
+        # Subtest: ENCODER cannot transition datasets to VALIDATED
+        ok 1 - ENCODER cannot transition datasets to VALIDATED
+          ---
+          duration_ms: 0.5586
+          type: 'test'
+          ...
+        # Subtest: ENCODER cannot withdraw datasets
+        ok 2 - ENCODER cannot withdraw datasets
+          ---
+          duration_ms: 0.3366
+          type: 'test'
+          ...
+        # Subtest: VIEWER cannot perform any lifecycle transition
+        ok 3 - VIEWER cannot perform any lifecycle transition
+          ---
+          duration_ms: 0.43
+          type: 'test'
+          ...
+        # Subtest: VIEWER cannot create new datasets
+        ok 4 - VIEWER cannot create new datasets
+          ---
+          duration_ms: 2.0585
+          type: 'test'
+          ...
+        # Subtest: ENCODER can create datasets strictly in DRAFT status
+        ok 5 - ENCODER can create datasets strictly in DRAFT status
+          ---
+          duration_ms: 2.1438
+          type: 'test'
+          ...
+        1..5
+    ok 2 - 2. RBAC Access Control Enforcement
+      ---
+      duration_ms: 5.9746
+      type: 'suite'
+      ...
+    # Subtest: 3. Office-Scope Isolation
+        # Subtest: ENCODER from Office A cannot view unapproved draft of Office B
+        ok 1 - ENCODER from Office A cannot view unapproved draft of Office B
+          ---
+          duration_ms: 3.4942
+          type: 'test'
+          ...
+        # Subtest: ENCODER from Office A CAN view draft belonging to their own office
+        ok 2 - ENCODER from Office A CAN view draft belonging to their own office
+          ---
+          duration_ms: 1.3799
+          type: 'test'
+          ...
+        # Subtest: ENCODER from Office B CAN view PUBLISHED datasets regardless of originating office
+        ok 3 - ENCODER from Office B CAN view PUBLISHED datasets regardless of originating office
+          ---
+          duration_ms: 0.5247
+          type: 'test'
+          ...
+        # Subtest: ADMIN and SUPER_ADMIN can view all datasets across offices
+        ok 4 - ADMIN and SUPER_ADMIN can view all datasets across offices
+          ---
+          duration_ms: 0.5121
+          type: 'test'
+          ...
+        1..4
+    ok 3 - 3. Office-Scope Isolation
+      ---
+      duration_ms: 6.4959
+      type: 'suite'
+      ...
+    # Subtest: 4. Full Lifecycle Transition Execution & Audit History
+        # Subtest: Execute Full Lifecycle Pipeline: DRAFT -> VALIDATED -> OFFICIAL -> PUBLISHED -> WITHDRAWN
+        ok 1 - Execute Full Lifecycle Pipeline: DRAFT -> VALIDATED -> OFFICIAL -> PUBLISHED -> WITHDRAWN
+          ---
+          duration_ms: 4.1651
+          type: 'test'
+          ...
+        # Subtest: Audit history retrieval retrieves dataset status trail
+        ok 2 - Audit history retrieval retrieves dataset status trail
+          ---
+          duration_ms: 12.3927
+          type: 'test'
+          ...
+        1..2
+    ok 4 - 4. Full Lifecycle Transition Execution & Audit History
+      ---
+      duration_ms: 17.1928
+      type: 'suite'
+      ...
+    1..4
+ok 14 - Sprint 7 Phase 4 — Dataset Governance & Lifecycle Transition Engine
+  ---
+  duration_ms: 69.0903
+  type: 'suite'
+  ...
+# Subtest: dataset history filters before pagination (memory)
+ok 15 - dataset history filters before pagination (memory)
+  ---
+  duration_ms: 35.8739
+  type: 'test'
+  ...
+# Subtest: dataset history filters before pagination (database query)
+ok 16 - dataset history filters before pagination (database query)
+  ---
+  duration_ms: 3.5548
+  type: 'test'
+  ...
+# Subtest: demo authentication is disabled unless DEMO_MODE is explicitly true
+ok 17 - demo authentication is disabled unless DEMO_MODE is explicitly true
+  ---
+  duration_ms: 2.4665
+  type: 'test'
+  ...
+# Subtest: demo mode requires all role-specific passwords and authenticates with configured values
+ok 18 - demo mode requires all role-specific passwords and authenticates with configured values
+  ---
+  duration_ms: 22.1393
+  type: 'test'
+  ...
+# Subtest: demo mode configuration fails when a role password is missing
+ok 19 - demo mode configuration fails when a role password is missing
+  ---
+  duration_ms: 0.9372
+  type: 'test'
+  ...
+# Subtest: fallback dimension assignments stay locked after officialization and publication
+ok 20 - fallback dimension assignments stay locked after officialization and publication
+  ---
+  duration_ms: 46.3598
+  type: 'test'
+  ...
+# Subtest: BE Phase 1 — Priority 1: Durable Auditing & Transactional Rollbacks (F-1)
+    # Subtest: 1. AuditService Error Propagation
+        # Subtest: rejects a missing transaction in connected mode
+        ok 1 - rejects a missing transaction in connected mode
+          ---
+          duration_ms: 2.1088
+          type: 'test'
+          ...
+        # Subtest: never substitutes memory audit records in production when storage is unavailable
+        ok 2 - never substitutes memory audit records in production when storage is unavailable
+          ---
+          duration_ms: 0.8058
+          type: 'test'
+          ...
+        # Subtest: logActionTx throws immediately when tx.auditLog.create fails, propagating to abort transaction
+        ok 3 - logActionTx throws immediately when tx.auditLog.create fails, propagating to abort transaction
+          ---
+          duration_ms: 0.9766
+          type: 'test'
+          ...
+        # Subtest: logAction throws immediately when prisma.auditLog.create fails in connected mode
+        ok 4 - logAction throws immediately when prisma.auditLog.create fails in connected mode
+          ---
+          duration_ms: 1.1756
+          type: 'test'
+          ...
+        1..4
+    ok 1 - 1. AuditService Error Propagation
+      ---
+      duration_ms: 6.2707
+      type: 'suite'
+      ...
+    # Subtest: 2. OfficeService Mutation Rollbacks on Injected Audit Failure
+        # Subtest: createOffice rolls back and leaves no persisted office when audit creation fails
+        ok 1 - createOffice rolls back and leaves no persisted office when audit creation fails
+          ---
+          duration_ms: 1.4119
+          type: 'test'
+          ...
+        # Subtest: updateOffice rolls back and retains before-state when audit creation fails
+        ok 2 - updateOffice rolls back and retains before-state when audit creation fails
+          ---
+          duration_ms: 2.1588
+          type: 'test'
+          ...
+        1..2
+    ok 2 - 2. OfficeService Mutation Rollbacks on Injected Audit Failure
+      ---
+      duration_ms: 4.1136
+      type: 'suite'
+      ...
+    # Subtest: 3. UserService Mutation Rollbacks on Injected Audit Failure
+        # Subtest: createUser rolls back and does not commit user record when audit fails
+        ok 1 - createUser rolls back and does not commit user record when audit fails
+          ---
+          duration_ms: 274.8101
+          type: 'test'
+          ...
+        1..1
+    ok 3 - 3. UserService Mutation Rollbacks on Injected Audit Failure
+      ---
+      duration_ms: 275.4578
+      type: 'suite'
+      ...
+    # Subtest: 4. ProgramService Mutation Rollbacks on Injected Audit Failure
+        # Subtest: createProgram rolls back and leaves no budget allocation when audit fails
+        ok 1 - createProgram rolls back and leaves no budget allocation when audit fails
+          ---
+          duration_ms: 2.026
+          type: 'test'
+          ...
+        1..1
+    ok 4 - 4. ProgramService Mutation Rollbacks on Injected Audit Failure
+      ---
+      duration_ms: 2.5976
+      type: 'suite'
+      ...
+    # Subtest: 5. Accomplishment & Beneficiary Mutation Rollbacks
+        # Subtest: createAccomplishment rolls back entirely when audit logging rejects
+        ok 1 - createAccomplishment rolls back entirely when audit logging rejects
+          ---
+          duration_ms: 3.1535
+          type: 'test'
+          ...
+        # Subtest: createBeneficiary rolls back completely when audit logging fails
+        ok 2 - createBeneficiary rolls back completely when audit logging fails
+          ---
+          duration_ms: 1.7198
+          type: 'test'
+          ...
+        1..2
+    ok 5 - 5. Accomplishment & Beneficiary Mutation Rollbacks
+      ---
+      duration_ms: 5.1582
+      type: 'suite'
+      ...
+    1..5
+ok 21 - BE Phase 1 — Priority 1: Durable Auditing & Transactional Rollbacks (F-1)
+  ---
+  duration_ms: 314.0329
+  type: 'suite'
+  ...
+# Subtest: production HTTP errors hide unexpected messages, codes and private details
+ok 22 - production HTTP errors hide unexpected messages, codes and private details
+  ---
+  duration_ms: 358.1516
+  type: 'test'
+  ...
+# Subtest: Express 5xx reaches Sentry transport with sensitive data removed; 4xx does not
+ok 23 - Express 5xx reaches Sentry transport with sensitive data removed; 4xx does not
+  ---
+  duration_ms: 635.0118
+  type: 'test'
+  ...
+# Subtest: feedback HTTP fails closed without storage and rejects non-admin reviewers
+ok 24 - feedback HTTP fails closed without storage and rejects non-admin reviewers
+  ---
+  duration_ms: 1018.0124
+  type: 'test'
+  ...
+# Subtest: feedback migration prevents direct public access to private messages
+ok 25 - feedback migration prevents direct public access to private messages
+  ---
+  duration_ms: 17552.0573
+  type: 'test'
+  ...
+# Subtest: same-origin requests and allowlisted cross-origin bearer preflights are supported
+ok 26 - same-origin requests and allowlisted cross-origin bearer preflights are supported
+  ---
+  duration_ms: 303.8549
+  type: 'test'
+  ...
+# Subtest: TAGAD Issue \#10 Hardening — GAD Domain Completion Qualification Suite
+    # Subtest: 1. Vulnerability Elimination: ENCODER -> SUBMITTED -> Generic Status -> DRAFT Bypass
+        # Subtest: HTTP Vector 1: ENCODER attempting PATCH /api/gad-plans/:id/status is rejected with 403 Forbidden
+        ok 1 - HTTP Vector 1: ENCODER attempting PATCH /api/gad-plans/:id/status is rejected with 403 Forbidden
+          ---
+          duration_ms: 723.0319
+          type: 'test'
+          ...
+        # Subtest: HTTP Vector 2: ENCODER attempting PATCH /api/admin/gad-plans/:id/status is rejected with 403 Forbidden
+        ok 2 - HTTP Vector 2: ENCODER attempting PATCH /api/admin/gad-plans/:id/status is rejected with 403 Forbidden
+          ---
+          duration_ms: 100.856
+          type: 'test'
+          ...
+        # Subtest: HTTP Vector 3: Unauthenticated caller attempting PATCH status is rejected with 401 Unauthorized
+        ok 3 - HTTP Vector 3: Unauthenticated caller attempting PATCH status is rejected with 401 Unauthorized
+          ---
+          duration_ms: 20.1307
+          type: 'test'
+          ...
+        # Subtest: HTTP Vector 4: VIEWER role attempting PATCH status is rejected with 403 Forbidden
+        ok 4 - HTTP Vector 4: VIEWER role attempting PATCH status is rejected with 403 Forbidden
+          ---
+          duration_ms: 58.7626
+          type: 'test'
+          ...
+        # Subtest: Service Vector: GADPlanService.updatePlanStatus rejects ENCODER returning SUBMITTED to DRAFT
+        ok 5 - Service Vector: GADPlanService.updatePlanStatus rejects ENCODER returning SUBMITTED to DRAFT
+          ---
+          duration_ms: 1.9807
+          type: 'test'
+          ...
+        # Subtest: Service Vector: GADPlanService.updateGADPlan rejects ENCODER directly injecting status into payload
+        ok 6 - Service Vector: GADPlanService.updateGADPlan rejects ENCODER directly injecting status into payload
+          ---
+          duration_ms: 5.2323
+          type: 'test'
+          ...
+        # Subtest: Service Vector: ENCODER cannot modify items while plan is in SUBMITTED status
+        ok 7 - Service Vector: ENCODER cannot modify items while plan is in SUBMITTED status
+          ---
+          duration_ms: 3.8137
+          type: 'test'
+          ...
+        1..7
+    ok 1 - 1. Vulnerability Elimination: ENCODER -> SUBMITTED -> Generic Status -> DRAFT Bypass
+      ---
+      duration_ms: 923.1378
+      type: 'suite'
+      ...
+    # Subtest: 2. Authoritative State Machine & Valid Transitions
+        # Subtest: Valid transition: ENCODER can transition DRAFT -> SUBMITTED
+        ok 1 - Valid transition: ENCODER can transition DRAFT -> SUBMITTED
+          ---
+          duration_ms: 6.7044
+          type: 'test'
+          ...
+        # Subtest: Invalid transition: DRAFT -> APPROVED directly is rejected by state machine
+        ok 2 - Invalid transition: DRAFT -> APPROVED directly is rejected by state machine
+          ---
+          duration_ms: 1.0682
+          type: 'test'
+          ...
+        # Subtest: Valid transition: ADMIN can return SUBMITTED -> REVISED with remarks
+        ok 3 - Valid transition: ADMIN can return SUBMITTED -> REVISED with remarks
+          ---
+          duration_ms: 11.581
+          type: 'test'
+          ...
+        # Subtest: Valid transition: ENCODER can resubmit REVISED -> SUBMITTED
+        ok 4 - Valid transition: ENCODER can resubmit REVISED -> SUBMITTED
+          ---
+          duration_ms: 0.6943
+          type: 'test'
+          ...
+        # Subtest: Invalid transition: REVISED -> DRAFT is forbidden
+        ok 5 - Invalid transition: REVISED -> DRAFT is forbidden
+          ---
+          duration_ms: 2.7109
+          type: 'test'
+          ...
+        # Subtest: Idempotent self-transition: Calling updatePlanStatus with current status is rejected
+        ok 6 - Idempotent self-transition: Calling updatePlanStatus with current status is rejected
+          ---
+          duration_ms: 0.9478
+          type: 'test'
+          ...
+        1..6
+    ok 2 - 2. Authoritative State Machine & Valid Transitions
+      ---
+      duration_ms: 24.7412
+      type: 'suite'
+      ...
+    # Subtest: 3. 5% Statutory GAD Budget Validator & Deficit Override Governance
+        # Subtest: Compliant Budget: GAD Budget >= 5% passes validation with SURPLUS/BALANCED
+        ok 1 - Compliant Budget: GAD Budget >= 5% passes validation with SURPLUS/BALANCED
+          ---
+          duration_ms: 2.4907
+          type: 'test'
+          ...
+        # Subtest: Deficit Budget: GAD Budget < 5% fails validation with DEFICIT status
+        ok 2 - Deficit Budget: GAD Budget < 5% fails validation with DEFICIT status
+          ---
+          duration_ms: 207.353
+          type: 'test'
+          ...
+        # Subtest: Approval Workflow: Deficit plan CANNOT be approved without forceApproval flag
+        ok 3 - Approval Workflow: Deficit plan CANNOT be approved without forceApproval flag
+          ---
+          duration_ms: 1.6878
+          type: 'test'
+          ...
+        # Subtest: Deficit Override Governance: forceApproval without justification reason is strictly REJECTED
+        ok 4 - Deficit Override Governance: forceApproval without justification reason is strictly REJECTED
+          ---
+          duration_ms: 1.8374
+          type: 'test'
+          ...
+        # Subtest: Deficit Override Governance: forceApproval WITH explicit reason succeeds and logs audit event
+        ok 5 - Deficit Override Governance: forceApproval WITH explicit reason succeeds and logs audit event
+          ---
+          duration_ms: 2.897
+          type: 'test'
+          ...
+        # Subtest: HTTP Endpoint: POST /api/gad-plans/:id/approve respects forceApproval and governance justification
+        ok 6 - HTTP Endpoint: POST /api/gad-plans/:id/approve respects forceApproval and governance justification
+          ---
+          duration_ms: 178.5166
+          type: 'test'
+          ...
+        1..6
+    ok 3 - 3. 5% Statutory GAD Budget Validator & Deficit Override Governance
+      ---
+      duration_ms: 425.1889
+      type: 'suite'
+      ...
+    # Subtest: 4. Harmonized Gender and Development Guidelines (HGDG) Scoring
+        # Subtest: Validates score ranges: Scores < 0 or > 20 are rejected
+        ok 1 - Validates score ranges: Scores < 0 or > 20 are rejected
+          ---
+          duration_ms: 7.8437
+          type: 'test'
+          ...
+        # Subtest: Correct attribution percentage across all 5 official HGDG tiers
+        ok 2 - Correct attribution percentage across all 5 official HGDG tiers
+          ---
+          duration_ms: 0.4792
+          type: 'test'
+          ...
+        # Subtest: Attributed Budget Calculation: Computes exact PHP attribution using Decimal precision
+        ok 3 - Attributed Budget Calculation: Computes exact PHP attribution using Decimal precision
+          ---
+          duration_ms: 0.4228
+          type: 'test'
+          ...
+        # Subtest: Item Attribution Updates: Updating item hgdgScore auto-populates attributedPercentage
+        ok 4 - Item Attribution Updates: Updating item hgdgScore auto-populates attributedPercentage
+          ---
+          duration_ms: 1.2164
+          type: 'test'
+          ...
+        1..4
+    ok 4 - 4. Harmonized Gender and Development Guidelines (HGDG) Scoring
+      ---
+      duration_ms: 10.31
+      type: 'suite'
+      ...
+    # Subtest: 5. Quarterly GAR Variance Reporting Service & API
+        # Subtest: GarReportService returns structured report with accurate financial metrics
+        ok 1 - GarReportService returns structured report with accurate financial metrics
+          ---
+          duration_ms: 1.2265
+          type: 'test'
+          ...
+        # Subtest: GarReportService rejects invalid quarter values with ValidationError
+        ok 2 - GarReportService rejects invalid quarter values with ValidationError
+          ---
+          duration_ms: 0.5913
+          type: 'test'
+          ...
+        # Subtest: HTTP GET /api/reports/gar-variance returns 503 when only fallback data is available
+        ok 3 - HTTP GET /api/reports/gar-variance returns 503 when only fallback data is available
+          ---
+          duration_ms: 18.9098
+          type: 'test'
+          ...
+        # Subtest: HTTP GET /api/reports/gar-variance returns 400 Bad Request on invalid quarter
+        ok 4 - HTTP GET /api/reports/gar-variance returns 400 Bad Request on invalid quarter
+          ---
+          duration_ms: 9.2601
+          type: 'test'
+          ...
+        1..4
+    ok 5 - 5. Quarterly GAR Variance Reporting Service & API
+      ---
+      duration_ms: 30.4704
+      type: 'suite'
+      ...
+    # Subtest: 6. Office Scope Enforcement & Inter-Office Data Isolation
+        # Subtest: ENCODER from Office A cannot modify or submit a plan owned by Office B
+        ok 1 - ENCODER from Office A cannot modify or submit a plan owned by Office B
+          ---
+          duration_ms: 9.2668
+          type: 'test'
+          ...
+        1..1
+    ok 6 - 6. Office Scope Enforcement & Inter-Office Data Isolation
+      ---
+      duration_ms: 9.5136
+      type: 'suite'
+      ...
+    1..6
+ok 27 - TAGAD Issue \#10 Hardening — GAD Domain Completion Qualification Suite
+  ---
+  duration_ms: 1801.2628
+  type: 'suite'
+  ...
+# Subtest: SUPER_ADMIN can approve a GAD plan through the status transition service
+ok 28 - SUPER_ADMIN can approve a GAD plan through the status transition service
+  ---
+  duration_ms: 74.7673
+  type: 'test'
+  ...
+# Subtest: partial GAD updates preserve omitted budgets and workflow status
+ok 29 - partial GAD updates preserve omitted budgets and workflow status
+  ---
+  duration_ms: 7.9908
+  type: 'test'
+  ...
+# Subtest: all GAD status entry points enforce the same state and budget checks
+ok 30 - all GAD status entry points enforce the same state and budget checks
+  ---
+  duration_ms: 87.7264
+  type: 'test'
+  ...
+# Subtest: GAR attributes item-linked accomplishments only to that item (program undefined)
+ok 31 - GAR attributes item-linked accomplishments only to that item (program undefined)
+  ---
+  duration_ms: 4.3847
+  type: 'test'
+  ...
+# Subtest: GAR attributes item-linked accomplishments only to that item (program null)
+ok 32 - GAR attributes item-linked accomplishments only to that item (program null)
+  ---
+  duration_ms: 16.3031
+  type: 'test'
+  ...
+# Subtest: GAR attributes item-linked accomplishments only to that item (program shared-program)
+ok 33 - GAR attributes item-linked accomplishments only to that item (program shared-program)
+  ---
+  duration_ms: 0.4756
+  type: 'test'
+  ...
+# Subtest: documented export streams 1201 rows in CSV and XLSX and rejects unauthorized data
+ok 34 - documented export streams 1201 rows in CSV and XLSX and rejects unauthorized data
+  ---
+  duration_ms: 2836.7199
+  type: 'test'
+  ...
+# Subtest: both import modes reject numeric prefixes, invalid grouping, blanks and nonfinite values
+ok 35 - both import modes reject numeric prefixes, invalid grouping, blanks and nonfinite values
+  ---
+  duration_ms: 39.7956
+  type: 'test'
+  ...
+# Subtest: VIEWER receives a middleware 403 on CSV ingestion execute
+ok 36 - VIEWER receives a middleware 403 on CSV ingestion execute
+  ---
+  duration_ms: 351.6038
+  type: 'test'
+  ...
+# Subtest: default direct connection ignores forged headers
+ok 37 - default direct connection ignores forged headers
+  ---
+  duration_ms: 235.659
+  type: 'test'
+  ...
+# Subtest: explicit untrusted peer ignores forged chain
+ok 38 - explicit untrusted peer ignores forged chain
+  ---
+  duration_ms: 22.138
+  type: 'test'
+  ...
+# Subtest: trusted hop ignores forged prefix
+ok 39 - trusted hop ignores forged prefix
+  ---
+  duration_ms: 22.5942
+  type: 'test'
+  ...
+# Subtest: trusted CIDR resolves nearest untrusted address
+ok 40 - trusted CIDR resolves nearest untrusted address
+  ---
+  duration_ms: 32.6983
+  type: 'test'
+  ...
+# Subtest: untrusted CIDR peer cannot supply client IP
+ok 41 - untrusted CIDR peer cannot supply client IP
+  ---
+  duration_ms: 18.8511
+  type: 'test'
+  ...
+# Subtest: short IPv4-mapped IPv6 prefix cannot trust arbitrary IPv4 peers
+ok 42 - short IPv4-mapped IPv6 prefix cannot trust arbitrary IPv4 peers
+  ---
+  duration_ms: 10.8847
+  type: 'test'
+  ...
+# Subtest: zero-leading IPv6 subnet cannot trust IPv4 peers
+ok 43 - zero-leading IPv6 subnet cannot trust IPv4 peers
+  ---
+  duration_ms: 12.5285
+  type: 'test'
+  ...
+# Subtest: correct IPv4-mapped subnet excludes unrelated IPv4 peers
+ok 44 - correct IPv4-mapped subnet excludes unrelated IPv4 peers
+  ---
+  duration_ms: 15.5763
+  type: 'test'
+  ...
+# Subtest: multiple trusted proxies stop at client
+ok 45 - multiple trusted proxies stop at client
+  ---
+  duration_ms: 20.3337
+  type: 'test'
+  ...
+# Subtest: unsafe unrestricted trust and invalid hop counts fail configuration
+ok 46 - unsafe unrestricted trust and invalid hop counts fail configuration
+  ---
+  duration_ms: 1.1655
+  type: 'test'
+  ...
+# ValidationError: The 'X-Forwarded-For' header is set but the Express 'trust proxy' setting is false (default). This could indicate a misconfiguration which would prevent express-rate-limit from accurately identifying users. See https://express-rate-limit.github.io/ERR_ERL_UNEXPECTED_X_FORWARDED_FOR/ for more information.
+#     at Object.xForwardedForHeader (file:///C:/Users/admin/Documents/TAGAD-FOUNDATION/backend/node_modules/express-rate-limit/dist/index.mjs:358:13)
+#     at wrappedValidations.<computed> [as xForwardedForHeader] (file:///C:/Users/admin/Documents/TAGAD-FOUNDATION/backend/node_modules/express-rate-limit/dist/index.mjs:683:22)
+#     at Object.keyGenerator (file:///C:/Users/admin/Documents/TAGAD-FOUNDATION/backend/node_modules/express-rate-limit/dist/index.mjs:793:20)
+#     at file:///C:/Users/admin/Documents/TAGAD-FOUNDATION/backend/node_modules/express-rate-limit/dist/index.mjs:883:32
+#     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+#     at async file:///C:/Users/admin/Documents/TAGAD-FOUNDATION/backend/node_modules/express-rate-limit/dist/index.mjs:836:5 {
+#   code: 'ERR_ERL_UNEXPECTED_X_FORWARDED_FOR',
+#   help: 'https://express-rate-limit.github.io/ERR_ERL_UNEXPECTED_X_FORWARDED_FOR/'
+# }
+# Subtest: rotating forged headers cannot bypass direct-connection rate limit
+ok 47 - rotating forged headers cannot bypass direct-connection rate limit
+  ---
+  duration_ms: 38.6862
+  type: 'test'
+  ...
+# Subtest: logger never emits values for any shared sensitive field, including nested arrays
+ok 48 - logger never emits values for any shared sensitive field, including nested arrays
+  ---
+  duration_ms: 6.2577
+  type: 'test'
+  ...
+# Subtest: MOV multipart parser forwards file bytes and rejects unexpected file fields
+ok 49 - MOV multipart parser forwards file bytes and rejects unexpected file fields
+  ---
+  duration_ms: 172.7778
+  type: 'test'
+  ...
+# Subtest: MOV denies access when database is unavailable
+ok 50 - MOV denies access when database is unavailable
+  ---
+  duration_ms: 18.6041
+  type: 'test'
+  ...
+# Subtest: MOV denies encoder without a verifiable matching office
+ok 51 - MOV denies encoder without a verifiable matching office
+  ---
+  duration_ms: 5.5341
+  type: 'test'
+  ...
+# Subtest: TAGAD Issue \#15 — Step 2: Statistical Observation Backend, Validation & API Suite
+    # Subtest: 1. Deterministic Coordinate & Dimension Hashing
+        # Subtest: computeDimensionsHash returns EMPTY_DIMENSIONS for null, undefined, or empty object
+        ok 1 - computeDimensionsHash returns EMPTY_DIMENSIONS for null, undefined, or empty object
+          ---
+          duration_ms: 4.7888
+          type: 'test'
+          ...
+        # Subtest: computeDimensionsHash produces identical hash regardless of key order or whitespace
+        ok 2 - computeDimensionsHash produces identical hash regardless of key order or whitespace
+          ---
+          duration_ms: 2.3974
+          type: 'test'
+          ...
+        # Subtest: computeDimensionsHash produces different hash for different dimension values
+        ok 3 - computeDimensionsHash produces different hash for different dimension values
+          ---
+          duration_ms: 3.646
+          type: 'test'
+          ...
+        1..3
+    ok 1 - 1. Deterministic Coordinate & Dimension Hashing
+      ---
+      duration_ms: 13.5512
+      type: 'suite'
+      ...
+    # Subtest: 2. Dimension Schema Validation & Vocabulary Enforcement
+        # Subtest: Rejects unknown dimension keys not bound to the table schema
+        ok 1 - Rejects unknown dimension keys not bound to the table schema
+          ---
+          duration_ms: 10.1409
+          type: 'test'
+          ...
+        # Subtest: Enforces required dimensions bound to the table
+        ok 2 - Enforces required dimensions bound to the table
+          ---
+          duration_ms: 19.7872
+          type: 'test'
+          ...
+        # Subtest: Enforces allowed vocabulary values on bound dimensions
+        ok 3 - Enforces allowed vocabulary values on bound dimensions
+          ---
+          duration_ms: 6.1439
+          type: 'test'
+          ...
+        1..3
+    ok 2 - 2. Dimension Schema Validation & Vocabulary Enforcement
+      ---
+      duration_ms: 37.4685
+      type: 'suite'
+      ...
+    # Subtest: 3. Dataset Mutability & State Lock Enforcement
+        # Subtest: Allows observation creation in DRAFT dataset
+        ok 1 - Allows observation creation in DRAFT dataset
+          ---
+          duration_ms: 6.4688
+          type: 'test'
+          ...
+        # Subtest: Rejects observation creation in OFFICIAL / locked dataset
+        ok 2 - Rejects observation creation in OFFICIAL / locked dataset
+          ---
+          duration_ms: 4.5696
+          type: 'test'
+          ...
+        1..2
+    ok 3 - 3. Dataset Mutability & State Lock Enforcement
+      ---
+      duration_ms: 13.1129
+      type: 'suite'
+      ...
+    # Subtest: 4. Observation CRUD & Duplicate Coordinate Protection
+        # Subtest: Prevents creating duplicate observation with identical coordinate
+        ok 1 - Prevents creating duplicate observation with identical coordinate
+          ---
+          duration_ms: 6.7282
+          type: 'test'
+          ...
+        # Subtest: Allows updating observation and prevents collision on update
+        ok 2 - Allows updating observation and prevents collision on update
+          ---
+          duration_ms: 4.9116
+          type: 'test'
+          ...
+        # Subtest: Deletes observation successfully and frees coordinate for re-creation
+        ok 3 - Deletes observation successfully and frees coordinate for re-creation
+          ---
+          duration_ms: 5.9375
+          type: 'test'
+          ...
+        1..3
+    ok 4 - 4. Observation CRUD & Duplicate Coordinate Protection
+      ---
+      duration_ms: 18.4129
+      type: 'suite'
+      ...
+    # Subtest: 5. Bulk Observation Persistence & Atomic Upsert
+        # Subtest: Performs atomic bulk upsert (inserts new, updates matching coordinates)
+        ok 1 - Performs atomic bulk upsert (inserts new, updates matching coordinates)
+          ---
+          duration_ms: 60.0781
+          type: 'test'
+          ...
+        # Subtest: Rejects bulk operation if any single row has invalid dimension/coordinate
+        ok 2 - Rejects bulk operation if any single row has invalid dimension/coordinate
+          ---
+          duration_ms: 2.7482
+          type: 'test'
+          ...
+        1..2
+    ok 5 - 5. Bulk Observation Persistence & Atomic Upsert
+      ---
+      duration_ms: 63.2655
+      type: 'suite'
+      ...
+    # Subtest: 6. HTTP API Endpoints & RBAC Enforcement
+        # Subtest: Unauthenticated request returns 401 Unauthorized
+        ok 1 - Unauthenticated request returns 401 Unauthorized
+          ---
+          duration_ms: 799.8258
+          type: 'test'
+          ...
+        # Subtest: VIEWER role can read observations but cannot create, update, delete, or bulk save
+        ok 2 - VIEWER role can read observations but cannot create, update, delete, or bulk save
+          ---
+          duration_ms: 306.6682
+          type: 'test'
+          ...
+        # Subtest: ENCODER and ADMIN can perform observation CRUD and bulk save via HTTP
+        ok 3 - ENCODER and ADMIN can perform observation CRUD and bulk save via HTTP
+          ---
+          duration_ms: 402.7344
+          type: 'test'
+          ...
+        1..3
+    ok 6 - 6. HTTP API Endpoints & RBAC Enforcement
+      ---
+      duration_ms: 1516.0764
+      type: 'suite'
+      ...
+    # Subtest: Condition C1 — Production Persistence Isolation
+        # Subtest: strictly throws 500 error and forbids in-memory fallback when NODE_ENV is production without database
+        ok 1 - strictly throws 500 error and forbids in-memory fallback when NODE_ENV is production without database
+          ---
+          duration_ms: 22.4869
+          type: 'test'
+          ...
+        1..1
+    ok 7 - Condition C1 — Production Persistence Isolation
+      ---
+      duration_ms: 22.7733
+      type: 'suite'
+      ...
+    # Subtest: Condition C4 — Cross-Table and Cross-Dataset IDOR Scoping
+        # Subtest: rejects observation access and mutation when observation belongs to a different table
+        ok 1 - rejects observation access and mutation when observation belongs to a different table
+          ---
+          duration_ms: 209.4295
+          type: 'test'
+          ...
+        # Subtest: rejects cross-dataset observation modification
+        ok 2 - rejects cross-dataset observation modification
+          ---
+          duration_ms: 7.4638
+          type: 'test'
+          ...
+        1..2
+    ok 8 - Condition C4 — Cross-Table and Cross-Dataset IDOR Scoping
+      ---
+      duration_ms: 220.5477
+      type: 'suite'
+      ...
+    # Subtest: Condition C5 — ENCODER Office Scope Isolation
+        # Subtest: allows ENCODER to mutate datasets owned by their office, but strictly rejects mutations on other offices
+        ok 1 - allows ENCODER to mutate datasets owned by their office, but strictly rejects mutations on other offices
+          ---
+          duration_ms: 93.8906
+          type: 'test'
+          ...
+        1..1
+    ok 9 - Condition C5 — ENCODER Office Scope Isolation
+      ---
+      duration_ms: 94.3647
+      type: 'suite'
+      ...
+    # Subtest: Condition C6 — Audit Failure / Transaction Semantics
+        # Subtest: does NOT emit false successful audit events when validation fails
+        ok 1 - does NOT emit false successful audit events when validation fails
+          ---
+          duration_ms: 7.1696
+          type: 'test'
+          ...
+        1..1
+    ok 10 - Condition C6 — Audit Failure / Transaction Semantics
+      ---
+      duration_ms: 7.4011
+      type: 'suite'
+      ...
+    # Subtest: Condition C7 — Duplicate Coordinates Inside Bulk Payload
+        # Subtest: deterministically rejects bulk payloads containing duplicate coordinates upfront
+        ok 1 - deterministically rejects bulk payloads containing duplicate coordinates upfront
+          ---
+          duration_ms: 43.1669
+          type: 'test'
+          ...
+        1..1
+    ok 11 - Condition C7 — Duplicate Coordinates Inside Bulk Payload
+      ---
+      duration_ms: 43.4346
+      type: 'suite'
+      ...
+    1..11
+ok 52 - TAGAD Issue \#15 — Step 2: Statistical Observation Backend, Validation & API Suite
+  ---
+  duration_ms: 2204.5074
+  type: 'suite'
+  ...
+# Subtest: program title edits cannot reset status, budgets or beneficiary counts
+ok 53 - program title edits cannot reset status, budgets or beneficiary counts
+  ---
+  duration_ms: 10.7435
+  type: 'test'
+  ...
+# Subtest: accomplishment narrative edits cannot reset reported counts or expenditure
+ok 54 - accomplishment narrative edits cannot reset reported counts or expenditure
+  ---
+  duration_ms: 5.6742
+  type: 'test'
+  ...
+# Subtest: office metadata edits cannot reactivate an inactive office
+ok 55 - office metadata edits cannot reactivate an inactive office
+  ---
+  duration_ms: 1.5628
+  type: 'test'
+  ...
+# Subtest: production startup enforces readiness, CORS allowlist, and Helmet response headers
+ok 56 - production startup enforces readiness, CORS allowlist, and Helmet response headers
+  ---
+  duration_ms: 10638.1763
+  type: 'test'
+  ...
+# {"timestamp":"2026-10-16T23:50:07.239Z","level":"WARN","event":"RATE_LIMIT_EXCEEDED_LOGIN","details":{"clientIp":"127.0.0.1","path":"/api/auth/login"}}
+# {"timestamp":"2026-10-16T23:50:07.274Z","level":"WARN","event":"RATE_LIMIT_EXCEEDED_FEEDBACK","details":{"clientIp":"127.0.0.1","path":"/api/public/feedback"}}
+# Subtest: real login and feedback routes reject requests exceeding their IP limits
+ok 57 - real login and feedback routes reject requests exceeding their IP limits
+  ---
+  duration_ms: 275.6388
+  type: 'test'
+  ...
+# Subtest: request logs redact query PII in URL and parsed query at every severity
+ok 58 - request logs redact query PII in URL and parsed query at every severity
+  ---
+  duration_ms: 371.5037
+  type: 'test'
+  ...
+# {"timestamp":"2026-10-16T23:50:08.186Z","level":"WARN","event":"REVOCATION_DB_READ_FAILED"}
+# {"timestamp":"2026-10-16T23:50:08.201Z","level":"WARN","event":"REVOCATION_DB_WRITE_FAILED"}
+# {"timestamp":"2026-10-16T23:50:08.205Z","level":"WARN","event":"REVOCATION_DB_WRITE_FAILED"}
+# Subtest: shared revocation reads fail closed and do not cache a negative result
+ok 59 - shared revocation reads fail closed and do not cache a negative result
+  ---
+  duration_ms: 70.7894
+  type: 'test'
+  ...
+# Subtest: logout and refresh cannot report success when durable writes fail
+ok 60 - logout and refresh cannot report success when durable writes fail
+  ---
+  duration_ms: 12.6399
+  type: 'test'
+  ...
+# {"timestamp":"2026-10-16T23:50:08.438Z","level":"WARN","event":"REVOCATION_DB_READ_FAILED"}
+# Subtest: authenticated HTTP requests return 503 on an unavailable shared revocation store
+ok 61 - authenticated HTTP requests return 503 on an unavailable shared revocation store
+  ---
+  duration_ms: 259.9691
+  type: 'test'
+  ...
+# {"timestamp":"2026-10-16T23:50:09.392Z","level":"INFO","event":"REVOCATION_STORE_HYDRATED","details":{"count":1}}
+# {"timestamp":"2026-10-16T23:50:09.552Z","level":"WARN","event":"REVOCATION_HYDRATION_FAILED"}
+# Subtest: hydration recovers automatically after late connection
+ok 62 - hydration recovers automatically after late connection
+  ---
+  duration_ms: 1173.2001
+  type: 'test'
+  ...
+# {"timestamp":"2026-10-16T23:50:10.555Z","level":"INFO","event":"REVOCATION_STORE_HYDRATED","details":{"count":1}}
+# Subtest: hydration recovers automatically after query failure
+ok 63 - hydration recovers automatically after query failure
+  ---
+  duration_ms: 1158.4943
+  type: 'test'
+  ...
+# Subtest: canonical RLS blocks Data API roles, preserves policies and server access
+ok 64 - canonical RLS blocks Data API roles, preserves policies and server access
+  ---
+  duration_ms: 13620.0433
+  type: 'test'
+  ...
+# Subtest: dashboard scopes every aggregate and detail query and fails closed on errors
+ok 65 - dashboard scopes every aggregate and detail query and fails closed on errors
+  ---
+  duration_ms: 118.7044
+  type: 'test'
+  ...
+# Subtest: all dashboard HTTP aliases forward authenticated scope and reject anonymous reads
+ok 66 - all dashboard HTTP aliases forward authenticated scope and reject anonymous reads
+  ---
+  duration_ms: 746.6667
+  type: 'test'
+  ...
+# Subtest: review: real dashboard service isolates encoder through every HTTP alias
+ok 67 - review: real dashboard service isolates encoder through every HTTP alias
+  ---
+  duration_ms: 233.9505
+  type: 'test'
+  ...
+# Subtest: legacy/admin writes have equal demographic validation and retain name-based clients
+ok 68 - legacy/admin writes have equal demographic validation and retain name-based clients
+  ---
+  duration_ms: 530.1476
+  type: 'test'
+  ...
+# Subtest: strict report reads cannot return fallback fixtures, even on a query failure
+ok 69 - strict report reads cannot return fallback fixtures, even on a query failure
+  ---
+  duration_ms: 4.7548
+  type: 'test'
+  ...
+# Subtest: report controllers propagate actor and export incomplete plans without invented content
+ok 70 - report controllers propagate actor and export incomplete plans without invented content
+  ---
+  duration_ms: 1046.9177
+  type: 'test'
+  ...
+# Subtest: strict plan, accomplishment and variance queries use actor office despite other-office filters
+ok 71 - strict plan, accomplishment and variance queries use actor office despite other-office filters
+  ---
+  duration_ms: 1.5836
+  type: 'test'
+  ...
+# Subtest: empty plan summaries keep missing narratives explicit for existing page consumers
+ok 72 - empty plan summaries keep missing narratives explicit for existing page consumers
+  ---
+  duration_ms: 5.3813
+  type: 'test'
+  ...
+# Subtest: variance HTTP route requires auth and passes strict scoped actor
+ok 73 - variance HTTP route requires auth and passes strict scoped actor
+  ---
+  duration_ms: 95.832
+  type: 'test'
+  ...
+# Subtest: production barangay outage never returns a fabricated roster or counts
+ok 74 - production barangay outage never returns a fabricated roster or counts
+  ---
+  duration_ms: 2.0633
+  type: 'test'
+  ...
+# Subtest: review: public demographics outage cannot produce sample statistical totals
+ok 75 - review: public demographics outage cannot produce sample statistical totals
+  ---
+  duration_ms: 30.1747
+  type: 'test'
+  ...
+# Subtest: review: registry PDF rejects absent data source rather than exporting memory
+ok 76 - review: registry PDF rejects absent data source rather than exporting memory
+  ---
+  duration_ms: 35.0008
+  type: 'test'
+  ...
+# Subtest: review: all public statistical feeds report outages instead of sample narratives
+ok 77 - review: all public statistical feeds report outages instead of sample narratives
+  ---
+  duration_ms: 86.2912
+  type: 'test'
+  ...
+# Subtest: review: dashboard aliases share a rate budget before authentication
+ok 78 - review: dashboard aliases share a rate budget before authentication
+  ---
+  duration_ms: 931.853
+  type: 'test'
+  ...
+# Subtest: beneficiary production mounts share a rate budget before authentication
+ok 79 - beneficiary production mounts share a rate budget before authentication
+  ---
+  duration_ms: 711.5476
+  type: 'test'
+  ...
+# Subtest: public accomplishments withhold unrestricted identifying text at query and HTTP boundaries
+ok 80 - public accomplishments withhold unrestricted identifying text at query and HTTP boundaries
+  ---
+  duration_ms: 19.6087
+  type: 'test'
+  ...
+# Subtest: bearer-only logout invalidates the login pair and all its refresh rotations
+ok 81 - bearer-only logout invalidates the login pair and all its refresh rotations
+  ---
+  duration_ms: 45.7956
+  type: 'test'
+  ...
+# Subtest: logout refuses another login session refresh token before revoking anything
+ok 82 - logout refuses another login session refresh token before revoking anything
+  ---
+  duration_ms: 17.0956
+  type: 'test'
+  ...
+# Subtest: legacy refresh tokens with unpaired session IDs require fresh login
+ok 83 - legacy refresh tokens with unpaired session IDs require fresh login
+  ---
+  duration_ms: 3.0166
+  type: 'test'
+  ...
+# Subtest: Sprint 9 — Backend Security, Persistence, & Observability Suite
+    # Subtest: BE-3: Durable JWT Revocation & Storage
+        # Subtest: Access token verifies successfully before revocation
+        ok 1 - Access token verifies successfully before revocation
+          ---
+          duration_ms: 23.0218
+          type: 'test'
+          ...
+        # Subtest: Revoking access token by token string immediately invalidates it
+        ok 2 - Revoking access token by token string immediately invalidates it
+          ---
+          duration_ms: 3.5292
+          type: 'test'
+          ...
+        # Subtest: Revoking access token by JTI immediately blocks token verification
+        ok 3 - Revoking access token by JTI immediately blocks token verification
+          ---
+          duration_ms: 4.0595
+          type: 'test'
+          ...
+        # Subtest: Refresh token can be revoked and rejected upon rotation attempt
+        ok 4 - Refresh token can be revoked and rejected upon rotation attempt
+          ---
+          duration_ms: 4.0604
+          type: 'test'
+          ...
+        # Subtest: Invalidating a session revokes both session ID and associated token
+        ok 5 - Invalidating a session revokes both session ID and associated token
+          ---
+          duration_ms: 8.239
+          type: 'test'
+          ...
+        # Subtest: Revoking all user sessions blocks all existing tokens for that user ID
+        ok 6 - Revoking all user sessions blocks all existing tokens for that user ID
+          ---
+          duration_ms: 3.8163
+          type: 'test'
+          ...
+        # Subtest: TokenRevocationService hashes raw token before storage
+        ok 7 - TokenRevocationService hashes raw token before storage
+          ---
+          duration_ms: 0.4013
+          type: 'test'
+          ...
+        # Subtest: Explicit offline demo revocation updates the demo cache (not durability proof)
+        ok 8 - Explicit offline demo revocation updates the demo cache (not durability proof)
+          ---
+          duration_ms: 2.377
+          type: 'test'
+          ...
+        1..8
+    ok 1 - BE-3: Durable JWT Revocation & Storage
+      ---
+      duration_ms: 52.4228
+      type: 'suite'
+      ...
+    # Subtest: BE-2: Helmet & CORS Allowlist Configuration
+        # Subtest: CORS options enable credentials and standard allowed headers
+        ok 1 - CORS options enable credentials and standard allowed headers
+          ---
+          duration_ms: 0.6873
+          type: 'test'
+          ...
+        # Subtest: CORS origin handler allows requests with no origin (same-host/mobile/tools)
+        ok 2 - CORS origin handler allows requests with no origin (same-host/mobile/tools)
+          ---
+          duration_ms: 0.3179
+          type: 'test'
+          ...
+        # Subtest: CORS origin handler allows localhost and configured allowed origins
+        ok 3 - CORS origin handler allows localhost and configured allowed origins
+          ---
+          duration_ms: 0.3439
+          type: 'test'
+          ...
+        1..3
+    ok 2 - BE-2: Helmet & CORS Allowlist Configuration
+      ---
+      duration_ms: 1.6597
+      type: 'suite'
+      ...
+    # Subtest: BE-6: Structured Logging & PII Redaction
+        # Subtest: redactPII strips plain passwords, password hashes, and secrets
+        ok 1 - redactPII strips plain passwords, password hashes, and secrets
+          ---
+          duration_ms: 0.8936
+          type: 'test'
+          ...
+        # Subtest: redactPII masks Bearer JWT strings in text headers
+        ok 2 - redactPII masks Bearer JWT strings in text headers
+          ---
+          duration_ms: 0.1451
+          type: 'test'
+          ...
+        # Subtest: redactPII handles arrays and primitives safely
+        ok 3 - redactPII handles arrays and primitives safely
+          ---
+          duration_ms: 0.4103
+          type: 'test'
+          ...
+        1..3
+    ok 3 - BE-6: Structured Logging & PII Redaction
+      ---
+      duration_ms: 1.632
+      type: 'suite'
+      ...
+    # Subtest: BE-1: Proxy Rate Limiting & Client Identity Resolution
+        # Subtest: Express with trust proxy 1 resolves client IP behind single-hop reverse proxy
+        ok 1 - Express with trust proxy 1 resolves client IP behind single-hop reverse proxy
+          ---
+          duration_ms: 7.3148
+          type: 'test'
+          ...
+        1..1
+    ok 4 - BE-1: Proxy Rate Limiting & Client Identity Resolution
+      ---
+      duration_ms: 8.2374
+      type: 'suite'
+      ...
+    1..4
+ok 84 - Sprint 9 — Backend Security, Persistence, & Observability Suite
+  ---
+  duration_ms: 69.028
+  type: 'suite'
+  ...
+# Subtest: Sprint 8 — Statistical Catalog & Category UX Backend Verification Suite
+    # Subtest: 1. 69-Table Master Register Integrity
+        # Subtest: All 69 PSA CBMS statistical tables are registered
+        ok 1 - All 69 PSA CBMS statistical tables are registered
+          ---
+          duration_ms: 16.6401
+          type: 'test'
+          ...
+        # Subtest: Table numbers preserve the source gap at 68 and final Table 70
+        ok 2 - Table numbers preserve the source gap at 68 and final Table 70
+          ---
+          duration_ms: 0.4473
+          type: 'test'
+          ...
+        # Subtest: Table codes are unique normalized source tab names
+        ok 3 - Table codes are unique normalized source tab names
+          ---
+          duration_ms: 0.8212
+          type: 'test'
+          ...
+        # Subtest: Every table has a non-empty title, domain, expectedUnit, and description
+        ok 4 - Every table has a non-empty title, domain, expectedUnit, and description
+          ---
+          duration_ms: 0.7682
+          type: 'test'
+          ...
+        1..4
+    ok 1 - 1. 69-Table Master Register Integrity
+      ---
+      duration_ms: 21.2465
+      type: 'suite'
+      ...
+    # Subtest: 2. Search & Filter Engine
+        # Subtest: Search by table code returns exact table
+        ok 1 - Search by table code returns exact table
+          ---
+          duration_ms: 1.2251
+          type: 'test'
+          ...
+        # Subtest: Search by keyword matches in title or description
+        ok 2 - Search by keyword matches in title or description
+          ---
+          duration_ms: 0.6769
+          type: 'test'
+          ...
+        # Subtest: Filter by domain returns only matching domain tables
+        ok 3 - Filter by domain returns only matching domain tables
+          ---
+          duration_ms: 0.4742
+          type: 'test'
+          ...
+        # Subtest: Filter by classification distinguishes indicators from aggregated statistics
+        ok 4 - Filter by classification distinguishes indicators from aggregated statistics
+          ---
+          duration_ms: 0.8343
+          type: 'test'
+          ...
+        # Subtest: Filter by verification status
+        ok 5 - Filter by verification status
+          ---
+          duration_ms: 0.5205
+          type: 'test'
+          ...
+        1..5
+    ok 2 - 2. Search & Filter Engine
+      ---
+      duration_ms: 4.4988
+      type: 'suite'
+      ...
+    # Subtest: 3. Pagination Handling
+        # Subtest: Paginates properly when page and limit are provided
+        ok 1 - Paginates properly when page and limit are provided
+          ---
+          duration_ms: 0.5781
+          type: 'test'
+          ...
+        # Subtest: Page 7 contains the remaining 9 items
+        ok 2 - Page 7 contains the remaining 9 items
+          ---
+          duration_ms: 3.5276
+          type: 'test'
+          ...
+        1..2
+    ok 3 - 3. Pagination Handling
+      ---
+      duration_ms: 4.3589
+      type: 'suite'
+      ...
+    # Subtest: 4. Single Table Detail Resolution
+        # Subtest: Retrieves table by integer number
+        ok 1 - Retrieves table by integer number
+          ---
+          duration_ms: 0.6081
+          type: 'test'
+          ...
+        # Subtest: Retrieves table by string table code (case-insensitive)
+        ok 2 - Retrieves table by string table code (case-insensitive)
+          ---
+          duration_ms: 0.5052
+          type: 'test'
+          ...
+        # Subtest: Retrieves table by polymorphic identifier
+        ok 3 - Retrieves table by polymorphic identifier
+          ---
+          duration_ms: 9.1629
+          type: 'test'
+          ...
+        # Subtest: Returns null for non-existent table
+        ok 4 - Returns null for non-existent table
+          ---
+          duration_ms: 0.4326
+          type: 'test'
+          ...
+        1..4
+    ok 4 - 4. Single Table Detail Resolution
+      ---
+      duration_ms: 11.1331
+      type: 'suite'
+      ...
+    # Subtest: 5. Domain Breakdown and Standard Dimensions
+        # Subtest: getDomainsSummary aggregates all registered tables and metrics
+        ok 1 - getDomainsSummary aggregates all registered tables and metrics
+          ---
+          duration_ms: 0.8123
+          type: 'test'
+          ...
+        # Subtest: getDimensions returns analytical dimensions register
+        ok 2 - getDimensions returns analytical dimensions register
+          ---
+          duration_ms: 0.3938
+          type: 'test'
+          ...
+        1..2
+    ok 5 - 5. Domain Breakdown and Standard Dimensions
+      ---
+      duration_ms: 1.3923
+      type: 'suite'
+      ...
+    1..5
+ok 85 - Sprint 8 — Statistical Catalog & Category UX Backend Verification Suite
+  ---
+  duration_ms: 49.1087
+  type: 'suite'
+  ...
+# Subtest: TAGAD Issue \#16 — Statistical CSV Import Pipeline Suite
+    # Subtest: explicit banner layout reaches the discover HTTP endpoint
+    ok 1 - explicit banner layout reaches the discover HTTP endpoint
+      ---
+      duration_ms: 435.9328
+      type: 'test'
+      ...
+    # Subtest: 1. CSV Discovery & Profiling Endpoint
+        # Subtest: POST /statistical-import/discover profiles CSV and suggests candidate mappings
+        ok 1 - POST /statistical-import/discover profiles CSV and suggests candidate mappings
+          ---
+          duration_ms: 123.1311
+          type: 'test'
+          ...
+        # Subtest: Rejects empty CSV content with 422 ValidationError
+        ok 2 - Rejects empty CSV content with 422 ValidationError
+          ---
+          duration_ms: 33.2025
+          type: 'test'
+          ...
+        1..2
+    ok 2 - 1. CSV Discovery & Profiling Endpoint
+      ---
+      duration_ms: 157.0041
+      type: 'suite'
+      ...
+    # Subtest: 4. Dataset Lifecycle Governance Enforcement
+        # Subtest: Import into locked OFFICIAL dataset is strictly rejected with 403 Forbidden
+        ok 1 - Import into locked OFFICIAL dataset is strictly rejected with 403 Forbidden
+          ---
+          duration_ms: 111.1029
+          type: 'test'
+          ...
+        1..1
+    ok 3 - 4. Dataset Lifecycle Governance Enforcement
+      ---
+      duration_ms: 111.7966
+      type: 'suite'
+      ...
+    # Subtest: 5. RBAC & Office Scoping Enforcement
+        # Subtest: ENCODER is rejected when attempting to import into another office dataset (403 OfficeScopeError)
+        ok 1 - ENCODER is rejected when attempting to import into another office dataset (403 OfficeScopeError)
+          ---
+          duration_ms: 188.3101
+          type: 'test'
+          ...
+        # Subtest: VIEWER role is rejected with 403 Forbidden
+        ok 2 - VIEWER role is rejected with 403 Forbidden
+          ---
+          duration_ms: 37.0907
+          type: 'test'
+          ...
+        # Subtest: Unauthenticated request is rejected with 401 Unauthorized
+        ok 3 - Unauthenticated request is rejected with 401 Unauthorized
+          ---
+          duration_ms: 31.2951
+          type: 'test'
+          ...
+        1..3
+    ok 4 - 5. RBAC & Office Scoping Enforcement
+      ---
+      duration_ms: 257.7295
+      type: 'suite'
+      ...
+    1..4
+ok 86 - TAGAD Issue \#16 — Statistical CSV Import Pipeline Suite
+  ---
+  duration_ms: 1050.363
+  type: 'suite'
+  ...
+# Subtest: TAGAD Issue \#15 — Step 3: Admin Data Entry Grid & 69 Statistical Catalog Test Suite
+    # Subtest: 1. 69 Table Catalog & Attribute Metrics Calculation
+        # Subtest: GET /table-builder/tables returns the seeded 69 municipal statistical tables
+        ok 1 - GET /table-builder/tables returns the seeded 69 municipal statistical tables
+          ---
+          duration_ms: 350.5391
+          type: 'test'
+          ...
+        # Subtest: Aggregate metrics across all 69 tables compute Total Dimensions, Indicators, and Attributes
+        ok 2 - Aggregate metrics across all 69 tables compute Total Dimensions, Indicators, and Attributes
+          ---
+          duration_ms: 291.6911
+          type: 'test'
+          ...
+        # Subtest: GET /table-builder/tables/:id retrieves full specification with bound dimensions & allowed values
+        ok 3 - GET /table-builder/tables/:id retrieves full specification with bound dimensions & allowed values
+          ---
+          duration_ms: 18.7241
+          type: 'test'
+          ...
+        1..3
+    ok 1 - 1. 69 Table Catalog & Attribute Metrics Calculation
+      ---
+      duration_ms: 663.2983
+      type: 'suite'
+      ...
+    # Subtest: 2. Dataset Management & Governance Lifecycle
+        # Subtest: POST /datasets creates a new DRAFT dataset for observation entry
+        ok 1 - POST /datasets creates a new DRAFT dataset for observation entry
+          ---
+          duration_ms: 43.2278
+          type: 'test'
+          ...
+        # Subtest: VIEWER role cannot create a new dataset (RBAC rejection)
+        ok 2 - VIEWER role cannot create a new dataset (RBAC rejection)
+          ---
+          duration_ms: 21.9904
+          type: 'test'
+          ...
+        1..2
+    ok 2 - 2. Dataset Management & Governance Lifecycle
+      ---
+      duration_ms: 66.6601
+      type: 'suite'
+      ...
+    # Subtest: 3. Observation Data Entry Grid CRUD & Bulk Operations
+        # Subtest: Honest Empty State: 0 observations initially returned for table in new dataset
+        ok 1 - Honest Empty State: 0 observations initially returned for table in new dataset
+          ---
+          duration_ms: 254.2487
+          type: 'test'
+          ...
+        # Subtest: POST /tables/:id/observations creates single row and validates required coordinates
+        ok 2 - POST /tables/:id/observations creates single row and validates required coordinates
+          ---
+          duration_ms: 152.8988
+          type: 'test'
+          ...
+        # Subtest: POST /tables/:id/observations rejects duplicate coordinate conflict (409)
+        ok 3 - POST /tables/:id/observations rejects duplicate coordinate conflict (409)
+          ---
+          duration_ms: 97.8538
+          type: 'test'
+          ...
+        # Subtest: POST /tables/:id/observations/bulk saves batch spreadsheet rows cleanly
+        ok 4 - POST /tables/:id/observations/bulk saves batch spreadsheet rows cleanly
+          ---
+          duration_ms: 70.5948
+          type: 'test'
+          ...
+        # Subtest: PATCH /tables/:id/observations/:obsId updates numeric value and notes
+        ok 5 - PATCH /tables/:id/observations/:obsId updates numeric value and notes
+          ---
+          duration_ms: 93.2651
+          type: 'test'
+          ...
+        # Subtest: DELETE /tables/:id/observations/:obsId removes observation
+        ok 6 - DELETE /tables/:id/observations/:obsId removes observation
+          ---
+          duration_ms: 80.0247
+          type: 'test'
+          ...
+        # Subtest: VIEWER role is rejected with 403 on observation creation and bulk save
+        ok 7 - VIEWER role is rejected with 403 on observation creation and bulk save
+          ---
+          duration_ms: 52.851
+          type: 'test'
+          ...
+        1..7
+    ok 3 - 3. Observation Data Entry Grid CRUD & Bulk Operations
+      ---
+      duration_ms: 804.7084
+      type: 'suite'
+      ...
+    1..3
+ok 87 - TAGAD Issue \#15 — Step 3: Admin Data Entry Grid & 69 Statistical Catalog Test Suite
+  ---
+  duration_ms: 1689.3564
+  type: 'suite'
+  ...
+# Subtest: database catalog and builder derive availability from persisted counts, not verification
+ok 88 - database catalog and builder derive availability from persisted counts, not verification
+  ---
+  duration_ms: 33.2532
+  type: 'test'
+  ...
+# Subtest: TAGAD Issue \#17 — Governance Tie-in Specification & Verification Suite
+    # Subtest: Spec 1: Dataset Initialization Lifecycle (Mandatory DRAFT Status)
+        # Subtest: StatisticalCatalogService.createDataset enforces DRAFT publication status by default
+        ok 1 - StatisticalCatalogService.createDataset enforces DRAFT publication status by default
+          ---
+          duration_ms: 28.2537
+          type: 'test'
+          ...
+        # Subtest: StatisticalCatalogService.createDataset rejects tampering attempting to start as OFFICIAL
+        ok 2 - StatisticalCatalogService.createDataset rejects tampering attempting to start as OFFICIAL
+          ---
+          duration_ms: 0.8346
+          type: 'test'
+          ...
+        # Subtest: StatisticalDatasetService.createDataset creates DRAFT dataset by default
+        ok 3 - StatisticalDatasetService.createDataset creates DRAFT dataset by default
+          ---
+          duration_ms: 1.4393
+          type: 'test'
+          ...
+        1..3
+    ok 1 - Spec 1: Dataset Initialization Lifecycle (Mandatory DRAFT Status)
+      ---
+      duration_ms: 32.5922
+      type: 'suite'
+      ...
+    # Subtest: Spec 2: Table Structure Lock (unbindDimension Rejection on OFFICIAL Datasets)
+        # Subtest: unbindDimension succeeds on custom table when dataset is in DRAFT status
+        ok 1 - unbindDimension succeeds on custom table when dataset is in DRAFT status
+          ---
+          duration_ms: 4.2152
+          type: 'test'
+          ...
+        1..1
+    ok 2 - Spec 2: Table Structure Lock (unbindDimension Rejection on OFFICIAL Datasets)
+      ---
+      duration_ms: 4.7369
+      type: 'suite'
+      ...
+    # Subtest: Spec 3: Data availability is independent of catalog verification
+        # Subtest: fallback catalog never labels seeded metadata as real observations
+        ok 1 - fallback catalog never labels seeded metadata as real observations
+          ---
+          duration_ms: 3.6516
+          type: 'test'
+          ...
+        # Subtest: fallback table builder never labels seeded metadata as real observations
+        ok 2 - fallback table builder never labels seeded metadata as real observations
+          ---
+          duration_ms: 1.5475
+          type: 'test'
+          ...
+        1..2
+    ok 3 - Spec 3: Data availability is independent of catalog verification
+      ---
+      duration_ms: 7.2864
+      type: 'suite'
+      ...
+    # Subtest: Spec 4: RBAC & Governance Access Boundaries
+        # Subtest: ENCODER and VIEWER cannot unbind dimensions regardless of dataset state
+        ok 1 - ENCODER and VIEWER cannot unbind dimensions regardless of dataset state
+          ---
+          duration_ms: 2.38
+          type: 'test'
+          ...
+        1..1
+    ok 4 - Spec 4: RBAC & Governance Access Boundaries
+      ---
+      duration_ms: 2.8631
+      type: 'suite'
+      ...
+    1..4
+ok 89 - TAGAD Issue \#17 — Governance Tie-in Specification & Verification Suite
+  ---
+  duration_ms: 48.8005
+  type: 'suite'
+  ...
+# Subtest: statistical search requires authentication and reports unavailable data honestly
+ok 90 - statistical search requires authentication and reports unavailable data honestly
+  ---
+  duration_ms: 373.3784
+  type: 'test'
+  ...
+# Subtest: observation detail cannot bypass dataset scope, including unresolved offices
+ok 91 - observation detail cannot bypass dataset scope, including unresolved offices
+  ---
+  duration_ms: 19.6365
+  type: 'test'
+  ...
+# Subtest: TAGAD Sprint 12 — Issue \#14: Table Builder Backend Service & Security Suite
+    # Subtest: 1. Table CRUD & Immutability Engine
+        # Subtest: listTables returns paginated statistical table definitions
+        ok 1 - listTables returns paginated statistical table definitions
+          ---
+          duration_ms: 16.9514
+          type: 'test'
+          ...
+        # Subtest: getTableById retrieves a single table with bindings and indicators
+        ok 2 - getTableById retrieves a single table with bindings and indicators
+          ---
+          duration_ms: 1.1502
+          type: 'test'
+          ...
+        # Subtest: createTable creates a custom statistical table with valid defaults
+        ok 3 - createTable creates a custom statistical table with valid defaults
+          ---
+          duration_ms: 2.4162
+          type: 'test'
+          ...
+        # Subtest: Duplicate table-code protection rejects collision
+        ok 4 - Duplicate table-code protection rejects collision
+          ---
+          duration_ms: 1.8572
+          type: 'test'
+          ...
+        # Subtest: updateTable updates allowlisted metadata properties
+        ok 5 - updateTable updates allowlisted metadata properties
+          ---
+          duration_ms: 1.9187
+          type: 'test'
+          ...
+        # Subtest: System-table immutability: Cannot delete PSA canonical tables (1-69)
+        ok 6 - System-table immutability: Cannot delete PSA canonical tables (1-69)
+          ---
+          duration_ms: 1.2037
+          type: 'test'
+          ...
+        # Subtest: System-table immutability: Update payload cannot mutate protected identity fields
+        ok 7 - System-table immutability: Update payload cannot mutate protected identity fields
+          ---
+          duration_ms: 0.8528
+          type: 'test'
+          ...
+        # Subtest: Custom table deletion succeeds for unreferenced custom table
+        ok 8 - Custom table deletion succeeds for unreferenced custom table
+          ---
+          duration_ms: 1.4726
+          type: 'test'
+          ...
+        1..8
+    ok 1 - 1. Table CRUD & Immutability Engine
+      ---
+      duration_ms: 30.2314
+      type: 'suite'
+      ...
+    # Subtest: 2. Dimension Dictionary & Inline Creation
+        # Subtest: getDimensionDictionary returns registered analytical dimensions
+        ok 1 - getDimensionDictionary returns registered analytical dimensions
+          ---
+          duration_ms: 26.5988
+          type: 'test'
+          ...
+        # Subtest: Inline dimension creation creates a new verified dimension
+        ok 2 - Inline dimension creation creates a new verified dimension
+          ---
+          duration_ms: 1.2698
+          type: 'test'
+          ...
+        # Subtest: Duplicate dimension-code protection rejects duplicate dimensionCode
+        ok 3 - Duplicate dimension-code protection rejects duplicate dimensionCode
+          ---
+          duration_ms: 0.8046
+          type: 'test'
+          ...
+        1..3
+    ok 2 - 2. Dimension Dictionary & Inline Creation
+      ---
+      duration_ms: 33.1712
+      type: 'suite'
+      ...
+    # Subtest: 3. Dimension Binding, Unbinding & Reordering
+        # Subtest: bindDimension binds a dimension to a table with display order
+        ok 1 - bindDimension binds a dimension to a table with display order
+          ---
+          duration_ms: 1.7623
+          type: 'test'
+          ...
+        # Subtest: Duplicate dimension binding is rejected with 409 Conflict
+        ok 2 - Duplicate dimension binding is rejected with 409 Conflict
+          ---
+          duration_ms: 1.3624
+          type: 'test'
+          ...
+        # Subtest: Safe unbinding removes dimension binding when no observations exist
+        ok 3 - Safe unbinding removes dimension binding when no observations exist
+          ---
+          duration_ms: 1.5099
+          type: 'test'
+          ...
+        # Subtest: Transactional dimension reorder normalizes sequence across all bound dimensions
+        ok 4 - Transactional dimension reorder normalizes sequence across all bound dimensions
+          ---
+          duration_ms: 1.9357
+          type: 'test'
+          ...
+        # Subtest: Cross-table reorder rejection: Reordering with foreign dimension ID is rejected
+        ok 5 - Cross-table reorder rejection: Reordering with foreign dimension ID is rejected
+          ---
+          duration_ms: 1.7282
+          type: 'test'
+          ...
+        1..5
+    ok 3 - 3. Dimension Binding, Unbinding & Reordering
+      ---
+      duration_ms: 13.7677
+      type: 'suite'
+      ...
+    # Subtest: 4. Indicator CRUD & Referential Protection
+        # Subtest: createIndicator creates an indicator associated with a table definition
+        ok 1 - createIndicator creates an indicator associated with a table definition
+          ---
+          duration_ms: 1.4539
+          type: 'test'
+          ...
+        # Subtest: Duplicate indicator-code is rejected with ConflictError
+        ok 2 - Duplicate indicator-code is rejected with ConflictError
+          ---
+          duration_ms: 1.7334
+          type: 'test'
+          ...
+        # Subtest: updateIndicator updates indicator formula, name, and title
+        ok 3 - updateIndicator updates indicator formula, name, and title
+          ---
+          duration_ms: 1.1114
+          type: 'test'
+          ...
+        # Subtest: deleteIndicator deletes unreferenced indicator
+        ok 4 - deleteIndicator deletes unreferenced indicator
+          ---
+          duration_ms: 0.9526
+          type: 'test'
+          ...
+        1..4
+    ok 4 - 4. Indicator CRUD & Referential Protection
+      ---
+      duration_ms: 5.5672
+      type: 'suite'
+      ...
+    # Subtest: 5. RBAC Enforcement (ENCODER and VIEWER Rejection)
+        # Subtest: ENCODER role cannot create tables (ForbiddenError 403)
+        ok 1 - ENCODER role cannot create tables (ForbiddenError 403)
+          ---
+          duration_ms: 0.6713
+          type: 'test'
+          ...
+        # Subtest: VIEWER role cannot update tables (ForbiddenError 403)
+        ok 2 - VIEWER role cannot update tables (ForbiddenError 403)
+          ---
+          duration_ms: 1.0309
+          type: 'test'
+          ...
+        # Subtest: ENCODER role cannot bind dimensions (ForbiddenError 403)
+        ok 3 - ENCODER role cannot bind dimensions (ForbiddenError 403)
+          ---
+          duration_ms: 1.1667
+          type: 'test'
+          ...
+        # Subtest: VIEWER role cannot create dimensions (ForbiddenError 403)
+        ok 4 - VIEWER role cannot create dimensions (ForbiddenError 403)
+          ---
+          duration_ms: 0.6332
+          type: 'test'
+          ...
+        # Subtest: ENCODER role cannot create indicators (ForbiddenError 403)
+        ok 5 - ENCODER role cannot create indicators (ForbiddenError 403)
+          ---
+          duration_ms: 1.3227
+          type: 'test'
+          ...
+        1..5
+    ok 5 - 5. RBAC Enforcement (ENCODER and VIEWER Rejection)
+      ---
+      duration_ms: 5.3493
+      type: 'suite'
+      ...
+    # Subtest: 6. Audit Trail Logging Verification
+        # Subtest: Mutations emit audit log events with actor and entity tracking
+        ok 1 - Mutations emit audit log events with actor and entity tracking
+          ---
+          duration_ms: 1.4386
+          type: 'test'
+          ...
+        1..1
+    ok 6 - 6. Audit Trail Logging Verification
+      ---
+      duration_ms: 1.7573
+      type: 'suite'
+      ...
+    1..6
+ok 92 - TAGAD Sprint 12 — Issue \#14: Table Builder Backend Service & Security Suite
+  ---
+  duration_ms: 91.5382
+  type: 'suite'
+  ...
+# Subtest: TAGAD Sprint 12 — Step 4: Full Table Builder HTTP End-to-End Integration & RBAC Attack Suite
+    # Subtest: 1. Authentication Boundary Across HTTP
+        # Subtest: Unauthenticated request to list tables returns 401 Unauthorized
+        ok 1 - Unauthenticated request to list tables returns 401 Unauthorized
+          ---
+          duration_ms: 119.3644
+          type: 'test'
+          ...
+        # Subtest: Malformed/invalid token returns 401 Unauthorized
+        ok 2 - Malformed/invalid token returns 401 Unauthorized
+          ---
+          duration_ms: 29.8436
+          type: 'test'
+          ...
+        1..2
+    ok 1 - 1. Authentication Boundary Across HTTP
+      ---
+      duration_ms: 152.5869
+      type: 'suite'
+      ...
+    # Subtest: 2. Table Catalog List & Filters Across HTTP
+        # Subtest: ADMIN retrieves paginated tables with metadata and pagination
+        ok 1 - ADMIN retrieves paginated tables with metadata and pagination
+          ---
+          duration_ms: 40.5224
+          type: 'test'
+          ...
+        # Subtest: VIEWER can view catalog (Read-only access permitted)
+        ok 2 - VIEWER can view catalog (Read-only access permitted)
+          ---
+          duration_ms: 27.2641
+          type: 'test'
+          ...
+        # Subtest: Filtering by domain returns only matching domain tables
+        ok 3 - Filtering by domain returns only matching domain tables
+          ---
+          duration_ms: 25.3463
+          type: 'test'
+          ...
+        # Subtest: Search query matches title or tableCode
+        ok 4 - Search query matches title or tableCode
+          ---
+          duration_ms: 20.488
+          type: 'test'
+          ...
+        # Subtest: GET /tables/:id returns table detail with dimension bindings and indicators
+        ok 5 - GET /tables/:id returns table detail with dimension bindings and indicators
+          ---
+          duration_ms: 37.079
+          type: 'test'
+          ...
+        1..5
+    ok 2 - 2. Table Catalog List & Filters Across HTTP
+      ---
+      duration_ms: 155.2457
+      type: 'suite'
+      ...
+    # Subtest: 3. Custom Table Lifecycle (Create -> Read -> Update -> Delete)
+        # Subtest: Complete custom table lifecycle with server-assigned identifiers and immutability
+        ok 1 - Complete custom table lifecycle with server-assigned identifiers and immutability
+          ---
+          duration_ms: 209.4279
+          type: 'test'
+          ...
+        # Subtest: Duplicate tableCode in POST /tables is rejected with 409 Conflict
+        ok 2 - Duplicate tableCode in POST /tables is rejected with 409 Conflict
+          ---
+          duration_ms: 28.9116
+          type: 'test'
+          ...
+        1..2
+    ok 3 - 3. Custom Table Lifecycle (Create -> Read -> Update -> Delete)
+      ---
+      duration_ms: 240.5597
+      type: 'suite'
+      ...
+    # Subtest: 4. PSA System Table Immutability (\#1–69)
+        # Subtest: DELETE /tables/:id on a PSA System Table is strictly rejected with 403 Forbidden
+        ok 1 - DELETE /tables/:id on a PSA System Table is strictly rejected with 403 Forbidden
+          ---
+          duration_ms: 21.9258
+          type: 'test'
+          ...
+        # Subtest: PUT /tables/:id cannot mutate tableCode, tableNumber, or isSystemTable
+        ok 2 - PUT /tables/:id cannot mutate tableCode, tableNumber, or isSystemTable
+          ---
+          duration_ms: 21.6081
+          type: 'test'
+          ...
+        1..2
+    ok 4 - 4. PSA System Table Immutability (\#1–69)
+      ---
+      duration_ms: 43.9652
+      type: 'suite'
+      ...
+    # Subtest: 5. Dimension Lifecycle (Dictionary -> Inline Create -> Bind -> Reorder -> Unbind)
+        # Subtest: Dimension dictionary lookup, inline creation, binding, reordering, and unbinding
+        ok 1 - Dimension dictionary lookup, inline creation, binding, reordering, and unbinding
+          ---
+          duration_ms: 170.1373
+          type: 'test'
+          ...
+        1..1
+    ok 5 - 5. Dimension Lifecycle (Dictionary -> Inline Create -> Bind -> Reorder -> Unbind)
+      ---
+      duration_ms: 171.3911
+      type: 'suite'
+      ...
+    # Subtest: 6. Indicator Lifecycle (Create -> Read -> Update -> Delete)
+        # Subtest: Indicator creation, formula updates, permanent code protection, and deletion
+        ok 1 - Indicator creation, formula updates, permanent code protection, and deletion
+          ---
+          duration_ms: 67.0926
+          type: 'test'
+          ...
+        1..1
+    ok 6 - 6. Indicator Lifecycle (Create -> Read -> Update -> Delete)
+      ---
+      duration_ms: 67.702
+      type: 'suite'
+      ...
+    # Subtest: 7. Authoritative RBAC HTTP Attack Matrix
+        # Subtest: ENCODER cannot execute mutation operations (POST/PUT/DELETE return 403 Forbidden)
+        ok 1 - ENCODER cannot execute mutation operations (POST/PUT/DELETE return 403 Forbidden)
+          ---
+          duration_ms: 41.2172
+          type: 'test'
+          ...
+        # Subtest: VIEWER cannot execute mutation operations (POST/PUT/DELETE return 403 Forbidden)
+        ok 2 - VIEWER cannot execute mutation operations (POST/PUT/DELETE return 403 Forbidden)
+          ---
+          duration_ms: 24.3321
+          type: 'test'
+          ...
+        # Subtest: SUPER_ADMIN and ADMIN are granted full mutation access
+        ok 3 - SUPER_ADMIN and ADMIN are granted full mutation access
+          ---
+          duration_ms: 22.0935
+          type: 'test'
+          ...
+        1..3
+    ok 7 - 7. Authoritative RBAC HTTP Attack Matrix
+      ---
+      duration_ms: 88.3502
+      type: 'suite'
+      ...
+    # Subtest: 8. Audit Trail Event Emittance Across HTTP
+        # Subtest: Mutations emit structured audit log events with actor metadata
+        ok 1 - Mutations emit structured audit log events with actor metadata
+          ---
+          duration_ms: 18.1196
+          type: 'test'
+          ...
+        1..1
+    ok 8 - 8. Audit Trail Event Emittance Across HTTP
+      ---
+      duration_ms: 18.8359
+      type: 'suite'
+      ...
+    1..8
+ok 93 - TAGAD Sprint 12 — Step 4: Full Table Builder HTTP End-to-End Integration & RBAC Attack Suite
+  ---
+  duration_ms: 1046.4155
+  type: 'suite'
+  ...
+1..93
+# tests 267
+# suites 70
+# pass 267
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 35448.3338
+
+> @tagad/backend@2.0.0 posttest
+> npm run build
+
+
+> @tagad/backend@2.0.0 build
+> tsc

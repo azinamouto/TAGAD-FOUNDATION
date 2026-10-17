@@ -1,0 +1,18 @@
+# Data preservation matrix
+
+Inventory is schema/repository based. No claim is made about actual historical row counts or completeness in a deployed LGU database. All families below must be inventoried by the authorized operator before deployment; unknown count does not mean empty or disposable.
+
+| Data family | Preserve without reinterpretation | Risks / future acceptance |
+| --- | --- | --- |
+| CBMS-derived catalog and datasets | IDs, table number/code/title, source agency/file, reporting year/period/round, batch/importer, official/publication/verification state | 69-source register is catalog metadata, not 69 certified datasets. Preserve obsolete/custom/linked identities; do not run seed reconciliation as cleanup. D03/D08 approve GAD subset. |
+| Statistical observations | Dataset/table/indicator/barangay/provenance links, numeric decimal(18,4), unit, period, JSON dimensions/hash and suppression fields | Never turn missing/suppressed into zero, sum unlike units, deduplicate without grain evidence, or manufacture persons from counts. Dataset deletion cascades. |
+| Provenance and dictionaries | Source file/document/URL, method, agency, importer, batch, formulas/denominators, dimensions and allowed-value bindings | Strings may refer to external artifacts without FKs. Archive source bytes/checksums and reviewed mappings; preserve original versions. |
+| Beneficiaries and households | UUIDs, original sex/sector/age/birthdate, barangay/office/household links, encoder and archive state | No inferred birthdate, category remapping, identity merge, household expansion or cross-office matching. D03/D04/D05 first. |
+| Barangay and office references | Original UUIDs/codes/names/aliases, geometry, coordinate pair, source and verification status | Existing TLB codes and placeholder labels are not proof of official roster. D07 must approve mapping and geometry sources; retain null/unverified explicitly. |
+| GAD plans/programs/items | Office/year, statuses, monetary decimals, HGDG/attribution, gender issues, activities, targets, creator/updater and timestamps | Existing defaults/checks are software behavior, not newly approved policy. Preserve reported totals independently of future participation calculations. D04/D09. |
+| Accomplishments and MOV | Plan/program links, outputs/quarter/year, male/female totals, expenditure, variance/remarks, uploader and object paths | Program deletion cascades to accomplishments and attachments. Retain private object bytes and checksums separately; no deletion for UI retirement. |
+| Identity/security | Account UUID/hash/active state/roles/scope and all unexpired revocations | Never grant privileges through inferred persona mapping or lose revoked/consumed session identifiers on restore. Preserve original and canonical auth separately. |
+| Audit and feedback | Actor references, before/after, action/entity, timestamps, reviewer and private contents | Preserve append history and confidentiality; do not bulk copy PII into reports/log artifacts. Retention requires D05. |
+| Legacy SQL and SQLite | All foundation tables/IDs/FKs/types/policies/triggers; tracked dev.db bytes | No drop because Prisma omits them; no automatic migration/merge into canonical domain. Operator must establish ownership and retention. |
+
+Synthetic rehearsal verifies counts/content and relationships without exporting real records. The additive migration preserves all pre-existing rows. Existing cascading FK behavior is recorded, not changed or exercised on historical data. Future WP04 backfills need reviewed source mappings, unresolved-row handling, before/after reconciliation and a protected restore proof. Source object backups and deployed inventory remain D10 dependencies.

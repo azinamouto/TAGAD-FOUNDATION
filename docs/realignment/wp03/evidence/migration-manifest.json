@@ -1,0 +1,38 @@
+[
+  {
+    "file": "20260824000001_sprint1_foundation.sql",
+    "sha256": "11c85bb5d73ef1f7ecc34383df6a93ab71b8ddf019357a4a87834b432cf93420"
+  },
+  {
+    "file": "20260824000002_canonical_domain_model.sql",
+    "sha256": "68db1aa83da7149b31d87a9874132e13780d0932583bb3a44cd79c944a36109f"
+  },
+  {
+    "file": "20260831000001_add_super_admin_role.sql",
+    "sha256": "2d3a7e3ed6bca61034f2fd43f418d7da6eeded207548c43d3ec01bfae1b51fc7"
+  },
+  {
+    "file": "20260831000002_statistical_domain.sql",
+    "sha256": "50584dd462ef2e71579c4a5112e7d3ce46c806b122288f254eae884346a2fcf8"
+  },
+  {
+    "file": "20260831000003_table_dimension_bindings.sql",
+    "sha256": "c9b3156ecb3080637aeaa4bc2d7c64cb37ef60db3a0310dfe9f1688f9efd3df5"
+  },
+  {
+    "file": "20260914141827_deny_tagad_data_api_access.sql",
+    "sha256": "30faa8b4aea2f6f0f88d7c726624d43f89684f90b0b94ded24b7a689b10165b5"
+  },
+  {
+    "file": "20260914230700_barangay_geography.sql",
+    "sha256": "ec36e6cb1a8499964d1d5c0be36923f9575464dbaf3197078ff1de2a5cab377d"
+  },
+  {
+    "file": "20260916041906_feedback_review.sql",
+    "sha256": "652e0b9206c547a2bd0b00e20464504e291eff8dfabaf96245a00d4c7ea6b4be"
+  },
+  {
+    "file": "20261017000001_revoked_tokens.sql",
+    "sha256": "b9b5d5eb36e03d8c39975056666ac24ddb721a0c2bd42c31f93a07d63961612c"
+  }
+]

@@ -1,0 +1,526 @@
+-- DropForeignKey
+ALTER TABLE "public"."audit_logs" DROP CONSTRAINT "audit_logs_user_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."budget_allocations" DROP CONSTRAINT "budget_allocations_budget_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."budget_allocations" DROP CONSTRAINT "budget_allocations_created_by_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."budget_allocations" DROP CONSTRAINT "budget_allocations_office_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."budgets" DROP CONSTRAINT "budgets_created_by_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."budgets" DROP CONSTRAINT "budgets_updated_by_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."documents" DROP CONSTRAINT "documents_activity_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."documents" DROP CONSTRAINT "documents_document_type_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."documents" DROP CONSTRAINT "documents_uploaded_by_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."expenditures" DROP CONSTRAINT "expenditures_activity_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."expenditures" DROP CONSTRAINT "expenditures_allocation_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."expenditures" DROP CONSTRAINT "expenditures_created_by_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."gad_activities" DROP CONSTRAINT "gad_activities_created_by_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."gad_activities" DROP CONSTRAINT "gad_activities_project_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."gad_activities" DROP CONSTRAINT "gad_activities_updated_by_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."gad_programs" DROP CONSTRAINT "gad_programs_created_by_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."gad_programs" DROP CONSTRAINT "gad_programs_office_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."gad_programs" DROP CONSTRAINT "gad_programs_updated_by_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."gad_projects" DROP CONSTRAINT "gad_projects_created_by_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."gad_projects" DROP CONSTRAINT "gad_projects_program_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."gad_projects" DROP CONSTRAINT "gad_projects_updated_by_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."tagad_accomplishments" DROP CONSTRAINT "tagad_accomplishments_created_by_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."tagad_accomplishments" DROP CONSTRAINT "tagad_accomplishments_gad_plan_item_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."tagad_accomplishments" DROP CONSTRAINT "tagad_accomplishments_program_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."tagad_audit_logs" DROP CONSTRAINT "tagad_audit_logs_user_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."tagad_beneficiaries" DROP CONSTRAINT "tagad_beneficiaries_barangay_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."tagad_beneficiaries" DROP CONSTRAINT "tagad_beneficiaries_encoded_by_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."tagad_beneficiaries" DROP CONSTRAINT "tagad_beneficiaries_household_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."tagad_beneficiaries" DROP CONSTRAINT "tagad_beneficiaries_office_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."tagad_citizen_feedback" DROP CONSTRAINT "tagad_citizen_feedback_reviewed_by_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."tagad_gad_plan_items" DROP CONSTRAINT "tagad_gad_plan_items_gad_plan_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."tagad_gad_plan_items" DROP CONSTRAINT "tagad_gad_plan_items_program_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."tagad_gad_plans" DROP CONSTRAINT "tagad_gad_plans_created_by_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."tagad_gad_plans" DROP CONSTRAINT "tagad_gad_plans_office_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."tagad_gad_plans" DROP CONSTRAINT "tagad_gad_plans_updated_by_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."tagad_households" DROP CONSTRAINT "tagad_households_barangay_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."tagad_mov_attachments" DROP CONSTRAINT "tagad_mov_attachments_accomplishment_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."tagad_mov_attachments" DROP CONSTRAINT "tagad_mov_attachments_uploaded_by_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."tagad_programs" DROP CONSTRAINT "tagad_programs_created_by_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."tagad_programs" DROP CONSTRAINT "tagad_programs_office_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."tagad_programs" DROP CONSTRAINT "tagad_programs_updated_by_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."tagad_statistical_datasets" DROP CONSTRAINT "tagad_statistical_datasets_imported_by_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."tagad_statistical_indicators" DROP CONSTRAINT "tagad_statistical_indicators_table_definition_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."tagad_statistical_observations" DROP CONSTRAINT "tagad_statistical_observations_barangay_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."tagad_statistical_observations" DROP CONSTRAINT "tagad_statistical_observations_dataset_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."tagad_statistical_observations" DROP CONSTRAINT "tagad_statistical_observations_indicator_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."tagad_statistical_observations" DROP CONSTRAINT "tagad_statistical_observations_provenance_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."tagad_statistical_observations" DROP CONSTRAINT "tagad_statistical_observations_table_definition_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."tagad_statistical_provenance" DROP CONSTRAINT "tagad_statistical_provenance_imported_by_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."tagad_table_dimension_bindings" DROP CONSTRAINT "tagad_table_dimension_bindings_dimension_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."tagad_table_dimension_bindings" DROP CONSTRAINT "tagad_table_dimension_bindings_table_definition_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."tagad_users" DROP CONSTRAINT "tagad_users_barangay_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."tagad_users" DROP CONSTRAINT "tagad_users_office_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."user_roles" DROP CONSTRAINT "user_roles_assigned_by_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."user_roles" DROP CONSTRAINT "user_roles_user_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."users" DROP CONSTRAINT "users_barangay_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."users" DROP CONSTRAINT "users_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "public"."users" DROP CONSTRAINT "users_office_id_fkey";
+
+-- DropIndex
+DROP INDEX "public"."idx_stat_table_def_system_archived";
+
+-- DropIndex
+DROP INDEX "public"."idx_table_dim_binding_dim";
+
+-- DropIndex
+DROP INDEX "public"."idx_tagad_users_office";
+
+-- AlterTable
+ALTER TABLE "public"."tagad_accomplishments" ALTER COLUMN "id" DROP DEFAULT,
+ALTER COLUMN "created_at" SET DATA TYPE TIMESTAMP(3),
+ALTER COLUMN "updated_at" DROP DEFAULT,
+ALTER COLUMN "updated_at" SET DATA TYPE TIMESTAMP(3);
+
+-- AlterTable
+ALTER TABLE "public"."tagad_audit_logs" ALTER COLUMN "id" DROP DEFAULT,
+ALTER COLUMN "created_at" SET DATA TYPE TIMESTAMP(3);
+
+-- AlterTable
+ALTER TABLE "public"."tagad_barangays" ALTER COLUMN "id" DROP DEFAULT,
+ALTER COLUMN "created_at" SET DATA TYPE TIMESTAMP(3),
+ALTER COLUMN "updated_at" DROP DEFAULT,
+ALTER COLUMN "updated_at" SET DATA TYPE TIMESTAMP(3);
+
+-- AlterTable
+ALTER TABLE "public"."tagad_beneficiaries" ALTER COLUMN "id" DROP DEFAULT,
+ALTER COLUMN "created_at" SET DATA TYPE TIMESTAMP(3),
+ALTER COLUMN "updated_at" DROP DEFAULT,
+ALTER COLUMN "updated_at" SET DATA TYPE TIMESTAMP(3);
+
+-- AlterTable
+ALTER TABLE "public"."tagad_citizen_feedback" ALTER COLUMN "id" DROP DEFAULT,
+ALTER COLUMN "updated_at" DROP DEFAULT;
+
+-- AlterTable
+ALTER TABLE "public"."tagad_gad_plan_items" ALTER COLUMN "id" DROP DEFAULT,
+ALTER COLUMN "created_at" SET DATA TYPE TIMESTAMP(3),
+ALTER COLUMN "updated_at" DROP DEFAULT,
+ALTER COLUMN "updated_at" SET DATA TYPE TIMESTAMP(3);
+
+-- AlterTable
+ALTER TABLE "public"."tagad_gad_plans" ALTER COLUMN "id" DROP DEFAULT,
+ALTER COLUMN "created_at" SET DATA TYPE TIMESTAMP(3),
+ALTER COLUMN "updated_at" DROP DEFAULT,
+ALTER COLUMN "updated_at" SET DATA TYPE TIMESTAMP(3);
+
+-- AlterTable
+ALTER TABLE "public"."tagad_households" ALTER COLUMN "id" DROP DEFAULT,
+ALTER COLUMN "created_at" SET DATA TYPE TIMESTAMP(3),
+ALTER COLUMN "updated_at" DROP DEFAULT,
+ALTER COLUMN "updated_at" SET DATA TYPE TIMESTAMP(3);
+
+-- AlterTable
+ALTER TABLE "public"."tagad_mov_attachments" ALTER COLUMN "id" DROP DEFAULT,
+ALTER COLUMN "uploaded_at" SET DATA TYPE TIMESTAMP(3);
+
+-- AlterTable
+ALTER TABLE "public"."tagad_offices" ALTER COLUMN "id" DROP DEFAULT,
+ALTER COLUMN "created_at" SET DATA TYPE TIMESTAMP(3),
+ALTER COLUMN "updated_at" DROP DEFAULT,
+ALTER COLUMN "updated_at" SET DATA TYPE TIMESTAMP(3);
+
+-- AlterTable
+ALTER TABLE "public"."tagad_programs" ALTER COLUMN "id" DROP DEFAULT,
+ALTER COLUMN "created_at" SET DATA TYPE TIMESTAMP(3),
+ALTER COLUMN "updated_at" DROP DEFAULT,
+ALTER COLUMN "updated_at" SET DATA TYPE TIMESTAMP(3);
+
+-- AlterTable
+ALTER TABLE "public"."tagad_statistical_datasets" ALTER COLUMN "id" DROP DEFAULT,
+ALTER COLUMN "created_at" SET DATA TYPE TIMESTAMP(3),
+ALTER COLUMN "updated_at" DROP DEFAULT,
+ALTER COLUMN "updated_at" SET DATA TYPE TIMESTAMP(3);
+
+-- AlterTable
+ALTER TABLE "public"."tagad_statistical_dimensions" ALTER COLUMN "id" DROP DEFAULT,
+ALTER COLUMN "created_at" SET DATA TYPE TIMESTAMP(3),
+ALTER COLUMN "updated_at" DROP DEFAULT,
+ALTER COLUMN "updated_at" SET DATA TYPE TIMESTAMP(3);
+
+-- AlterTable
+ALTER TABLE "public"."tagad_statistical_indicators" ALTER COLUMN "id" DROP DEFAULT,
+ALTER COLUMN "created_at" SET DATA TYPE TIMESTAMP(3),
+ALTER COLUMN "updated_at" DROP DEFAULT,
+ALTER COLUMN "updated_at" SET DATA TYPE TIMESTAMP(3);
+
+-- AlterTable
+ALTER TABLE "public"."tagad_statistical_observations" ALTER COLUMN "id" DROP DEFAULT,
+ALTER COLUMN "created_at" SET DATA TYPE TIMESTAMP(3),
+ALTER COLUMN "updated_at" DROP DEFAULT,
+ALTER COLUMN "updated_at" SET DATA TYPE TIMESTAMP(3);
+
+-- AlterTable
+ALTER TABLE "public"."tagad_statistical_provenance" ALTER COLUMN "id" DROP DEFAULT,
+ALTER COLUMN "created_at" SET DATA TYPE TIMESTAMP(3);
+
+-- AlterTable
+ALTER TABLE "public"."tagad_statistical_table_definitions" ALTER COLUMN "id" DROP DEFAULT,
+ALTER COLUMN "created_at" SET DATA TYPE TIMESTAMP(3),
+ALTER COLUMN "updated_at" DROP DEFAULT,
+ALTER COLUMN "updated_at" SET DATA TYPE TIMESTAMP(3);
+
+-- AlterTable
+ALTER TABLE "public"."tagad_table_dimension_bindings" ALTER COLUMN "id" DROP DEFAULT,
+ALTER COLUMN "created_at" SET DATA TYPE TIMESTAMP(3),
+ALTER COLUMN "updated_at" DROP DEFAULT,
+ALTER COLUMN "updated_at" SET DATA TYPE TIMESTAMP(3);
+
+-- AlterTable
+ALTER TABLE "public"."tagad_users" ALTER COLUMN "id" DROP DEFAULT,
+ALTER COLUMN "created_at" SET DATA TYPE TIMESTAMP(3),
+ALTER COLUMN "updated_at" DROP DEFAULT,
+ALTER COLUMN "updated_at" SET DATA TYPE TIMESTAMP(3);
+
+-- DropTable
+DROP TABLE "auth"."users";
+
+-- DropTable
+DROP TABLE "public"."audit_logs";
+
+-- DropTable
+DROP TABLE "public"."barangays";
+
+-- DropTable
+DROP TABLE "public"."budget_allocations";
+
+-- DropTable
+DROP TABLE "public"."budgets";
+
+-- DropTable
+DROP TABLE "public"."document_types";
+
+-- DropTable
+DROP TABLE "public"."documents";
+
+-- DropTable
+DROP TABLE "public"."expenditures";
+
+-- DropTable
+DROP TABLE "public"."gad_activities";
+
+-- DropTable
+DROP TABLE "public"."gad_programs";
+
+-- DropTable
+DROP TABLE "public"."gad_projects";
+
+-- DropTable
+DROP TABLE "public"."offices";
+
+-- DropTable
+DROP TABLE "public"."roles";
+
+-- DropTable
+DROP TABLE "public"."user_roles";
+
+-- DropTable
+DROP TABLE "public"."users";
+
+-- DropEnum
+DROP TYPE "public"."app_role";
+
+-- DropEnum
+DROP TYPE "public"."budget_status";
+
+-- DropEnum
+DROP TYPE "public"."gad_program_status";
+
+-- CreateTable
+CREATE TABLE "public"."tagad_revoked_tokens" (
+    "id" UUID NOT NULL,
+    "jti" VARCHAR(255),
+    "token_hash" VARCHAR(64) NOT NULL,
+    "user_id" UUID,
+    "reason" VARCHAR(255),
+    "expires_at" TIMESTAMP(3) NOT NULL,
+    "revoked_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "tagad_revoked_tokens_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "tagad_revoked_tokens_jti_key" ON "public"."tagad_revoked_tokens"("jti");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "tagad_revoked_tokens_token_hash_key" ON "public"."tagad_revoked_tokens"("token_hash");
+
+-- CreateIndex
+CREATE INDEX "tagad_revoked_tokens_token_hash_idx" ON "public"."tagad_revoked_tokens"("token_hash");
+
+-- CreateIndex
+CREATE INDEX "tagad_revoked_tokens_jti_idx" ON "public"."tagad_revoked_tokens"("jti");
+
+-- CreateIndex
+CREATE INDEX "tagad_revoked_tokens_expires_at_idx" ON "public"."tagad_revoked_tokens"("expires_at");
+
+-- CreateIndex
+CREATE INDEX "tagad_revoked_tokens_user_id_idx" ON "public"."tagad_revoked_tokens"("user_id");
+
+-- AddForeignKey
+ALTER TABLE "public"."tagad_households" ADD CONSTRAINT "tagad_households_barangay_id_fkey" FOREIGN KEY ("barangay_id") REFERENCES "public"."tagad_barangays"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."tagad_users" ADD CONSTRAINT "tagad_users_office_id_fkey" FOREIGN KEY ("office_id") REFERENCES "public"."tagad_offices"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."tagad_users" ADD CONSTRAINT "tagad_users_barangay_id_fkey" FOREIGN KEY ("barangay_id") REFERENCES "public"."tagad_barangays"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."tagad_beneficiaries" ADD CONSTRAINT "tagad_beneficiaries_household_id_fkey" FOREIGN KEY ("household_id") REFERENCES "public"."tagad_households"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."tagad_beneficiaries" ADD CONSTRAINT "tagad_beneficiaries_office_id_fkey" FOREIGN KEY ("office_id") REFERENCES "public"."tagad_offices"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."tagad_beneficiaries" ADD CONSTRAINT "tagad_beneficiaries_barangay_id_fkey" FOREIGN KEY ("barangay_id") REFERENCES "public"."tagad_barangays"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."tagad_beneficiaries" ADD CONSTRAINT "tagad_beneficiaries_encoded_by_fkey" FOREIGN KEY ("encoded_by") REFERENCES "public"."tagad_users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."tagad_gad_plans" ADD CONSTRAINT "tagad_gad_plans_office_id_fkey" FOREIGN KEY ("office_id") REFERENCES "public"."tagad_offices"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."tagad_gad_plans" ADD CONSTRAINT "tagad_gad_plans_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "public"."tagad_users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."tagad_gad_plan_items" ADD CONSTRAINT "tagad_gad_plan_items_gad_plan_id_fkey" FOREIGN KEY ("gad_plan_id") REFERENCES "public"."tagad_gad_plans"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."tagad_gad_plan_items" ADD CONSTRAINT "tagad_gad_plan_items_program_id_fkey" FOREIGN KEY ("program_id") REFERENCES "public"."tagad_programs"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."tagad_programs" ADD CONSTRAINT "tagad_programs_office_id_fkey" FOREIGN KEY ("office_id") REFERENCES "public"."tagad_offices"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."tagad_programs" ADD CONSTRAINT "tagad_programs_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "public"."tagad_users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."tagad_accomplishments" ADD CONSTRAINT "tagad_accomplishments_program_id_fkey" FOREIGN KEY ("program_id") REFERENCES "public"."tagad_programs"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."tagad_accomplishments" ADD CONSTRAINT "tagad_accomplishments_gad_plan_item_id_fkey" FOREIGN KEY ("gad_plan_item_id") REFERENCES "public"."tagad_gad_plan_items"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."tagad_accomplishments" ADD CONSTRAINT "tagad_accomplishments_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "public"."tagad_users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."tagad_mov_attachments" ADD CONSTRAINT "tagad_mov_attachments_accomplishment_id_fkey" FOREIGN KEY ("accomplishment_id") REFERENCES "public"."tagad_accomplishments"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."tagad_mov_attachments" ADD CONSTRAINT "tagad_mov_attachments_uploaded_by_fkey" FOREIGN KEY ("uploaded_by") REFERENCES "public"."tagad_users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."tagad_audit_logs" ADD CONSTRAINT "tagad_audit_logs_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."tagad_users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."tagad_statistical_datasets" ADD CONSTRAINT "tagad_statistical_datasets_imported_by_id_fkey" FOREIGN KEY ("imported_by_id") REFERENCES "public"."tagad_users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."tagad_statistical_indicators" ADD CONSTRAINT "tagad_statistical_indicators_table_definition_id_fkey" FOREIGN KEY ("table_definition_id") REFERENCES "public"."tagad_statistical_table_definitions"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."tagad_table_dimension_bindings" ADD CONSTRAINT "tagad_table_dimension_bindings_table_definition_id_fkey" FOREIGN KEY ("table_definition_id") REFERENCES "public"."tagad_statistical_table_definitions"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."tagad_table_dimension_bindings" ADD CONSTRAINT "tagad_table_dimension_bindings_dimension_id_fkey" FOREIGN KEY ("dimension_id") REFERENCES "public"."tagad_statistical_dimensions"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."tagad_statistical_provenance" ADD CONSTRAINT "tagad_statistical_provenance_imported_by_id_fkey" FOREIGN KEY ("imported_by_id") REFERENCES "public"."tagad_users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."tagad_statistical_observations" ADD CONSTRAINT "tagad_statistical_observations_dataset_id_fkey" FOREIGN KEY ("dataset_id") REFERENCES "public"."tagad_statistical_datasets"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."tagad_statistical_observations" ADD CONSTRAINT "tagad_statistical_observations_table_definition_id_fkey" FOREIGN KEY ("table_definition_id") REFERENCES "public"."tagad_statistical_table_definitions"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."tagad_statistical_observations" ADD CONSTRAINT "tagad_statistical_observations_indicator_id_fkey" FOREIGN KEY ("indicator_id") REFERENCES "public"."tagad_statistical_indicators"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."tagad_statistical_observations" ADD CONSTRAINT "tagad_statistical_observations_barangay_id_fkey" FOREIGN KEY ("barangay_id") REFERENCES "public"."tagad_barangays"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."tagad_statistical_observations" ADD CONSTRAINT "tagad_statistical_observations_provenance_id_fkey" FOREIGN KEY ("provenance_id") REFERENCES "public"."tagad_statistical_provenance"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."tagad_revoked_tokens" ADD CONSTRAINT "tagad_revoked_tokens_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."tagad_users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."tagad_citizen_feedback" ADD CONSTRAINT "tagad_citizen_feedback_reviewed_by_id_fkey" FOREIGN KEY ("reviewed_by_id") REFERENCES "public"."tagad_users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- RenameIndex
+ALTER INDEX "public"."idx_tagad_accomplishments_program" RENAME TO "tagad_accomplishments_program_id_idx";
+
+-- RenameIndex
+ALTER INDEX "public"."idx_tagad_audit_logs_created" RENAME TO "tagad_audit_logs_created_at_idx";
+
+-- RenameIndex
+ALTER INDEX "public"."idx_tagad_audit_logs_user_action" RENAME TO "tagad_audit_logs_user_id_action_idx";
+
+-- RenameIndex
+ALTER INDEX "public"."idx_tagad_beneficiaries_barangay" RENAME TO "tagad_beneficiaries_barangay_id_idx";
+
+-- RenameIndex
+ALTER INDEX "public"."idx_tagad_beneficiaries_sector" RENAME TO "tagad_beneficiaries_sector_idx";
+
+-- RenameIndex
+ALTER INDEX "public"."idx_tagad_beneficiaries_sex" RENAME TO "tagad_beneficiaries_sex_idx";
+
+-- RenameIndex
+ALTER INDEX "public"."idx_tagad_gad_plan_items_plan" RENAME TO "tagad_gad_plan_items_gad_plan_id_idx";
+
+-- RenameIndex
+ALTER INDEX "public"."uq_gad_plan_office_year" RENAME TO "tagad_gad_plans_office_id_fiscal_year_key";
+
+-- RenameIndex
+ALTER INDEX "public"."idx_tagad_mov_accomplishment" RENAME TO "tagad_mov_attachments_accomplishment_id_idx";
+
+-- RenameIndex
+ALTER INDEX "public"."idx_tagad_programs_year_office" RENAME TO "tagad_programs_fiscal_year_office_id_idx";
+
+-- RenameIndex
+ALTER INDEX "public"."idx_stat_dataset_publication_status" RENAME TO "tagad_statistical_datasets_publication_status_idx";
+
+-- RenameIndex
+ALTER INDEX "public"."idx_stat_dataset_year_agency" RENAME TO "tagad_statistical_datasets_reporting_year_source_agency_idx";
+
+-- RenameIndex
+ALTER INDEX "public"."idx_stat_indicator_table_definition" RENAME TO "tagad_statistical_indicators_table_definition_id_idx";
+
+-- RenameIndex
+ALTER INDEX "public"."idx_stat_observation_barangay_period" RENAME TO "tagad_statistical_observations_barangay_id_period_idx";
+
+-- RenameIndex
+ALTER INDEX "public"."idx_stat_observation_dataset_table" RENAME TO "tagad_statistical_observations_dataset_id_table_definition__idx";
+
+-- RenameIndex
+ALTER INDEX "public"."idx_stat_observation_indicator" RENAME TO "tagad_statistical_observations_indicator_id_idx";
+
+-- RenameIndex
+ALTER INDEX "public"."idx_stat_table_def_classification" RENAME TO "tagad_statistical_table_definitions_classification_idx";
+
+-- RenameIndex
+ALTER INDEX "public"."idx_stat_table_def_domain" RENAME TO "tagad_statistical_table_definitions_domain_idx";
+
+-- RenameIndex
+ALTER INDEX "public"."idx_table_dim_binding_order" RENAME TO "tagad_table_dimension_bindings_table_definition_id_display__idx";
+
+-- RenameIndex
+ALTER INDEX "public"."uq_table_dimension" RENAME TO "tagad_table_dimension_bindings_table_definition_id_dimensio_key";

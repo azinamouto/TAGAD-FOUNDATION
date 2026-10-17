@@ -1,95 +1,24 @@
 name: TAGAD Database & Migrations Integrity Pipeline
-
 on:
   push:
     branches: [main, master, develop]
     paths:
       - 'backend/prisma/**'
       - 'backend/supabase/migrations/**'
+      - 'backend/scripts/**'
+      - 'docs/realignment/wp03/evidence/**'
       - '.github/workflows/database-ci.yml'
   pull_request:
     branches: [main, master, develop]
     paths:
       - 'backend/prisma/**'
       - 'backend/supabase/migrations/**'
+      - 'backend/scripts/**'
+      - 'docs/realignment/wp03/evidence/**'
       - '.github/workflows/database-ci.yml'
   workflow_dispatch:
-
+permissions:
+  contents: read
 jobs:
   database-integrity:
-    name: Database Migrations & Prisma Schema Verification
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-
-    services:
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgrespassword
-          POSTGRES_DB: tagad_verification
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 5
-
-    env:
-      NODE_ENV: test
-      DATABASE_URL: "postgresql://postgres:postgrespassword@localhost:5432/tagad_verification?schema=public"
-      DIRECT_URL: "postgresql://postgres:postgrespassword@localhost:5432/tagad_verification?schema=public"
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js Environment
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-          cache: "npm"
-          cache-dependency-path: backend/package-lock.json
-
-      - name: Install PostgreSQL Client Tools
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y postgresql-client
-
-      - name: Install Backend Dependencies
-        working-directory: ./backend
-        run: npm ci
-
-      - name: Validate Prisma Schema Syntax
-        working-directory: ./backend
-        run: npx prisma validate
-
-      - name: Generate Prisma Client Engine
-        working-directory: ./backend
-        run: npx prisma generate
-
-      - name: Provision PostgreSQL Authorization Roles (Supabase Compatibility)
-        run: |
-          export PGPASSWORD=postgrespassword
-          psql -h localhost -p 5432 -U postgres -d tagad_verification -c "
-            DO \$\$ BEGIN CREATE ROLE anon; EXCEPTION WHEN duplicate_object THEN NULL; END \$\$;
-            DO \$\$ BEGIN CREATE ROLE authenticated; EXCEPTION WHEN duplicate_object THEN NULL; END \$\$;
-            DO \$\$ BEGIN CREATE ROLE service_role; EXCEPTION WHEN duplicate_object THEN NULL; END \$\$;
-          "
-
-      - name: Test Supabase SQL Migrations In Timestamp Order
-        run: |
-          echo "Applying raw Supabase SQL migrations in sequential timestamp order..."
-          export PGPASSWORD=postgrespassword
-          for file in $(ls backend/supabase/migrations/*.sql | sort); do
-            echo "Executing: $file"
-            psql -h localhost -p 5432 -U postgres -d tagad_verification -v ON_ERROR_STOP=1 -f "$file"
-          done
-          echo "All Supabase migrations successfully applied cleanly."
-
-      - name: Verify Prisma Schema Synchronization (Push Check)
-        working-directory: ./backend
-        run: |
-          echo "Validating that Prisma schema can push cleanly onto test database..."
-          npx prisma db push --skip-generate
+    uses: ./.github/workflows/backend-qualification-ci.yml
