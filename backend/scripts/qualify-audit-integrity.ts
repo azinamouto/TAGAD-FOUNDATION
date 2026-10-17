@@ -69,8 +69,8 @@ const cases: Array<[string, () => Promise<unknown>]> = [
   ['catalog dataset create', () => StatisticalCatalogService.createDataset({ datasetCode: 'AUDIT-LEGACY', name: 'Rollback', importedById: user.id })],
   ['catalog indicator create', () => StatisticalCatalogService.registerIndicator({ indicatorCode: 'AUDIT-ROLLBACK', name: 'Rollback', title: 'Rollback', tableDefinitionId: table.id })],
   ['catalog observation create', () => StatisticalCatalogService.createObservation({ datasetId: dataset.id, tableDefinitionId: table.id, period: '2097', numericValue: 1 })],
-  ['feedback submit', () => FeedbackService.submit({ name: 'Synthetic', email: 'test@example.test', subject: 'Rollback', message: 'Rollback' })],
-  ['feedback review', () => FeedbackService.review(actor, feedback.id, { status: 'REVIEWED', reviewNote: 'Rollback', expectedUpdatedAt: feedbackRow.updatedAt.toISOString() })],
+  ['feedback submit', () => FeedbackService.submit({ name: 'Synthetic', email: 'test@example.test', subject: 'Rollback', message: 'Synthetic rollback message' })],
+  ['feedback review', () => FeedbackService.review(actor, feedback.id, { status: 'IN_REVIEW', reviewNote: 'Rollback', expectedUpdatedAt: feedbackRow.updatedAt.toISOString() })],
   ['strict CSV chunk', () => CsvIngestionService.executeIngestion({ ...csvParams, ingestionMode: 'STRICT' })],
   ['tolerant CSV chunk', () => CsvIngestionService.executeIngestion({ ...csvParams, ingestionMode: 'TOLERANT' })],
 ];

@@ -1,0 +1,288 @@
+{
+  "before": [
+    {
+      "table": "auth.users",
+      "fingerprint": "0:d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "public.audit_logs",
+      "fingerprint": "0:d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "public.barangays",
+      "fingerprint": "25:2359a21d1400dce94551c4892a6cca24"
+    },
+    {
+      "table": "public.budget_allocations",
+      "fingerprint": "0:d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "public.budgets",
+      "fingerprint": "0:d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "public.document_types",
+      "fingerprint": "4:4aa1d1db4004bde762037ed6bff5b345"
+    },
+    {
+      "table": "public.documents",
+      "fingerprint": "0:d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "public.expenditures",
+      "fingerprint": "0:d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "public.gad_activities",
+      "fingerprint": "0:d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "public.gad_programs",
+      "fingerprint": "0:d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "public.gad_projects",
+      "fingerprint": "0:d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "public.offices",
+      "fingerprint": "5:e8e896b4e9e6b0b7bb5843490069af14"
+    },
+    {
+      "table": "public.roles",
+      "fingerprint": "5:4051d4ae15634352f28ed445881dfec5"
+    },
+    {
+      "table": "public.tagad_accomplishments",
+      "fingerprint": "1:9cfc9afb4e3e16f534a18afa9cb17b7e"
+    },
+    {
+      "table": "public.tagad_audit_logs",
+      "fingerprint": "30:0d6377f19a40f8ad52a5f5c1a9c80ad7"
+    },
+    {
+      "table": "public.tagad_barangays",
+      "fingerprint": "25:d1a8bc7965260692552fdf581370b2fc"
+    },
+    {
+      "table": "public.tagad_beneficiaries",
+      "fingerprint": "1:01f6c28c7c555e5109cb80dd5cc94c38"
+    },
+    {
+      "table": "public.tagad_citizen_feedback",
+      "fingerprint": "3:aa1d73fce9df4f543fd3a5faf0c6d08b"
+    },
+    {
+      "table": "public.tagad_gad_plan_items",
+      "fingerprint": "2:70fea77d244b1c41abc0ecc4df06c1eb"
+    },
+    {
+      "table": "public.tagad_gad_plans",
+      "fingerprint": "3:dfe75eaead33d13da0da0d421c0fafa3"
+    },
+    {
+      "table": "public.tagad_households",
+      "fingerprint": "1:2bbcc4aa7bea3e7a053e5419f65cfa9e"
+    },
+    {
+      "table": "public.tagad_mov_attachments",
+      "fingerprint": "1:35949431200de4d244a4db0a93613ddb"
+    },
+    {
+      "table": "public.tagad_offices",
+      "fingerprint": "9:d86db449e2cf0590716dc74423e2d4df"
+    },
+    {
+      "table": "public.tagad_programs",
+      "fingerprint": "253:9c7dcceaf72576bb475d9f9b14c473a4"
+    },
+    {
+      "table": "public.tagad_revoked_tokens",
+      "fingerprint": "1:e0dc11a3448206b263d6daec2f416e1b"
+    },
+    {
+      "table": "public.tagad_statistical_datasets",
+      "fingerprint": "6:9bf45acd0921eabbd27c5a3a3e13a0d5"
+    },
+    {
+      "table": "public.tagad_statistical_dimensions",
+      "fingerprint": "2:e5f30d9af05e4f5c8ca07016a8e1194a"
+    },
+    {
+      "table": "public.tagad_statistical_indicators",
+      "fingerprint": "4:92636dfbac1e11bcc5f5b496e7867eba"
+    },
+    {
+      "table": "public.tagad_statistical_observations",
+      "fingerprint": "1012:d546e9f8cf964e7c1fe8179ec3f1d6f5"
+    },
+    {
+      "table": "public.tagad_statistical_provenance",
+      "fingerprint": "7:9e14ea4c53d5ed48d3811cb5216eea8d"
+    },
+    {
+      "table": "public.tagad_statistical_table_definitions",
+      "fingerprint": "4:7dde1bd519a63eb843087e4dfa663691"
+    },
+    {
+      "table": "public.tagad_table_dimension_bindings",
+      "fingerprint": "2:03f79d22b395b3ac8e5231473a683559"
+    },
+    {
+      "table": "public.tagad_users",
+      "fingerprint": "6:9bfa7f18e4057c7e6c58b6f5db824ef5"
+    },
+    {
+      "table": "public.user_roles",
+      "fingerprint": "0:d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "public.users",
+      "fingerprint": "0:d41d8cd98f00b204e9800998ecf8427e"
+    }
+  ],
+  "after": [
+    {
+      "table": "auth.users",
+      "fingerprint": "0:d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "public.audit_logs",
+      "fingerprint": "0:d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "public.barangays",
+      "fingerprint": "25:2359a21d1400dce94551c4892a6cca24"
+    },
+    {
+      "table": "public.budget_allocations",
+      "fingerprint": "0:d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "public.budgets",
+      "fingerprint": "0:d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "public.document_types",
+      "fingerprint": "4:4aa1d1db4004bde762037ed6bff5b345"
+    },
+    {
+      "table": "public.documents",
+      "fingerprint": "0:d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "public.expenditures",
+      "fingerprint": "0:d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "public.gad_activities",
+      "fingerprint": "0:d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "public.gad_programs",
+      "fingerprint": "0:d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "public.gad_projects",
+      "fingerprint": "0:d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "public.offices",
+      "fingerprint": "5:e8e896b4e9e6b0b7bb5843490069af14"
+    },
+    {
+      "table": "public.roles",
+      "fingerprint": "5:4051d4ae15634352f28ed445881dfec5"
+    },
+    {
+      "table": "public.tagad_accomplishments",
+      "fingerprint": "1:9cfc9afb4e3e16f534a18afa9cb17b7e"
+    },
+    {
+      "table": "public.tagad_audit_logs",
+      "fingerprint": "30:0d6377f19a40f8ad52a5f5c1a9c80ad7"
+    },
+    {
+      "table": "public.tagad_barangays",
+      "fingerprint": "25:d1a8bc7965260692552fdf581370b2fc"
+    },
+    {
+      "table": "public.tagad_beneficiaries",
+      "fingerprint": "1:01f6c28c7c555e5109cb80dd5cc94c38"
+    },
+    {
+      "table": "public.tagad_citizen_feedback",
+      "fingerprint": "3:aa1d73fce9df4f543fd3a5faf0c6d08b"
+    },
+    {
+      "table": "public.tagad_gad_plan_items",
+      "fingerprint": "2:70fea77d244b1c41abc0ecc4df06c1eb"
+    },
+    {
+      "table": "public.tagad_gad_plans",
+      "fingerprint": "3:dfe75eaead33d13da0da0d421c0fafa3"
+    },
+    {
+      "table": "public.tagad_households",
+      "fingerprint": "1:2bbcc4aa7bea3e7a053e5419f65cfa9e"
+    },
+    {
+      "table": "public.tagad_mov_attachments",
+      "fingerprint": "1:35949431200de4d244a4db0a93613ddb"
+    },
+    {
+      "table": "public.tagad_offices",
+      "fingerprint": "9:d86db449e2cf0590716dc74423e2d4df"
+    },
+    {
+      "table": "public.tagad_programs",
+      "fingerprint": "253:9c7dcceaf72576bb475d9f9b14c473a4"
+    },
+    {
+      "table": "public.tagad_revoked_tokens",
+      "fingerprint": "1:e0dc11a3448206b263d6daec2f416e1b"
+    },
+    {
+      "table": "public.tagad_statistical_datasets",
+      "fingerprint": "6:9bf45acd0921eabbd27c5a3a3e13a0d5"
+    },
+    {
+      "table": "public.tagad_statistical_dimensions",
+      "fingerprint": "2:e5f30d9af05e4f5c8ca07016a8e1194a"
+    },
+    {
+      "table": "public.tagad_statistical_indicators",
+      "fingerprint": "4:92636dfbac1e11bcc5f5b496e7867eba"
+    },
+    {
+      "table": "public.tagad_statistical_observations",
+      "fingerprint": "1012:d546e9f8cf964e7c1fe8179ec3f1d6f5"
+    },
+    {
+      "table": "public.tagad_statistical_provenance",
+      "fingerprint": "7:9e14ea4c53d5ed48d3811cb5216eea8d"
+    },
+    {
+      "table": "public.tagad_statistical_table_definitions",
+      "fingerprint": "4:7dde1bd519a63eb843087e4dfa663691"
+    },
+    {
+      "table": "public.tagad_table_dimension_bindings",
+      "fingerprint": "2:03f79d22b395b3ac8e5231473a683559"
+    },
+    {
+      "table": "public.tagad_users",
+      "fingerprint": "6:9bfa7f18e4057c7e6c58b6f5db824ef5"
+    },
+    {
+      "table": "public.user_roles",
+      "fingerprint": "0:d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "public.users",
+      "fingerprint": "0:d41d8cd98f00b204e9800998ecf8427e"
+    }
+  ],
+  "catalogEqual": true,
+  "restoreAndVerificationMs": 8001
+}

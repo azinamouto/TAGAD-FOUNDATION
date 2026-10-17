@@ -36,8 +36,8 @@ async function runIssue16Qualification() {
   }
   if (!await testDatabaseConnection()) throw new Error('Qualification database unavailable');
   await prisma.office.createMany({ data: [
-    { id: '00000000-0000-4000-8000-000000000001', code: 'MPDC', name: 'Synthetic MPDC' },
-    { id: '00000000-0000-4000-8000-000000000002', code: 'MSWDO', name: 'Synthetic MSWDO' },
+    { id: '00000000-0000-4000-8000-000000000001', code: 'QUAL_MPDC', name: 'Synthetic MPDC' },
+    { id: '00000000-0000-4000-8000-000000000002', code: 'QUAL_MSWDO', name: 'Synthetic MSWDO' },
   ] });
   const users = [
     ['00000000-0000-4000-8000-000000000003', Role.SUPER_ADMIN, null], ['00000000-0000-4000-8000-000000000004', Role.ADMIN, '00000000-0000-4000-8000-000000000001'],
@@ -47,7 +47,7 @@ async function runIssue16Qualification() {
   for (const [id, role, officeId] of users) await prisma.user.create({ data: {
     id: id!, email: `${id}@qualification.invalid`, fullName: 'Synthetic actor', passwordHash: 'not-a-login-hash', role: role as Role, officeId,
   } });
-  for (const b of FALLBACK_BARANGAYS) await prisma.barangay.create({ data: { name: b.name, code: b.code } });
+  for (const b of FALLBACK_BARANGAYS) await prisma.barangay.upsert({ where: { code: b.code }, update: {}, create: { name: b.name, code: b.code } });
   await prisma.statisticalDimension.create({ data: { dimensionCode: 'DIM_SEX', name: 'Sex' } });
   const barangays = await BarangayService.getBarangays();
   console.log(`>> [SETUP] Loaded ${barangays.length} canonical Talibon barangays.`);
