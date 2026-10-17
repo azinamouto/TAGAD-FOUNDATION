@@ -52,6 +52,7 @@ enum ProgramStatus {
 // ------------------------------------------------------------------------------
 
 model Office {
+  provisionalSeries ProvisionalGadSeries[]
   id          String        @id @default(uuid()) @db.Uuid
   code        String        @unique @db.VarChar(50)
   name        String        @db.VarChar(255)
@@ -69,6 +70,8 @@ model Office {
 }
 
 model Barangay {
+  provisionalReference ProvisionalGadReference?
+  provisionalEntries ProvisionalGadEntry[]
   id             String        @id @default(uuid()) @db.Uuid
   name           String        @unique @db.VarChar(100)
   code           String        @unique @db.VarChar(50)
@@ -115,6 +118,8 @@ model Household {
 // ------------------------------------------------------------------------------
 
 model User {
+  provisionalSeries ProvisionalGadSeries[]
+  provisionalEntries ProvisionalGadEntry[]
   id           String        @id @default(uuid()) @db.Uuid
   email        String        @unique @db.VarChar(255)
   passwordHash String        @map("password_hash") @db.VarChar(255)
@@ -559,4 +564,56 @@ model CitizenFeedback {
 
   @@index([status, createdAt])
   @@map("tagad_citizen_feedback")
+}
+
+
+// Isolated internal aggregates. No relation to statistical publication datasets.
+model ProvisionalGadSeries {
+  id String @id @default(uuid()) @db.Uuid
+  code String @unique @db.VarChar(80)
+  name String @db.VarChar(200)
+  sourceReference String @map("source_reference") @db.VarChar(1000)
+  owningOfficeId String @map("owning_office_id") @db.Uuid
+  creatorId String @map("creator_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  office Office @relation(fields: [owningOfficeId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  creator User @relation(fields: [creatorId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  entries ProvisionalGadEntry[]
+  @@unique([id, owningOfficeId])
+  @@map("tagad_provisional_gad_series")
+}
+
+// Evidence must be provisioned by a custodian; no UI/API can approve a roster.
+// Synthetic references are accepted only with NODE_ENV=test.
+model ProvisionalGadReference {
+  barangayId String @id @map("barangay_id") @db.Uuid
+  evidence String @db.VarChar(1000)
+  isSynthetic Boolean @default(false) @map("is_synthetic")
+  isActive Boolean @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  barangay Barangay @relation(fields: [barangayId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  @@map("tagad_provisional_gad_references")
+}
+
+model ProvisionalGadEntry {
+  id String @id @default(uuid()) @db.Uuid
+  seriesId String @map("series_id") @db.Uuid
+  barangayId String @map("barangay_id") @db.Uuid
+  period String @db.VarChar(50)
+  male Int
+  female Int
+  owningOfficeId String @map("owning_office_id") @db.Uuid
+  creatorId String @map("creator_id") @db.Uuid
+  sourceReference String @map("source_reference") @db.VarChar(1000)
+  sourceFileName String? @map("source_file_name") @db.VarChar(255)
+  batchId String @map("batch_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  series ProvisionalGadSeries @relation(fields: [seriesId, owningOfficeId], references: [id, owningOfficeId], onDelete: Restrict, onUpdate: NoAction)
+  barangay Barangay @relation(fields: [barangayId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  creator User @relation(fields: [creatorId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  @@unique([seriesId, barangayId, period])
+  @@index([owningOfficeId, seriesId, period], map: "tagad_provisional_gad_entries_scope")
+  @@map("tagad_provisional_gad_entries")
 }

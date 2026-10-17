@@ -1,0 +1,57 @@
+﻿Local verification; synthetic fixtures only. No production access.
+
+Full backend suite:
+# tests 272
+# pass 272
+# fail 0
+# skipped 0
+
+Frontend unit suite:
+# tests 19
+# pass 19
+# fail 0
+# skipped 0
+
+Browser suite, installed Edge:
+  23 passed (49.5s)
+
+Final focused browser checks:
+  ok 1 frontend\tests\browser\provisional-gad.spec.ts:22:3 › manual preview and confirmation, totals and missing data at 390 (2.8s)
+  ok 2 frontend\tests\browser\provisional-gad.spec.ts:22:3 › manual preview and confirmation, totals and missing data at 1280 (2.9s)
+  ok 3 frontend\tests\browser\provisional-gad.spec.ts:50:1 › CSV upload errors highlight rows and disable confirmation (1.9s)
+  ok 4 frontend\tests\browser\provisional-gad.spec.ts:58:1 › viewer cannot encode; outages remove statistics (1.8s)
+  ok 5 frontend\tests\browser\provisional-gad.spec.ts:67:1 › unverified roster blocks entry and expired session hides the workspace (3.4s)
+  5 passed (16.9s)
+
+Complete SQL replay and real PostgreSQL HTTP/service qualification:
+REPLAY 20260824000001_sprint1_foundation.sql
+REPLAY 20260824000002_canonical_domain_model.sql
+REPLAY 20260831000001_add_super_admin_role.sql
+REPLAY 20260831000002_statistical_domain.sql
+REPLAY 20260831000003_table_dimension_bindings.sql
+REPLAY 20260914141827_deny_tagad_data_api_access.sql
+REPLAY 20260914230700_barangay_geography.sql
+REPLAY 20260916041906_feedback_review.sql
+REPLAY 20261017000001_revoked_tokens.sql
+REPLAY 20261017000002_provisional_gad_entries.sql
+PASS manual create persists counts, explicit owner, creator and atomic audit
+PASS totals, missing barangays and empty periods never fabricate zeros
+PASS CSV preview/commit preserves file provenance and source
+PASS XLSX preview/commit and row numbers
+PASS all invalid count types, empty values, overflow and invalid references rejected
+PASS persisted and within-file duplicates block all writes
+PASS concurrent submissions yield one record and one audit
+PASS confirmation binding rejects tampering, other actors and absent confirmation
+PASS viewer and cross-office write/read restrictions
+PASS ownership remains stable when creator changes office
+PASS audit failure rolls back the entire multi-row batch
+PASS database checks enforce counts and matching series ownership
+PASS synthetic roster is excluded outside isolated test mode
+PASS anonymous routes rejected and no public route exists
+PASS HTTP CSV and XLSX upload preview and confirmed atomic commit
+PASS distinct source series never combine and revoked references invalidate previews
+PASS HTTP manual preview/commit and duplicate response
+PASS HTTP malformed uploads return validation errors
+PASS Data API grants and RLS exclude every provisional table
+PASS database outage is explicit and never substitutes fixtures
+QUALIFICATION PASSED: 20 scenarios, disposable PostgreSQL, synthetic data only.

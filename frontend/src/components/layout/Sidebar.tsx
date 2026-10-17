@@ -8,6 +8,7 @@ export const Sidebar: React.FC = () => {
   const groups = [
     { title: 'Sex-Disaggregated Barangay Statistics', links: [
       { name: 'Dashboard', path: '/dashboard' },
+      { name: 'Provisional Barangay Counts', path: '/barangay-statistics' },
       { name: 'Barangay and Sex Statistics', path: '/dashboard#barangay-statistics' },
     ], note: 'Charts available. Interactive mapping is not yet available.' },
     { title: 'GAD Data Management', links: [{ name: 'Beneficiary Registry', path: '/data-encoding' }] },

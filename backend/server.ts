@@ -5,6 +5,7 @@ import express, { Request, Response, NextFunction } from "express";
 import cors from 'cors';
 import helmet from 'helmet';
 import path from 'path';
+import { fileURLToPath } from 'node:url';
 import fs from 'fs';
 import { validateJwtConfig } from './server/lib/jwt';
 import { TokenRevocationService } from './server/services/TokenRevocationService';
@@ -29,6 +30,7 @@ import accomplishmentRoutes from './server/routes/accomplishments';
 import dashboardRoutes from './server/routes/dashboard';
 import reportRoutes from './server/routes/reports';
 import statisticalCatalogRoutes from './server/routes/statisticalCatalog';
+import provisionalGadRoutes from './server/routes/provisionalGad';
 
 export { configureCors };
 
@@ -119,6 +121,7 @@ async function startServer() {
   app.use('/api/dashboard', dashboardRoutes);
   app.use('/api/reports', reportRoutes);
   app.use('/api/statistical-catalog', statisticalCatalogRoutes);
+  app.use('/api/provisional-gad', provisionalGadRoutes);
 
   // Centralized Error Handling Middleware for API routes (BE-6)
   app.use('/api', (err: any, req: Request, res: Response, next: NextFunction) => {
@@ -137,7 +140,7 @@ async function startServer() {
   });
 
   // Frontend integration: Serve React SPA via Vite middleware in dev, static files in production test
-  const frontendDir = path.resolve(process.cwd(), 'frontend');
+  const frontendDir = fileURLToPath(new URL('../frontend', import.meta.url));
   const distPath = path.resolve(frontendDir, 'dist');
 
   if (process.env.NODE_ENV !== 'production' && !process.env.SERVE_STATIC) {

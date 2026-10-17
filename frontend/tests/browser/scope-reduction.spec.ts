@@ -17,7 +17,7 @@ for (const width of [390, 1280]) {
     await page.goto('/dashboard');
     const nav = page.getByRole('navigation', { name: 'GAD workspace' });
     await expect(nav.getByRole('heading')).toHaveCount(5);
-    await expect(nav.getByRole('link')).toHaveCount(8);
+    await expect(nav.getByRole('link')).toHaveCount(9);
     await expect(nav).toContainText('Interactive mapping is not yet available');
     await expect(nav.getByRole('link', { name: /Table Builder|Statistical Catalog|Data Entry Grid/ })).toHaveCount(0);
     const links = [
