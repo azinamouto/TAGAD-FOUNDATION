@@ -45,3 +45,14 @@ Local Prisma client regeneration encountered an existing Windows query-engine DL
 Reproduction: run the commands above; set synthetic JWT_SECRET/JWT_REFRESH_SECRET for qualification. For backend unit tests, disable database probing and use a dummy loopback DATABASE_URL/DIRECT_URL. For browser checks, from `frontend`, use `PLAYWRIGHT_CHANNEL=msedge`, a free `PLAYWRIGHT_PORT`, no loopback proxy, and `node node_modules/@playwright/test/cli.js test --config playwright.config.ts --workers=2`.
 
 No merge, deployment, production mutation, historical migration rewrite or MVP redesign is part of this fix. Unrelated local `docs/audits/` work is excluded.
+
+## GitHub Actions evidence
+
+All ten reported PR checks passed on implementation commit `e7b8df8bbd32f071728cef9da38a5be13cfe4a2c`:
+
+- [Backend Qualification](https://github.com/azinamouto/TAGAD-FOUNDATION/actions/runs/39046484141): fresh Prisma client generation, backend typecheck, full SQL replay and domain qualification passed. Log explicitly reports the unchanged drift baseline match and all 38 tables/catalog matching after restore (590 ms).
+- [Database & Migrations Integrity](https://github.com/azinamouto/TAGAD-FOUNDATION/actions/runs/39046484050): passed the reusable full qualification workflow.
+- [Backend CI](https://github.com/azinamouto/TAGAD-FOUNDATION/actions/runs/39046484030) and [Frontend CI](https://github.com/azinamouto/TAGAD-FOUNDATION/actions/runs/39046484011): passed.
+- [Security workflow](https://github.com/azinamouto/TAGAD-FOUNDATION/actions/runs/39046484086): CodeQL SAST, all three dependency audits and secret hygiene passed; the separate [CodeQL result check](https://github.com/azinamouto/TAGAD-FOUNDATION/runs/117436291173) also passed.
+
+CI replayed the provisional SQL migration with SHA-256 `99e40a19aa9cd22872e2054338fb877a6e86189bb704e85b7e1882bc881cef75`, identical to both original failed runs. Windows working-tree CRLF produces different raw-file hashes locally; Git confirms no migration changes. Branch protection reports main is unprotected and no repository rulesets were returned; verification therefore covers every reported check rather than assuming a configured required-check subset. PR #47 remains open and draft.
