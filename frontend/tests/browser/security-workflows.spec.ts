@@ -67,7 +67,8 @@ for (const status of [200, 503]) {
     await page.route('**/api/gad-plans?*', route => route.fulfill({ json: { data: [] } }));
     await page.route('**/api/auth/logout', route => route.fulfill({ status, json: { data: {} } }));
     await page.goto('/gad-plan');
-    await page.getByRole('button', { name: 'Sign out', exact: true }).click();
+    await page.getByRole('button', { name: 'Account menu' }).click();
+    await page.getByRole('menuitem', { name: 'Sign out', exact: true }).click();
     await expect(page.getByText(status === 200 ? 'Logout confirmed by server.' : 'Local authentication cleared. Server logout was not confirmed.', { exact: true })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Personnel Sign In' })).toBeVisible();
     expect(await page.evaluate(() => localStorage.getItem('tagad_token'))).toBeNull();
