@@ -15,6 +15,7 @@ for (const width of [390, 1280]) {
     await page.setViewportSize({ width, height: 850 });
     await session(page);
     await page.goto('/dashboard');
+    if (width < 1024) await page.getByRole('button', { name: 'Open navigation' }).click();
     const nav = page.getByRole('navigation', { name: 'GAD workspace' });
     await expect(nav.getByRole('heading')).toHaveCount(5);
     await expect(nav.getByRole('link')).toHaveCount(9);
@@ -30,8 +31,11 @@ for (const width of [390, 1280]) {
       ['Barangay and Sex Statistics', '/dashboard#barangay-statistics'],
     ];
     for (const [label, path] of links) {
+      if (width < 1024 && !await page.getByRole('dialog').isVisible()) await page.getByRole('button', { name: 'Open navigation' }).click();
       await nav.getByRole('link', { name: label, exact: true }).click();
       await expect(page).toHaveURL(new RegExp(path + '$'));
+      await expect(page.locator('.workspace-heading .font-semibold')).toHaveText(path.startsWith('/dashboard') ? 'Dashboard' : label);
+      if (width < 1024) await expect(page.getByRole('dialog')).not.toBeVisible();
       await expect(page.getByRole('main')).not.toContainText('Page Not Found');
     }
     await expect(page.locator('#barangay-statistics')).toBeInViewport();

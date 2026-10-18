@@ -1,49 +1,37 @@
-import { Logo } from '../common/Logo';
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { ChevronDown, LogOut, Menu, UserRound } from 'lucide-react';
 import { useAuth } from '../../modules/auth/AuthContext';
 import { formatRole } from '../../lib/utils/cn';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '../ui/dropdown-menu';
+import { workspacePath } from './Sidebar';
 
-export const TopBar: React.FC = () => {
-  const { user, roles, logout, isAuthenticated } = useAuth();
-
+const titles: Record<string, string> = {
+  '/dashboard': 'Dashboard', '/barangay-statistics': 'Provisional Barangay Counts',
+  '/data-encoding': 'Beneficiary Registry', '/programs': 'Programs and Services',
+  '/accomplishments': 'Accomplishments', '/gad-plan': 'GAD Plans and Budgets',
+  '/reports': 'Working Reports', '/users': 'User Management',
+};
+export const TopBar: React.FC<{ onOpenNavigation: () => void }> = ({ onOpenNavigation }) => {
+  const { user, roles, logout } = useAuth();
+  const { pathname } = useLocation();
   return (
-    <header className="h-16 border-b border-border dark:border-border bg-card dark:bg-background sticky top-0 z-30 px-6">
-      <div className="h-full max-w-7xl mx-auto flex items-center justify-between gap-6">
-        {/* Zone 1: Brand Title (Strictly one line text element) */}
-        <Link to="/dashboard" className="flex items-center gap-2 shrink-0">
-          <Logo size="sm" showSubtitle={false} />
-        </Link>
-
-        {/* Zone 3: Primary Actions / Profile & Logout */}
-        <div className="flex items-center gap-3 shrink-0">
-          {isAuthenticated && user ? (
-            <div className="flex items-center gap-3">
-              <div className="hidden sm:flex flex-col text-right">
-                <span className="text-xs font-semibold text-foreground dark:text-foreground truncate max-w-[140px]">
-                  {user.full_name}
-                </span>
-                <span className="text-[10px] text-primary dark:text-primary font-medium truncate max-w-[140px]">
-                  {formatRole(roles[0] || 'User')}
-                </span>
-              </div>
-              <button
-                onClick={() => logout()}
-                className="py-1.5 px-3 text-xs font-medium text-foreground dark:text-foreground hover:bg-muted dark:hover:bg-muted rounded-md border border-border dark:border-border transition-colors whitespace-nowrap shrink-0 cursor-pointer"
-              >
-                Sign out
-              </button>
-            </div>
-          ) : (
-            <Link
-              to="/login"
-              className="py-1.5 px-3.5 text-xs font-medium text-white bg-primary hover:bg-primary rounded-md transition-colors whitespace-nowrap shrink-0"
-            >
-              Sign in
-            </Link>
-          )}
-        </div>
+    <header className="workspace-header">
+      <div className="workspace-heading">
+        <button className="workspace-icon-button mobile-navigation-toggle" onClick={onOpenNavigation} aria-label="Open navigation" aria-haspopup="dialog"><Menu size={20} /></button>
+        <div><p className="font-semibold">{titles[workspacePath(pathname)] || 'GAD Workspace'}</p><p className="text-sm text-muted-foreground">Personal portal / GAD workspace</p></div>
       </div>
+      <DropdownMenu>
+        <DropdownMenuTrigger className="workspace-account" aria-label="Account menu">
+          <UserRound size={18} aria-hidden="true" />
+          <span className="min-w-0 text-left"><span className="block font-medium">{user?.full_name || user?.email}</span><span className="block text-sm text-muted-foreground">{roles.map(formatRole).join(', ')}</span></span>
+          <ChevronDown size={16} className="shrink-0" aria-hidden="true" />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="portal-theme max-w-[calc(100vw-2rem)] min-w-56 p-2">
+          {user?.office?.name && <p className="px-2 py-3 text-sm break-words">{user.office.name}</p>}
+          <DropdownMenuItem onClick={() => logout()} className="min-h-11 cursor-pointer px-3"><LogOut size={18} aria-hidden="true" />Sign out</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </header>
   );
 };
