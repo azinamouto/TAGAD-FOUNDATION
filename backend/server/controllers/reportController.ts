@@ -1,3 +1,5 @@
+import { ValidationError } from '../lib/errors';
+import { paginationQuerySchema } from '../validation/schemas';
 import { requireReadScope } from '../lib/readScope';
 import { sendError } from '../lib/response';
 import { AuthenticatedRequest } from '../middleware/authMiddleware';
@@ -8,13 +10,22 @@ import { GADPlanService } from '../services/GADPlanService';
 import { AccomplishmentService } from '../services/AccomplishmentService';
 import { BeneficiaryService } from '../services/BeneficiaryService';
 
+function reportYear(value: unknown): number | undefined {
+  if (value === undefined) return undefined;
+  if (typeof value !== 'string' || !/^\d{4}$/.test(value)) throw new ValidationError('Provide one four-digit reporting year.');
+  const parsed = paginationQuerySchema.shape.year.safeParse(value);
+  if (!parsed.success) throw new ValidationError('Reporting year must be between 1990 and 2100.');
+  return parsed.data;
+}
+
 export const getGPBExcel = async (req: AuthenticatedRequest, res: Response) => {
   const { year, office } = req.query;
 
   try {
     requireReadScope(req.user);
+    const selectedYear = reportYear(year);
     const planResult = await GADPlanService.getGADPlans({
-      year: year ? parseInt(year as string, 10) : undefined,
+      year: selectedYear,
       office: office as string,
     }, req.user, { strict: true });
     const plans = planResult.plans || [];
@@ -92,8 +103,9 @@ export const getGARExcel = async (req: AuthenticatedRequest, res: Response) => {
 
   try {
     requireReadScope(req.user);
+    const selectedYear = reportYear(year);
     const accomplishments = await AccomplishmentService.getAccomplishments({
-      year: year ? parseInt(year as string, 10) : undefined,
+      year: selectedYear,
       officeId: office as string,
     }, req.user, { strict: true });
 
@@ -105,7 +117,7 @@ export const getGARExcel = async (req: AuthenticatedRequest, res: Response) => {
       { header: 'Activity / Program', key: 'activity', width: 30 },
       { header: 'Responsible Office', key: 'office', width: 20 },
       { header: 'Actual Output', key: 'actualOutput', width: 30 },
-      { header: 'Approved Budget', key: 'approvedBudget', width: 15 },
+      { header: 'Planned Budget (not approval evidence)', key: 'approvedBudget', width: 15 },
       { header: 'Actual Budget Used', key: 'actualBudget', width: 15 },
       { header: 'Male Beneficiaries', key: 'male', width: 15 },
       { header: 'Female Beneficiaries', key: 'female', width: 15 },
@@ -177,10 +189,10 @@ export const getBeneficiariesExcel = async (req: AuthenticatedRequest, res: Resp
         lastName: b.lastName,
         sex: b.sex,
         age: b.age,
-        barangay: typeof b.barangay === 'object' ? b.barangay.name : b.barangay || '',
+        barangay: b.barangay && typeof b.barangay === 'object' ? b.barangay.name : b.barangay || '',
         sector: b.sector,
-        office: typeof b.office === 'object' ? b.office.code || b.office.name : b.office || '',
-        dateEncoded: b.createdAt ? new Date(b.createdAt).toISOString().split('T')[0] : '',
+        office: b.office && typeof b.office === 'object' ? b.office.code || b.office.name : b.office || '',
+        dateEncoded: (b.dateEncoded || b.createdAt) && Number.isFinite(Date.parse(b.dateEncoded || b.createdAt)) ? new Date(b.dateEncoded || b.createdAt).toISOString().split('T')[0] : null,
       });
     });
 
@@ -214,7 +226,7 @@ export const getBeneficiariesPDF = async (req: AuthenticatedRequest, res: Respon
     doc.moveDown();
 
     beneficiaries.forEach((b: any, i: number) => {
-      const brgy = typeof b.barangay === 'object' ? b.barangay.name : b.barangay || 'Not recorded';
+      const brgy = b.barangay && typeof b.barangay === 'object' ? b.barangay.name : b.barangay || 'Not recorded';
       doc.fontSize(9).text(
         `${i + 1}. ${b.lastName}, ${b.firstName} | Sex: ${b.sex} | Age: ${b.age} | Brgy: ${brgy} | Sector: ${b.sector}`
       );
