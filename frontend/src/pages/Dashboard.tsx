@@ -26,6 +26,7 @@ const Dashboard: React.FC = () => {
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
   const [year, setYear] = useState(new Date().getFullYear());
+  const [barangay, setBarangay] = useState('');
   const [attempt, setAttempt] = useState(0);
   const [error, setError] = useState('');
   useEffect(() => {
@@ -37,6 +38,7 @@ const Dashboard: React.FC = () => {
       if (!active) return;
       const parsed = parseStats(data);
       setStats(parsed);
+      if (parsed) setBarangay(current => parsed.byBarangay.some(row => row.barangay === current) ? current : '');
       if (!parsed) setError('The analytics response is incomplete. Statistics cannot be displayed reliably. Please try again or contact your administrator if this continues.');
     }).catch(() => {
       if (active) setError('We could not retrieve the registry and budget statistics. Please try again. If the service remains unavailable, contact your administrator.');
@@ -47,12 +49,13 @@ const Dashboard: React.FC = () => {
     if (!loading && hash === '#barangay-statistics') document.getElementById('barangay-statistics')?.scrollIntoView();
   }, [hash, loading]);
   const summary = stats?.summary;
+  const barangayRows = stats?.byBarangay.filter(row => !barangay || row.barangay === barangay) ?? [];
   const genderData = summary ? [{ name: 'Male', value: summary.totalMale }, { name: 'Female', value: summary.totalFemale }] : [];
   const years = Array.from({ length: Math.max(2026, new Date().getFullYear()) - 2023 + 1 }, (_, i) => 2023 + i);
   return (
     <div className="analytics-dashboard">
       <section className="dashboard-intro">
-        <div><p className="dashboard-eyebrow">GENDER AND DEVELOPMENT</p><h1>Dashboard and Barangay Statistics</h1><p className="text-muted-foreground">Registry insights and program budgets for the Municipality of Talibon.</p></div>
+        <div><p className="dashboard-eyebrow">GENDER AND DEVELOPMENT</p><h1>Dashboard</h1><p className="text-muted-foreground">Registry insights and program budgets for the Municipality of Talibon.</p></div>
         <div className="period-control"><label htmlFor="dash-year">Reporting year</label><select id="dash-year" value={year} onChange={event => setYear(Number(event.target.value))}>{years.map(value => <option key={value}>{value}</option>)}</select></div>
       </section>
 
@@ -82,11 +85,15 @@ const Dashboard: React.FC = () => {
 
         <section id="barangay-statistics" className="analytics-panel barangay-panel">
           <div className="panel-heading"><div><h2>Beneficiaries by Barangay</h2><p>Source: current non-archived registry · All years · Recorded sex</p></div><a href="#barangay-table" className="analytics-text-link">View data table</a></div>
-          {stats.byBarangay.length === 0 ? <p className="analytics-empty">No barangay registry records are available in your scope.</p> :
+          <div className="analytics-filter">
+            <div className="period-control"><label htmlFor="registry-barangay">Registry barangay</label><select id="registry-barangay" value={barangay} onChange={event => setBarangay(event.target.value)}><option value="">All available barangays</option>{stats.byBarangay.map(row => <option key={row.barangay} value={row.barangay}>{row.barangay}</option>)}</select></div>
+            <p role="status">Showing {barangayRows.length} of {stats.byBarangay.length} barangays. This filter applies only to the registry chart and table below.</p>
+          </div>
+          {barangayRows.length === 0 ? <p className="analytics-empty">No barangay registry records are available in your scope.</p> :
           <div className="chart-scroll" role="region" aria-label="Barangay comparison chart; data table follows" tabIndex={0}>
-            <div style={{ height: 320, minWidth: Math.max(560, stats.byBarangay.length * 72) }}>
+            <div style={{ height: 320, minWidth: Math.max(560, barangayRows.length * 72) }}>
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={stats.byBarangay} margin={{ top: 12, right: 20, left: 0, bottom: 40 }} accessibilityLayer>
+                <BarChart data={barangayRows} margin={{ top: 12, right: 20, left: 0, bottom: 40 }} accessibilityLayer>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
                   <XAxis dataKey="barangay" fontSize={12} interval={0} angle={-35} textAnchor="end" height={65} tick={{ fill: 'var(--muted-foreground)' }} />
                   <YAxis fontSize={12} allowDecimals={false} tick={{ fill: 'var(--muted-foreground)' }} />
@@ -100,8 +107,8 @@ const Dashboard: React.FC = () => {
           </div>}
           <div id="barangay-table" className="table-scroll" role="region" aria-label="Barangay registry data" tabIndex={0}>
             <table className="analytics-table"><caption>Barangay-level registry counts · All years. Missing counts are marked “Not recorded”.</caption><thead><tr><th scope="col">Barangay</th><th scope="col" className="numeric">Male</th><th scope="col" className="numeric">Female</th><th scope="col" className="numeric">Derived total</th></tr></thead><tbody>
-              {stats.byBarangay.map((row, i) => <tr key={row.barangay + i}><th scope="row">{row.barangay}</th><td className="numeric">{count(row.male)}</td><td className="numeric">{count(row.female)}</td><td className="numeric">{count(measured(row.male) && measured(row.female) ? row.male + row.female : null)}</td></tr>)}
-              {!stats.byBarangay.length && <tr><td colSpan={4}>No barangay data available.</td></tr>}
+              {barangayRows.map((row, i) => <tr key={row.barangay + i}><th scope="row">{row.barangay}</th><td className="numeric">{count(row.male)}</td><td className="numeric">{count(row.female)}</td><td className="numeric">{count(measured(row.male) && measured(row.female) ? row.male + row.female : null)}</td></tr>)}
+              {!barangayRows.length && <tr><td colSpan={4}>No barangay data available.</td></tr>}
             </tbody></table>
           </div>
         </section>
