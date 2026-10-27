@@ -1,3 +1,4 @@
+import { requireReadScope, ReadActor } from '../lib/readScope';
 import prisma, { isDatabaseConnected } from '../lib/prisma';
 import { ProgramStatus, Role } from '@prisma/client';
 import { AppError, NotFoundError, OfficeScopeError } from '../lib/errors';
@@ -17,9 +18,12 @@ export class ProgramService {
       status?: string;
       search?: string;
     },
-    actorUser?: { id: string; role: Role; officeId: string | null }
+    actorUser?: { id: string; role: Role; officeId: string | null },
+    options: { strict?: boolean } = {}
   ) {
+    if (options.strict) requireReadScope(actorUser);
     if (!isDatabaseConnected()) {
+      if (options.strict) throw new AppError('Program source unavailable', 503, 'DATA_UNAVAILABLE');
       let filtered = [...MEMORY_PROGRAMS];
       if (params.year) filtered = filtered.filter((p) => p.fiscalYear === Number(params.year));
       if (params.officeId) filtered = filtered.filter((p) => p.officeId === params.officeId);
@@ -93,6 +97,7 @@ export class ProgramService {
         createdByName: p.createdBy?.fullName || 'System',
       }));
     } catch {
+      if (options.strict) throw new AppError('Program source unavailable', 503, 'DATA_UNAVAILABLE');
       let filtered = [...MEMORY_PROGRAMS];
       if (params.year) filtered = filtered.filter((p) => p.fiscalYear === Number(params.year));
       if (params.officeId) filtered = filtered.filter((p) => p.officeId === params.officeId);
@@ -104,8 +109,10 @@ export class ProgramService {
     }
   }
 
-  public static async getProgramById(id: string) {
+  public static async getProgramById(id: string, actorUser?: ReadActor, options: { strict?: boolean } = {}) {
+    const officeScope = options.strict ? requireReadScope(actorUser) : null;
     if (!isDatabaseConnected()) {
+      if (options.strict) throw new AppError('Program source unavailable', 503, 'DATA_UNAVAILABLE');
       const prog = MEMORY_PROGRAMS.find((p) => p.id === id);
       if (!prog) throw new NotFoundError('Program');
       return prog;
@@ -124,7 +131,7 @@ export class ProgramService {
         },
       });
 
-      if (!program) {
+      if (!program || (officeScope && program.officeId !== officeScope)) {
         throw new NotFoundError('Program');
       }
 
@@ -138,6 +145,7 @@ export class ProgramService {
       };
     } catch (err: any) {
       if (err instanceof NotFoundError) throw err;
+      if (options.strict) throw new AppError('Program source unavailable', 503, 'DATA_UNAVAILABLE');
       const prog = MEMORY_PROGRAMS.find((p) => p.id === id);
       if (!prog) throw new NotFoundError('Program');
       return prog;
@@ -283,7 +291,7 @@ export class ProgramService {
       updateData.fiscalYear = parseInt(String(data.fiscalYear || data.year), 10);
     }
     if (data.budgetTarget !== undefined || data.budget !== undefined) {
-      updateData.budgetTarget = parseFloat(String(data.budgetTarget || data.budget));
+      updateData.budgetTarget = parseFloat(String(data.budgetTarget ?? data.budget));
     }
     if (data.budgetActual !== undefined) {
       updateData.budgetActual = parseFloat(String(data.budgetActual));
