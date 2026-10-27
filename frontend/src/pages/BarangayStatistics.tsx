@@ -7,7 +7,7 @@ import { Card, CardContent } from '../components/ui/card';
 
 type Row = { barangay_code: string; period: string; male: string | number; female: string | number; source_reference: string };
 type Reference = { barangayId: string; isSynthetic: boolean; barangay: { code: string; name: string } };
-type Series = { id: string; code: string; name: string; sourceReference: string };
+type Series = { id: string; code: string; name: string; sourceReference: string; owningOfficeId?: string };
 type Preview = { rows: Row[]; sourceFileName: string | null; confirmationToken: string | null; results: { rowNumber: number; input: Row; row?: Row; errors: string[] }[] };
 type Statistics = { period: string; rows: { barangayId: string; name: string; isSynthetic: boolean; eligible: boolean; male: number | null; female: number | null; total: number | null; sourceReference: string | null }[]; totals: { male: number; female: number; total: number } | null; missing: number };
 const errorMessage = (e: any) => e.response?.data?.error?.message || 'Request failed. Check your connection and retry.';
@@ -75,9 +75,10 @@ export default function BarangayStatistics() {
     });
   }
   const total = [form.male, form.female].every(v => /^\d+$/.test(String(v)) && Number(v) <= 2147483647) ? Number(form.male) + Number(form.female) : null;
-  return <div className="space-y-6 min-w-0">
-    <header><p className="text-sm text-muted-foreground">GAD internal workspace</p><h1 className="text-3xl font-bold">Barangay aggregate statistics</h1>
-      <p className="mt-2 text-muted-foreground">Provisional male/female counts from identified sources. These are not official population totals or approved LGU statistics.</p></header>
+  const selectedSeries = context?.series.find(series => series.id === seriesId);
+  return <div className="analytics-dashboard provisional-statistics min-w-0">
+    <header className="dashboard-intro"><div><p className="dashboard-eyebrow">GAD INTERNAL WORKSPACE</p><h1>Barangay aggregate statistics</h1>
+      <p className="mt-2 text-muted-foreground">Provisional male/female counts from identified sources. These are not official population totals or approved LGU statistics. These counts are separate from the beneficiary registry and do not establish program participation.</p></div></header>
     {error && <div role="alert" className="rounded border border-destructive p-3">{error} {!context && <Button onClick={() => run(loadContext)}>Retry</Button>}</div>}
     {notice && <p role="status" className="rounded border p-3">{notice}</p>}
     {!context && !error && <p role="status">Loading source series and references…</p>}
@@ -91,6 +92,13 @@ export default function BarangayStatistics() {
         </div>
         <p className="text-sm text-muted-foreground">Only one source series and one exact reporting period are shown at a time. Annual, quarterly and monthly labels are kept separate.</p>
         {period && !/^\d{4}(?:-(?:Q[1-4]|0[1-9]|1[0-2]))?$/.test(period) && <p role="alert">Use YYYY, YYYY-Q1 to Q4, or YYYY-MM for the reporting period.</p>}
+        {selectedSeries && <section className="source-metadata" aria-label="Selected source metadata"><dl>
+          <div><dt>Source reference</dt><dd>{selectedSeries.sourceReference || 'Not supplied'}</dd></div>
+          <div><dt>Owning office reference</dt><dd>{selectedSeries.owningOfficeId || 'Not supplied'}</dd></div>
+          <div><dt>Verification status</dt><dd>Provisional; not approved LGU statistics.</dd></div>
+          <div><dt>Reporting scope</dt><dd>One source series and exact period, within your account access. Last update time is not supplied.</dd></div>
+        </dl></section>}
+        {context.series.length === 0 && <p role="status">No source series are available in your office scope.</p>}
         {context.canWrite && <details><summary className="cursor-pointer font-medium">Create a source series</summary>
           <form className="grid gap-3 mt-3" onSubmit={e => { e.preventDefault(); run(async () => {
             const r = await api.post('/provisional-gad/series', seriesForm); await loadContext(); setSeriesId(r.data.data.id); setNotice('Source series created for your assigned office.');
@@ -104,6 +112,23 @@ export default function BarangayStatistics() {
       </CardContent></Card>
       {context.references.length === 0 && <p role="status" className="rounded border p-4">No eligible barangay roster references are available in your scope. Entry is unavailable until a custodian supplies roster evidence. Seed records and map verification do not establish approval.</p>}
       {context.references.some(r => r.isSynthetic) && <p role="status" className="rounded border p-4">Synthetic test fixtures only — these references are not official LGU barangays.</p>}
+      <section className="analytics-panel space-y-4" aria-label="Persisted barangay statistics">
+        <h2 className="text-xl font-semibold">Persisted barangay statistics</h2>
+        {!seriesId || !period ? <p>Select a source series and reporting period to view records.</p> : null}
+        {statsLoading && <p role="status">Loading persisted statistics…</p>}
+        {statsError && <p role="alert">{statsError} <Button variant="outline" onClick={() => setRefresh(n => n + 1)}>Retry statistics</Button></p>}
+        {stats && <>
+          {stats.totals === null && <p role="status">No recorded counts for this source and period. Missing values are not zero.</p>}
+          <div className="stat-breakdown">{(['male', 'female', 'total'] as const).map(k => <div className="min-w-24" key={k}><p className="capitalize">{k}</p><p className="text-2xl font-semibold tabular-nums">{display(stats.totals?.[k])}</p></div>)}</div>
+          <p>{stats.missing} eligible barangay(s) have no record for this selection. Totals cover recorded rows only.</p>
+          {stats.rows.some(r => r.total !== null) && <div aria-label="Male and female comparison chart" role="img" style={{ width: '100%', height: Math.max(250, stats.rows.filter(r => r.total !== null).length * 45) }}>
+            <ResponsiveContainer><BarChart layout="vertical" data={stats.rows.filter(r => r.total !== null)}><XAxis type="number" allowDecimals={false} /><YAxis type="category" dataKey="name" width={110} /><Tooltip /><Legend /><Bar dataKey="male" name="Male" fill="var(--chart-1)" isAnimationActive={false} /><Bar dataKey="female" name="Female" fill="var(--chart-2)" isAnimationActive={false} /></BarChart></ResponsiveContainer>
+          </div>}
+          <div className="table-scroll" role="region" aria-label="Provisional counts table" tabIndex={0}><table className="analytics-table"><caption className="text-left mb-2">Counts for {stats.period}; missing values remain “No data”.</caption><thead><tr>{['Barangay', 'Male', 'Female', 'Total', 'Source/reference'].map(c => <th scope="col" className={c === 'Barangay' || c === 'Source/reference' ? undefined : 'numeric'} key={c}>{c}</th>)}</tr></thead><tbody>
+            {stats.rows.map(r => <tr key={r.barangayId} className="border-t"><th scope="row">{r.isSynthetic ? '[Synthetic] ' : ''}{r.name}{!r.eligible && ' (reference inactive)'}</th><td className="numeric">{display(r.male)}</td><td className="numeric">{display(r.female)}</td><td className="numeric">{display(r.total)}</td><td className="max-w-xs break-words">{r.sourceReference ?? 'No data'}</td></tr>)}
+          </tbody></table></div>
+        </>}
+      </section>
       {context.canWrite && <Card><CardContent className="pt-6 space-y-5">
         <h2 className="text-xl font-semibold">Encode counts</h2>
         <form onSubmit={manualPreview}>
@@ -139,22 +164,7 @@ export default function BarangayStatistics() {
           <Button disabled={busy || !preview.confirmationToken} onClick={commit}>Confirm and save {preview.results.length} record(s)</Button>
         </section>}
       </CardContent></Card>}
-      <Card><CardContent className="pt-6 space-y-4">
-        <h2 className="text-xl font-semibold">Persisted barangay statistics</h2>
-        {!seriesId || !period ? <p>Select a source series and reporting period to view records.</p> : null}
-        {statsLoading && <p role="status">Loading persisted statistics…</p>}
-        {statsError && <p role="alert">{statsError} <Button variant="outline" onClick={() => setRefresh(n => n + 1)}>Retry statistics</Button></p>}
-        {stats && <>
-          <div className="grid grid-cols-3 gap-3">{(['male', 'female', 'total'] as const).map(k => <div className="rounded bg-muted p-3" key={k}><p className="capitalize">{k}</p><strong>{display(stats.totals?.[k])}</strong></div>)}</div>
-          <p>{stats.missing} eligible barangay(s) have no record for this selection. Totals cover recorded rows only.</p>
-          {stats.rows.some(r => r.total !== null) && <div aria-label="Male and female comparison chart" role="img" style={{ width: '100%', height: Math.max(250, stats.rows.filter(r => r.total !== null).length * 45) }}>
-            <ResponsiveContainer><BarChart layout="vertical" data={stats.rows.filter(r => r.total !== null)}><XAxis type="number" allowDecimals={false} /><YAxis type="category" dataKey="name" width={110} /><Tooltip /><Legend /><Bar dataKey="male" name="Male" fill="var(--chart-1)" isAnimationActive={false} /><Bar dataKey="female" name="Female" fill="var(--chart-2)" isAnimationActive={false} /></BarChart></ResponsiveContainer>
-          </div>}
-          <div className="overflow-x-auto"><table className="w-full text-sm"><caption className="text-left mb-2">Counts for {stats.period}; missing values remain “No data”.</caption><thead><tr>{['Barangay', 'Male', 'Female', 'Total', 'Source/reference'].map(c => <th className="text-left p-2" key={c}>{c}</th>)}</tr></thead><tbody>
-            {stats.rows.map(r => <tr key={r.barangayId} className="border-t"><th className="p-2 text-left font-normal">{r.isSynthetic ? '[Synthetic] ' : ''}{r.name}{!r.eligible && ' (reference inactive)'}</th><td>{display(r.male)}</td><td>{display(r.female)}</td><td>{display(r.total)}</td><td className="max-w-xs break-words">{r.sourceReference ?? 'No data'}</td></tr>)}
-          </tbody></table></div>
-        </>}
-      </CardContent></Card>
+
     </>}
   </div>;
 }

@@ -9,8 +9,9 @@ import { DEMO_USERS } from './AuthService';
 const DEMO_USERS_LIST = DEMO_USERS;
 
 export class UserService {
-  public static async getUsers(params?: { search?: string; role?: string; officeId?: string }) {
+  public static async getUsers(params?: { search?: string; role?: string; officeId?: string }, options: { strict?: boolean } = {}) {
     if (!isDatabaseConnected()) {
+      if (options.strict) throw new AppError('Account source unavailable', 503, 'DATA_UNAVAILABLE');
       let users = DEMO_USERS_LIST;
       if (params?.role) {
         users = users.filter((u) => u.role === params.role);
@@ -67,6 +68,7 @@ export class UserService {
         office: u.office?.code || u.office?.name || '',
       }));
     } catch {
+      if (options.strict) throw new AppError('Account source unavailable', 503, 'DATA_UNAVAILABLE');
       return DEMO_USERS_LIST.map((u) => ({
         ...u,
         name: u.fullName,
@@ -75,8 +77,9 @@ export class UserService {
     }
   }
 
-  public static async getUserById(id: string) {
+  public static async getUserById(id: string, options: { strict?: boolean } = {}) {
     if (!isDatabaseConnected()) {
+      if (options.strict) throw new AppError('Account source unavailable', 503, 'DATA_UNAVAILABLE');
       const user = DEMO_USERS_LIST.find((u) => u.id === id || u.email === id);
       if (user) {
         return {
@@ -109,6 +112,7 @@ export class UserService {
       };
     } catch (err: any) {
       if (err instanceof NotFoundError) throw err;
+      if (options.strict) throw new AppError('Account source unavailable', 503, 'DATA_UNAVAILABLE');
       const user = DEMO_USERS_LIST.find((u) => u.id === id || u.email === id);
       if (user) {
         return {

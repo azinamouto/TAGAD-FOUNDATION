@@ -7,6 +7,7 @@ import helmet from 'helmet';
 import path from 'path';
 import { fileURLToPath } from 'node:url';
 import fs from 'fs';
+import { createServer } from 'node:http';
 import { validateJwtConfig } from './server/lib/jwt';
 import { TokenRevocationService } from './server/services/TokenRevocationService';
 import { requestLogger } from './server/middleware/requestLogger';
@@ -62,6 +63,7 @@ async function startServer() {
   }
 
   const app = express();
+  const httpServer = createServer(app);
   const PORT = Number(process.env.PORT || 3000);
   if (!Number.isInteger(PORT) || PORT < 1 || PORT > 65535) throw new Error('PORT must be an integer from 1 to 65535');
 
@@ -150,7 +152,11 @@ async function startServer() {
       const vite = await createViteServer({
         root: frontendDir,
         configFile: path.resolve(frontendDir, 'vite.config.ts'),
-        server: { middlewareMode: true },
+        cacheDir: path.resolve(frontendDir, 'node_modules/.vite-middleware'),
+        server: {
+          middlewareMode: true,
+          hmr: process.env.DISABLE_HMR === 'true' ? false : { server: httpServer },
+        },
         appType: 'spa',
       });
       app.use(vite.middlewares);
@@ -173,7 +179,7 @@ async function startServer() {
     }
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
+  httpServer.listen(PORT, "0.0.0.0", () => {
     logger.info('TAGAD_BACKEND_SERVER_STARTED', {
       port: PORT,
       url: `http://localhost:${PORT}`,

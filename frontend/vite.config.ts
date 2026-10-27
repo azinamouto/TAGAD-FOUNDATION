@@ -7,11 +7,14 @@ export default defineConfig(() => {
   return {
     root: path.resolve(__dirname),
     plugins: [react(), tailwindcss()],
-    resolve: {
-      alias: {
-        '@': path.resolve(__dirname, './src'),
-      },
-    },
+   resolve: {
+  alias: {
+    '@': path.resolve(__dirname, './src'),
+    react: path.resolve(__dirname, './node_modules/react'),
+    'react-dom': path.resolve(__dirname, './node_modules/react-dom'),
+  },
+  dedupe: ['react', 'react-dom'],
+},
     server: {
       proxy: { '/api': { target: 'http://127.0.0.1:3000', changeOrigin: true } },
       // HMR is disabled in AI Studio via DISABLE_HMR env var.

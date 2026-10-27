@@ -1,5 +1,5 @@
 import { test, expect, Page } from '@playwright/test';
-const series = { id: 'synthetic-series', code: 'SYNTH', name: 'Synthetic source', sourceReference: 'Synthetic only' };
+const series = { id: 'synthetic-series', code: 'SYNTH', name: 'Synthetic source', sourceReference: 'Synthetic only', owningOfficeId: 'synthetic-office' };
 const row = { barangay_code: 'SYNTH-1', period: '2026', male: 3, female: 4, source_reference: 'Synthetic source' };
 async function setup(page: Page, canWrite = true, references = true) {
   await page.addInitScript(() => localStorage.setItem('tagad_token', 'synthetic-token'));
@@ -73,4 +73,23 @@ test('unverified roster blocks entry and expired session hides the workspace', a
   await expect(page.getByRole('heading', { name: 'Encode counts' })).toHaveCount(0);
   await page.getByRole('link', { name: 'Sign in', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Personnel Sign In' })).toBeVisible();
+});
+
+test('source provenance and results precede encoding, and empty counts remain missing', async ({ page }) => {
+  await setup(page);
+  await page.route('**/api/provisional-gad/statistics?*', route => route.fulfill({ json: { data: { series, period: '2026', rows: [], totals: null, missing: 2 } } }));
+  await page.goto('/barangay-statistics');
+  await page.getByLabel('Source series', { exact: true }).selectOption(series.id);
+  const metadata = page.getByRole('region', { name: 'Selected source metadata' });
+  await expect(metadata).toContainText('Synthetic only');
+  await expect(metadata).toContainText('synthetic-office');
+  await expect(metadata).toContainText('not approved LGU statistics');
+  await page.getByLabel('Statistics reporting period').fill('2026');
+  const results = page.getByRole('region', { name: 'Persisted barangay statistics', exact: true });
+  await expect(results).toContainText('Missing values are not zero');
+  await expect(results.locator('.stat-breakdown')).toContainText('No data');
+  expect(await results.evaluate(el => Boolean(el.compareDocumentPosition(Array.from(document.querySelectorAll('h2')).find(h => h.textContent === 'Encode counts')!) & Node.DOCUMENT_POSITION_FOLLOWING))).toBe(true);
+  await page.getByLabel('Source series', { exact: true }).selectOption('');
+  await expect(metadata).toHaveCount(0);
+  await expect(results).not.toContainText('Missing values are not zero');
 });

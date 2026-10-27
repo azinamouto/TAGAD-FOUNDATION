@@ -1,42 +1,33 @@
 import React, { useState } from 'react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../components/ui/card';
 import { Button } from '../components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { FileDown, Table as TableIcon, FileText, Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
-import { Badge } from '../components/ui/badge';
-import { apiUrl } from '../api/apiUrl';
+import { FileDown, Table as TableIcon, FileText } from 'lucide-react';
+import api from '../api/axios';
 
 const Reports: React.FC = () => {
   const [year, setYear] = useState(new Date().getFullYear().toString());
+  const [error, setError] = useState('');
+  const [notice, setNotice] = useState('');
   const [loading, setLoading] = useState<string | null>(null);
 
   const downloadReport = async (type: 'gpb' | 'gar' | 'beneficiaries', format: 'excel' | 'pdf') => {
-    setLoading(`${type}-${format}`);
+    setLoading(`${type}-${format}`); setError(''); setNotice('');
     try {
       let url = '';
       let filename = '';
       
       if (type === 'gpb') {
-        url = apiUrl(`/reports/gpb-excel?year=${year}`);
+        url = `/reports/gpb-excel?year=${year}`;
         filename = `GPB_Report_${year}.xlsx`;
       } else if (type === 'gar') {
-        url = apiUrl(`/reports/gar-excel?year=${year}`);
+        url = `/reports/gar-excel?year=${year}`;
         filename = `GAR_Report_${year}.xlsx`;
       } else if (type === 'beneficiaries') {
-        url = apiUrl('/reports/beneficiaries-pdf');
+        url = '/reports/beneficiaries-pdf';
         filename = 'Beneficiary_Registry.pdf';
       }
 
-      const response = await fetch(url, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('tagad_token')}`
-        }
-      });
-      
-      if (!response.ok) throw new Error('Download failed');
-      
-      const blob = await response.blob();
+      const response = await api.get(url, { responseType: 'blob' });
+      const blob = response.data;
       const downloadUrl = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = downloadUrl;
@@ -44,10 +35,11 @@ const Reports: React.FC = () => {
       document.body.appendChild(link);
       link.click();
       link.remove();
+      window.URL.revokeObjectURL(downloadUrl);
       
-      toast.success(`${type.toUpperCase()} Report downloaded successfully`);
+      setNotice(`${type.toUpperCase()} report download prepared. Review completeness before use.`);
     } catch (error) {
-      toast.error('Failed to generate report');
+      setError('Failed to generate report');
     } finally {
       setLoading(null);
     }
@@ -80,74 +72,31 @@ const Reports: React.FC = () => {
     }
   ];
 
+  const years = Array.from({ length: Math.max(2026, new Date().getFullYear()) - 2024 + 1 }, (_, i) => 2024 + i);
   return (
-    <div className="space-y-8 animate-in fade-in duration-500 max-w-[1600px] mx-auto">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Reports and Exports</h1>
-          <p className="text-sm font-medium text-muted-foreground">Download working exports; official template acceptance is pending.</p>
-        </div>
-        <div className="flex items-center gap-2 bg-card px-3 py-1.5 rounded-lg border border-border shadow-sm">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">GPB / GAR Year</span>
-          <select 
-            className="bg-transparent border-none focus:ring-0 text-sm font-bold text-primary cursor-pointer outline-none"
-            value={year}
-            onChange={(e) => setYear(e.target.value)}
-          >
-            {[2024, 2025, 2026].map(y => <option key={y} value={y.toString()}>{y}</option>)}
-          </select>
-        </div>
-      </div>
-
-      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {reportCards.map((report) => (
-          <Card key={report.id} className="border-border shadow-sm flex flex-col bg-card rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300 group">
-            <CardHeader className="p-8 pb-4">
-              <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center mb-6 group-hover:bg-accent transition-colors">
-                <report.icon className="h-6 w-6 text-muted-foreground group-hover:text-primary" />
-              </div>
-              <CardTitle className="text-xl font-bold text-foreground mb-2">{report.title}</CardTitle>
-              <CardDescription className="text-sm font-medium text-muted-foreground leading-relaxed">
-                {report.description}
-              </CardDescription>
-            </CardHeader>
-            <div className="flex-1" />
-            <CardFooter className="px-8 py-6 bg-muted/50 flex justify-between items-center border-t border-border">
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded text-[10px] font-extrabold bg-card border border-border text-muted-foreground uppercase tracking-widest">
-                {report.format}
-              </span>
-              <Button 
-                onClick={report.action} 
-                disabled={!!loading}
-                className="bg-primary hover:bg-primary text-white rounded-lg shadow-sm font-bold px-6 h-10"
-              >
-                {loading?.startsWith(report.id) ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <>
-                    <FileDown className="h-4 w-4 mr-2" /> Download
-                  </>
-                )}
-              </Button>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
-
-      <div className="mt-16 p-8 bg-accent rounded-[2rem] border border-[#E0E7FF] flex flex-col md:flex-row items-center gap-8 relative overflow-hidden">
-        <div className="absolute top-0 right-0 -mt-8 -mr-8 w-32 h-32 bg-primary opacity-[0.03] rounded-full" />
-        <div className="p-5 bg-card rounded-[1.5rem] shadow-sm border border-primary relative">
-          <FileText className="h-10 w-10 text-primary" />
-        </div>
-        <div className="text-center md:text-left relative">
-          <h3 className="text-xl font-bold text-foreground">Need specific data insights?</h3>
-          <p className="text-primary text-sm font-medium max-w-xl mt-2 leading-relaxed">
-            Review source records and completeness before using these exports for planning. GPB and GAR templates require confirmation by the designated report owners. The registry PDF is limited to 100 records and does not use the year filter.
-          </p>
-        </div>
-      </div>
+    <div className="analytics-dashboard management-page">
+      <header className="dashboard-intro">
+        <div><h1>Reports and Exports</h1><p className="text-muted-foreground">Download working exports; official template acceptance is pending.</p></div>
+        <div className="period-control"><label htmlFor="report-year">GPB / GAR Year</label><select id="report-year" disabled={!!loading} value={year} onChange={e => { setYear(e.target.value); setError(''); setNotice(''); }}>{years.map(y => <option key={y}>{y}</option>)}</select></div>
+      </header>
+      <section className="analytics-notice" aria-label="Export scope"><p>Exports use records available to your account. The year filter applies only to GPB and GAR. Source ownership remains with the offices recorded on the underlying plans, accomplishments and registry records.</p></section>
+      {error && <p role="alert" className="management-error">{error}. Retry the download below; no export was confirmed.</p>}
+      {notice && <p role="status">{notice}</p>}
+      {loading && <p role="status">Preparing export...</p>}
+      <section className="analytics-panel report-catalog" aria-label="Available exports">
+        {reportCards.map(report => <article key={report.id} className="report-row">
+          <report.icon size={24} aria-hidden="true" className="text-primary" />
+          <div><h2>{report.title}</h2><p className="text-muted-foreground">{report.description}</p><p className="report-metadata">{report.format} / {report.id === 'beneficiaries' ? 'All years / Up to 100 records' : `Fiscal year ${year}`} / Working export</p></div>
+          <Button onClick={report.action} disabled={!!loading} aria-label={'Download ' + report.title}><FileDown size={16} aria-hidden="true" />Download</Button>
+        </article>)}
+      </section>
+      <section className="analytics-panel source-metadata" aria-label="Report verification notes">
+        <h2>Before using an export</h2><dl>
+          <div><dt>Verification</dt><dd>Official GPB and GAR templates require confirmation by the designated report owners. No certification or approval is implied.</dd></div>
+          <div><dt>Completeness</dt><dd>Review source records and completeness before using these exports for planning. The registry PDF is limited to 100 records and does not use the year filter.</dd></div>
+        </dl>
+      </section>
     </div>
   );
 };
-
 export default Reports;
