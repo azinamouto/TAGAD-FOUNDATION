@@ -7,15 +7,18 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Label } from '../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { toast } from 'sonner';
-import { Plus, Edit, Trash2, Loader2, Target } from 'lucide-react';
-import { Card, CardContent } from '../components/ui/card';
-import { cn } from '../lib/utils';
+import { Plus, Edit, Trash2, Loader2 } from 'lucide-react';
+
 
 const ProgramMonitoring: React.FC = () => {
   const { user, isAdmin, hasRole } = useAuth();
   const [programs, setPrograms] = useState<any[]>([]);
+  const [error, setError] = useState('');
+  const [search, setSearch] = useState('');
+  const [filterYear, setFilterYear] = useState('');
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [saveError, setSaveError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
 
@@ -34,13 +37,14 @@ const ProgramMonitoring: React.FC = () => {
   });
 
   const fetchPrograms = async () => {
-    setLoading(true);
+    setLoading(true); setError('');
     try {
       const response = await api.get('/programs');
       const payload = response.data?.data ?? response.data;
-      setPrograms(Array.isArray(payload) ? payload : []);
+      if (!Array.isArray(payload)) throw new Error('Invalid program response');
+      setPrograms(payload);
     } catch (error) {
-      toast.error('Failed to fetch programs');
+      setError('Programs are unavailable. Retry to retrieve the current records.');
       setPrograms([]);
     } finally {
       setLoading(false);
@@ -54,6 +58,7 @@ const ProgramMonitoring: React.FC = () => {
   const defaultOfficeName = user?.office?.code || user?.office?.name || '';
 
   const handleOpenAdd = () => {
+    setSaveError('');
     setEditingId(null);
     setFormData({
       title: '',
@@ -72,6 +77,7 @@ const ProgramMonitoring: React.FC = () => {
   };
 
   const handleEdit = (p: any) => {
+    setSaveError('');
     setEditingId(p.id);
     setFormData({
       title: p.title || '',
@@ -81,10 +87,10 @@ const ProgramMonitoring: React.FC = () => {
       budget: (p.budget ?? p.budgetTarget ?? 0).toString(),
       year: (p.year ?? p.fiscalYear ?? new Date().getFullYear()).toString(),
       status: p.status || 'ACTIVE',
-      targetMale: (p.targetMale ?? 0).toString(),
-      targetFemale: (p.targetFemale ?? 0).toString(),
-      actualMale: (p.actualMale ?? 0).toString(),
-      actualFemale: (p.actualFemale ?? 0).toString()
+      targetMale: (p.targetMale ?? '').toString(),
+      targetFemale: (p.targetFemale ?? '').toString(),
+      actualMale: (p.actualMale ?? '').toString(),
+      actualFemale: (p.actualFemale ?? '').toString()
     });
     setIsModalOpen(true);
   };
@@ -102,6 +108,8 @@ const ProgramMonitoring: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
+    setSaveError('');
     setIsSubmitting(true);
     try {
       const payload = {
@@ -109,13 +117,13 @@ const ProgramMonitoring: React.FC = () => {
         description: formData.description,
         office: formData.office,
         sector: formData.sector,
-        year: parseInt(formData.year) || new Date().getFullYear(),
-        budget: parseFloat(formData.budget) || 0,
+        year: Number(formData.year),
+        budget: Number(formData.budget),
         status: formData.status,
-        targetMale: parseInt(formData.targetMale) || 0,
-        targetFemale: parseInt(formData.targetFemale) || 0,
-        actualMale: parseInt(formData.actualMale) || 0,
-        actualFemale: parseInt(formData.actualFemale) || 0
+        targetMale: formData.targetMale === '' ? undefined : Number(formData.targetMale),
+        targetFemale: formData.targetFemale === '' ? undefined : Number(formData.targetFemale),
+        actualMale: formData.actualMale === '' ? undefined : Number(formData.actualMale),
+        actualFemale: formData.actualFemale === '' ? undefined : Number(formData.actualFemale)
       };
 
       if (editingId) {
@@ -129,7 +137,7 @@ const ProgramMonitoring: React.FC = () => {
       fetchPrograms();
     } catch (error: any) {
       const msg = error.response?.data?.error?.message || error.response?.data?.message || 'Failed to save program';
-      toast.error(msg);
+      setSaveError(msg);
     } finally {
       setIsSubmitting(false);
     }
@@ -137,12 +145,15 @@ const ProgramMonitoring: React.FC = () => {
 
   const isViewer = hasRole('VIEWER') && !isAdmin && !hasRole('ENCODER');
 
+  const visiblePrograms = programs.filter(p => (!filterYear || String(p.year ?? p.fiscalYear) === filterYear) && [p.title, p.office, p.officeName, p.sector].some(value => typeof value === 'string' && value.toLowerCase().includes(search.toLowerCase())));
+  const years = [...new Set(programs.map(p => p.year ?? p.fiscalYear).filter(value => value != null).map(String))].sort().reverse();
+  const recorded = (value: unknown) => value !== null && value !== undefined && value !== '' && Number.isFinite(Number(value)) ? Number(value).toLocaleString('en-PH') : 'Not recorded';
   return (
-    <div className="space-y-8 animate-in fade-in duration-500 max-w-[1600px] mx-auto">
-      <div className="flex items-center justify-between">
+    <div className="analytics-dashboard management-page">
+      <div className="dashboard-intro">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">Program Monitoring</h1>
-          <p className="text-sm font-medium text-muted-foreground">Track GAD-related programs and actual vs target impact</p>
+          <p className="text-sm font-medium text-muted-foreground">Compare recorded program targets, actual counts and budgets within your access scope.</p>
         </div>
         {!isViewer && (
           <Button onClick={handleOpenAdd} className="bg-primary hover:bg-primary text-white rounded-lg shadow-sm font-semibold">
@@ -151,120 +162,51 @@ const ProgramMonitoring: React.FC = () => {
         )}
       </div>
 
-      <div className="grid gap-6">
-        {loading ? (
-          <div className="py-24 flex justify-center"><Loader2 className="h-10 w-10 animate-spin text-primary" /></div>
-        ) : programs.length === 0 ? (
-          <div className="bg-card rounded-2xl border border-border p-12 text-center">
-            <Target className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-bold text-foreground">No Programs Found</h3>
-            <p className="text-sm text-muted-foreground max-w-md mx-auto mt-1 mb-6">
-              There are no GAD programs recorded for this period yet.
-            </p>
-            {!isViewer && (
-              <Button onClick={handleOpenAdd} className="bg-primary hover:bg-primary text-white rounded-lg font-semibold">
-                <Plus className="h-4 w-4 mr-2" /> Create First Program
-              </Button>
-            )}
+      <section className="analytics-notice" aria-label="Program data scope"><p>Source: stored program records. Fiscal year and responsible office are shown per program. Reported actual counts do not establish unique participants or measured impact. Verification status is not supplied.</p></section>
+      <section className="analytics-panel">
+        <div className="management-filters">
+          <label>Search programs<Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Title, office or sector" /></label>
+          <label>Fiscal year<select aria-label="Fiscal year" value={filterYear} onChange={e => setFilterYear(e.target.value)}><option value="">All recorded years</option>{years.map(y => <option key={y}>{y}</option>)}</select></label>
+          {(search || filterYear) && <Button variant="outline" onClick={() => { setSearch(''); setFilterYear(''); }}>Clear filters</Button>}
+        </div>
+        {loading ? <p role="status">Loading programs...</p> : error ? <div role="alert" className="management-error"><p>{error}</p><Button variant="outline" onClick={fetchPrograms}>Retry programs</Button></div> : <>
+          <p role="status" className="panel-footnote">Showing {visiblePrograms.length} of {programs.length} available programs.</p>
+          <div className="table-scroll" role="region" aria-label="Program comparison" tabIndex={0}>
+            <table className="analytics-table program-table"><caption>Recorded counts by sex; missing values remain "Not recorded". Targets and actuals are kept separate.</caption>
+              <thead><tr>{['Program / sector', 'Office / fiscal year', 'Budget target (PHP)', 'Target male / female', 'Actual male / female', 'Status', 'Actions'].map(label => <th scope="col" key={label}>{label}</th>)}</tr></thead>
+              <tbody>{visiblePrograms.map(p => <tr key={p.id}>
+                <th scope="row"><strong>{p.title || 'Not recorded'}</strong><p className="text-muted-foreground font-normal">{p.sector || 'Sector not recorded'}</p>{p.description && <details><summary>Program description</summary><p className="font-normal">{p.description}</p></details>}</th>
+                <td>{p.office || p.officeName || 'Not recorded'}<p className="text-muted-foreground">{p.year ?? p.fiscalYear ?? 'Year not recorded'}</p></td>
+                <td className="numeric">{recorded(p.budget ?? p.budgetTarget)}</td>
+                <td className="numeric">{recorded(p.targetMale)} / {recorded(p.targetFemale)}</td>
+                <td className="numeric">{recorded(p.actualMale)} / {recorded(p.actualFemale)}</td>
+                <td>{p.status || 'Not recorded'}</td>
+                <td><div className="management-actions">{!isViewer && <Button variant="outline" aria-label={'Edit program ' + p.title} onClick={() => handleEdit(p)}><Edit size={16} />Edit</Button>}{isAdmin && <Button variant="outline" aria-label={'Delete program ' + p.title} onClick={() => handleDelete(p.id)}><Trash2 size={16} />Delete</Button>}{isViewer && <span className="text-muted-foreground">Read only</span>}</div></td>
+              </tr>)}{!visiblePrograms.length && <tr><td colSpan={7} className="analytics-empty">{programs.length ? 'No programs match these filters.' : 'No programs are recorded in your access scope.'}</td></tr>}</tbody>
+            </table>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {programs.map((p) => {
-              const targetM = Number(p.targetMale) || 0;
-              const targetF = Number(p.targetFemale) || 0;
-              const actualM = Number(p.actualMale) || 0;
-              const actualF = Number(p.actualFemale) || 0;
-              const totalTarget = targetM + targetF;
-              const totalActual = actualM + actualF;
-              const progress = totalTarget > 0 ? (totalActual / totalTarget) * 100 : 0;
-              const budgetVal = Number(p.budget ?? p.budgetTarget ?? 0);
-              const statusNormalized = (p.status || 'ACTIVE').toUpperCase();
+        </>}
+      </section>
 
-              return (
-                <Card key={p.id} className="border-border shadow-sm h-full flex flex-col bg-card rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300 group">
-                  <header className="px-6 py-5 border-b border-border flex items-start justify-between">
-                    <div className="space-y-1.5">
-                      <h3 className="text-lg font-bold text-foreground line-clamp-1">{p.title}</h3>
-                      <div className="flex gap-2">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-muted text-muted-foreground uppercase tracking-wider">
-                          {p.sector || 'General'}
-                        </span>
-                        <span className={cn(
-                          "inline-flex items-center px-2 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-widest",
-                          statusNormalized === 'ACTIVE' ? 'bg-accent text-primary' :
-                          statusNormalized === 'COMPLETED' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-500'
-                        )}>
-                          {statusNormalized}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="p-2 bg-muted rounded-lg group-hover:bg-accent transition-colors">
-                      <Target className="h-5 w-5 text-muted-foreground group-hover:text-primary" />
-                    </div>
-                  </header>
-                  <CardContent className="flex-1 p-6 space-y-6">
-                    <p className="text-xs font-medium text-muted-foreground leading-relaxed line-clamp-2">{p.description || 'No description provided.'}</p>
-
-                    <div className="space-y-3">
-                      <div className="flex justify-between items-end">
-                        <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground">Beneficiary Reach</span>
-                        <span className="text-xs font-bold text-foreground">{totalActual.toLocaleString()} / {totalTarget.toLocaleString()}</span>
-                      </div>
-                      <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-primary rounded-full transition-all duration-700"
-                          style={{ width: `${Math.min(progress, 100)}%` }}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-muted p-3 rounded-xl border border-border">
-                        <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1">Budget</p>
-                        <p className="text-sm font-bold text-foreground">₱{budgetVal.toLocaleString()}</p>
-                      </div>
-                      <div className="bg-muted p-3 rounded-xl border border-border">
-                        <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1">Office</p>
-                        <p className="text-sm font-bold text-foreground truncate">{p.office || p.officeName || 'General'}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex justify-end gap-2 pt-4 border-t border-border opacity-0 group-hover:opacity-100 transition-opacity">
-                      {!isViewer && (
-                        <Button variant="ghost" size="sm" onClick={() => handleEdit(p)} className="h-9 px-4 text-primary font-semibold hover:bg-accent rounded-lg">
-                          <Edit className="h-4 w-4 mr-2" /> Edit
-                        </Button>
-                      )}
-                      {isAdmin && (
-                        <Button variant="ghost" size="sm" onClick={() => handleDelete(p.id)} className="h-9 px-4 text-red-400 font-semibold hover:bg-red-50 rounded-lg">
-                          <Trash2 className="h-4 w-4 mr-2" /> Delete
-                        </Button>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        )}
-      </div>
-
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="max-w-2xl rounded-2xl p-8 border-none shadow-xl">
+      <Dialog open={isModalOpen} onOpenChange={open => { if (!isSubmitting) setIsModalOpen(open); }}>
+        <DialogContent showCloseButton={!isSubmitting} className="portal-theme management-dialog sm:max-w-2xl">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-foreground">{editingId ? 'Edit Program' : 'Create New Program'}</DialogTitle>
             <p className="text-sm text-muted-foreground">Define the scope and objectives for your GAD program.</p>
           </DialogHeader>
-          <form onSubmit={handleSubmit} className="space-y-6 pt-6">
+          <form onSubmit={handleSubmit} className="pt-6" aria-busy={isSubmitting}>
+            {saveError && <p role="alert" className="management-error mb-4">{saveError}</p>}
+            {isSubmitting && <p role="status" className="mb-4">Saving changes...</p>}
+            <fieldset disabled={isSubmitting} className="space-y-6 min-w-0">
             <div className="space-y-2">
               <Label htmlFor="title" className="text-sm font-semibold text-foreground">Program Title <span className="text-red-500">*</span></Label>
-              <Input id="title" className="rounded-lg border-input py-6" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} required />
+              <Input id="title" minLength={3} className="rounded-lg border-input py-6" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="description" className="text-sm font-semibold text-foreground">Description</Label>
               <Input id="description" className="rounded-lg border-input py-6" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} />
             </div>
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label htmlFor="office" className="text-sm font-semibold text-foreground">Responsible Office <span className="text-red-500">*</span></Label>
                 <Input id="office" className="rounded-lg border-input py-6" value={formData.office} onChange={e => setFormData({...formData, office: e.target.value})} required />
@@ -272,47 +214,47 @@ const ProgramMonitoring: React.FC = () => {
               <div className="space-y-2">
                 <Label htmlFor="sector" className="text-sm font-semibold text-foreground">Sector <span className="text-red-500">*</span></Label>
                 <Select value={formData.sector} onValueChange={val => setFormData({...formData, sector: val})}>
-                  <SelectTrigger className="rounded-lg border-input py-6"><SelectValue placeholder="Select sector" /></SelectTrigger>
-                  <SelectContent className="rounded-xl">
+                  <SelectTrigger aria-label="Sector" className="rounded-lg border-input py-6"><SelectValue placeholder="Select sector" /></SelectTrigger>
+                  <SelectContent className="portal-theme rounded-xl">
                     {["Women", "Senior Citizens", "PWD", "Youth", "Indigenous Peoples", "Farmers", "Fisherfolk", "Urban Poor"].map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label htmlFor="budget" className="text-sm font-semibold text-foreground">Budget (₱) <span className="text-red-500">*</span></Label>
-                <Input id="budget" type="number" step="0.01" className="rounded-lg border-input py-6" value={formData.budget} onChange={e => setFormData({...formData, budget: e.target.value})} required />
+                <Input id="budget" type="number" min={0} step="0.01" className="rounded-lg border-input py-6" value={formData.budget} onChange={e => setFormData({...formData, budget: e.target.value})} required />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="year" className="text-sm font-semibold text-foreground">Year <span className="text-red-500">*</span></Label>
-                <Input id="year" type="number" className="rounded-lg border-input py-6" value={formData.year} onChange={e => setFormData({...formData, year: e.target.value})} required />
+                <Input id="year" type="number" min={2000} max={2100} step={1} className="rounded-lg border-input py-6" value={formData.year} onChange={e => setFormData({...formData, year: e.target.value})} required />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-6 p-6 rounded-xl bg-muted border border-border">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 p-6 rounded-xl bg-muted border border-border">
               <div className="space-y-4">
-                <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground">Target Beneficiaries</p>
+                <p className="text-sm font-bold uppercase tracking-[0.15em] text-muted-foreground">Target Beneficiaries</p>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold text-muted-foreground">Male</Label>
-                    <Input className="h-10 rounded-lg border-input" type="number" value={formData.targetMale} onChange={e => setFormData({...formData, targetMale: e.target.value})} />
+                    <Label className="text-sm font-semibold text-muted-foreground">Male</Label>
+                    <Input className="h-10 rounded-lg border-input" type="number" min={0} step={1} aria-label="Target male" value={formData.targetMale} onChange={e => setFormData({...formData, targetMale: e.target.value})} />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold text-muted-foreground">Female</Label>
-                    <Input className="h-10 rounded-lg border-input" type="number" value={formData.targetFemale} onChange={e => setFormData({...formData, targetFemale: e.target.value})} />
+                    <Label className="text-sm font-semibold text-muted-foreground">Female</Label>
+                    <Input className="h-10 rounded-lg border-input" type="number" min={0} step={1} aria-label="Target female" value={formData.targetFemale} onChange={e => setFormData({...formData, targetFemale: e.target.value})} />
                   </div>
                 </div>
               </div>
               <div className="space-y-4">
-                <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground">Actual Beneficiaries</p>
+                <p className="text-sm font-bold uppercase tracking-[0.15em] text-muted-foreground">Actual Beneficiaries</p>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold text-muted-foreground">Male</Label>
-                    <Input className="h-10 rounded-lg border-input" type="number" value={formData.actualMale} onChange={e => setFormData({...formData, actualMale: e.target.value})} />
+                    <Label className="text-sm font-semibold text-muted-foreground">Male</Label>
+                    <Input className="h-10 rounded-lg border-input" type="number" min={0} step={1} aria-label="Actual male" value={formData.actualMale} onChange={e => setFormData({...formData, actualMale: e.target.value})} />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold text-muted-foreground">Female</Label>
-                    <Input className="h-10 rounded-lg border-input" type="number" value={formData.actualFemale} onChange={e => setFormData({...formData, actualFemale: e.target.value})} />
+                    <Label className="text-sm font-semibold text-muted-foreground">Female</Label>
+                    <Input className="h-10 rounded-lg border-input" type="number" min={0} step={1} aria-label="Actual female" value={formData.actualFemale} onChange={e => setFormData({...formData, actualFemale: e.target.value})} />
                   </div>
                 </div>
               </div>
@@ -320,8 +262,8 @@ const ProgramMonitoring: React.FC = () => {
             <div className="space-y-2">
               <Label className="text-sm font-semibold text-foreground">Status</Label>
               <Select value={formData.status} onValueChange={val => setFormData({...formData, status: val})}>
-                <SelectTrigger className="rounded-lg border-input py-6"><SelectValue placeholder="Select status" /></SelectTrigger>
-                <SelectContent className="rounded-xl">
+                <SelectTrigger aria-label="Status" className="rounded-lg border-input py-6"><SelectValue placeholder="Select status" /></SelectTrigger>
+                <SelectContent className="portal-theme rounded-xl">
                   <SelectItem value="ACTIVE">ACTIVE</SelectItem>
                   <SelectItem value="COMPLETED">COMPLETED</SelectItem>
                   <SelectItem value="CANCELLED">CANCELLED</SelectItem>
@@ -335,6 +277,7 @@ const ProgramMonitoring: React.FC = () => {
                 {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : 'Save Program'}
               </Button>
             </DialogFooter>
+            </fieldset>
           </form>
         </DialogContent>
       </Dialog>
