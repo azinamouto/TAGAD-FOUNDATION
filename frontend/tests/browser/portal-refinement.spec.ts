@@ -86,3 +86,18 @@ test('empty charts explain zero records without inventing data', async ({ page }
   await expect(page.getByText('Utilization rate is unavailable without an allocated budget.')).toBeVisible();
   await page.screenshot({ path: 'test-results/portal-empty.png', fullPage: true });
 });
+
+test('barangay filter keeps chart and table aligned without changing summary scope', async ({ page }) => {
+  await session(page);
+  await page.route('**/api/dashboard/stats?*', route => route.fulfill({ json: { data } }));
+  await page.goto('/dashboard');
+  await page.getByLabel('Registry barangay', { exact: true }).selectOption('Synthetic missing');
+  const table = page.getByRole('region', { name: 'Barangay registry data', exact: true });
+  await expect(table.getByRole('row')).toHaveCount(2);
+  await expect(table).not.toContainText('Synthetic A');
+  await expect(table.getByRole('row', { name: /Synthetic missing/ })).toContainText('Not recorded');
+  await expect(page.locator('.barangay-panel .recharts-xAxis')).not.toContainText('Synthetic A');
+  await expect(page.locator('.stat-value').first()).toHaveText('7records');
+  await page.getByLabel('Registry barangay', { exact: true }).selectOption('');
+  await expect(table.getByRole('row')).toHaveCount(3);
+});
