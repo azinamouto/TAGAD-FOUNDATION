@@ -18,7 +18,7 @@ export const getBeneficiaries = async (req: AuthenticatedRequest, res: Response)
         officeId: officeId as string,
         year: year ? Number(year) : undefined,
       },
-      req.user
+      req.user, { strict: true }
     );
     return sendSuccess(res, result.data, result.pagination);
   } catch (error: any) {

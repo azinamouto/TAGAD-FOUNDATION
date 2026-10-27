@@ -1,3 +1,5 @@
+import { isDatabaseConnected } from '../../lib/prisma';
+import { AppError } from '../../lib/errors';
 import { Response } from 'express';
 import { ProgramService } from '../../services/ProgramService';
 import { sendSuccess, sendError } from '../../lib/response';
@@ -15,7 +17,7 @@ export const getPrograms = async (req: AuthenticatedRequest, res: Response) => {
         status: status as string,
         search: search as string,
       },
-      req.user
+      req.user, { strict: true }
     );
     return sendSuccess(res, result);
   } catch (error: any) {
@@ -25,7 +27,7 @@ export const getPrograms = async (req: AuthenticatedRequest, res: Response) => {
 
 export const getProgramById = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const result = await ProgramService.getProgramById(req.params.id);
+    const result = await ProgramService.getProgramById(req.params.id, req.user, { strict: true });
     return sendSuccess(res, result);
   } catch (error: any) {
     return sendError(res, error, error.statusCode || 404);
@@ -34,6 +36,7 @@ export const getProgramById = async (req: AuthenticatedRequest, res: Response) =
 
 export const createProgram = async (req: AuthenticatedRequest, res: Response) => {
   try {
+    if (!isDatabaseConnected()) throw new AppError('Storage unavailable; no save was confirmed', 503, 'DATA_UNAVAILABLE');
     if (!req.user) return sendError(res, 'Unauthorized', 401);
     const result = await ProgramService.createProgram(req.body, req.user, req);
     return sendSuccess(res, result, undefined, 201);
@@ -44,6 +47,7 @@ export const createProgram = async (req: AuthenticatedRequest, res: Response) =>
 
 export const updateProgram = async (req: AuthenticatedRequest, res: Response) => {
   try {
+    if (!isDatabaseConnected()) throw new AppError('Storage unavailable; no save was confirmed', 503, 'DATA_UNAVAILABLE');
     if (!req.user) return sendError(res, 'Unauthorized', 401);
     const result = await ProgramService.updateProgram(req.params.id, req.body, req.user, req);
     return sendSuccess(res, result);
@@ -54,6 +58,7 @@ export const updateProgram = async (req: AuthenticatedRequest, res: Response) =>
 
 export const deleteProgram = async (req: AuthenticatedRequest, res: Response) => {
   try {
+    if (!isDatabaseConnected()) throw new AppError('Storage unavailable; no save was confirmed', 503, 'DATA_UNAVAILABLE');
     if (!req.user) return sendError(res, 'Unauthorized', 401);
     const result = await ProgramService.deleteProgram(req.params.id, req.user, req);
     return sendSuccess(res, result);
