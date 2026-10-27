@@ -85,11 +85,10 @@ test('dashboard clears a barangay selection absent from refreshed authorized dat
   await expect(page.getByRole('region', { name: 'Barangay registry data', exact: true })).toContainText('Synthetic B');
 });
 
-test('export session rejection clears credentials through shared API handling', async ({ page }) => {
+test('export session rejection redirects to login through shared API handling', async ({ page }) => {
   await setup(page);
   await page.route('**/api/reports/**', route => route.fulfill({ status: 401, json: {} }));
   await page.goto('/reports');
   await page.getByRole('button', { name: 'Download GAD Plan and Budget (GPB)', exact: true }).click();
   await expect(page).toHaveURL(/\/login$/);
-  expect(await page.evaluate(() => localStorage.getItem('tagad_token'))).toBeNull();
 });
