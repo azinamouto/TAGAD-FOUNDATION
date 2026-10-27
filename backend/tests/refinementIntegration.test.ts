@@ -64,7 +64,7 @@ test('GPB and GAR reject ambiguous periods before reading or exporting data', as
   try {
     await withApi({ '/gpb': getGPBExcel, '/gar': getGARExcel }, async base => {
       for (const path of ['gpb', 'gar']) for (const query of ['year=2026junk', 'year=', 'year=2026&year=2025', 'year=NaN', 'year=2200']) {
-        assert.equal((await fetch(`${base}/${path}?${query}`)).status, 400);
+        assert.equal((await fetch(`${base}/${path}?${query}`)).status, 422);
       }
       assert.equal(reads, 0);
     });
